@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>รายงานตามสถานที่</title>
+<style>
+body{font-family:sans-serif;padding:20px}
+.summary div{margin:5px 0;font-weight:bold}
+table{border-collapse:collapse;width:100%;margin-top:10px}
+th,td{border:1px solid #ccc;padding:6px;text-align:left}
+th{background:#f0f0f0}
+.received{color:green}
+.pending{color:red}
+</style>
+</head>
+<body>
+
+<h2>📊 รายงานตามสถานที่</h2>
+
+<select id="placeSelect">
+  <option value="">-- เลือกสถานที่ --</option>
+</select>
+
+<div class="summary">
+  <div>📦 ทั้งหมด: <span id="total">0</span></div>
+  <div>✅ รับบิลแล้ว: <span id="received">0</span></div>
+  <div>⏳ คงเหลือ: <span id="pending">0</span></div>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th>เลขบิล</th>
+  <th>รายละเอียด</th>
+  <th>สถานะ</th>
+</tr>
+</thead>
+<tbody id="result"></tbody>
+</table>
+
+<script>
+const API = "https://script.google.com/macros/s/AKfycbySoKxAm58Vf0O0BVA-2WuN6IstiLquxxyoYNKVgATwYNUtECFNNS2LsWZFltyMumJp/exec";
+
+fetch(API+"?action=places")
+.then(r=>r.json())
+.then(d=>{
+  if(d.success){
+    d.places.forEach(p=>{
+      placeSelect.innerHTML += `<option value="${p}">${p}</option>`;
+    });
+  }
+});
+
+placeSelect.onchange = ()=>{
+  if(!placeSelect.value) return;
+
+  fetch(API+"?action=report&place="+encodeURIComponent(placeSelect.value))
+  .then(r=>r.json())
+  .then(d=>{
+    total.textContent = d.total;
+    received.textContent = d.received;
+    pending.textContent = d.pending;
+
+    result.innerHTML = "";
+    d.items.forEach(i=>{
+      result.innerHTML += `
+        <tr>
+          <td>${i.billNo}</td>
+          <td>${i.detail}</td>
+          <td class="${i.status==='รับบิลแล้ว'?'received':'pending'}">
+            ${i.status}
+          </td>
+        </tr>
+      `;
+    });
+  });
+};
+</script>
+
+</body>
+</html>

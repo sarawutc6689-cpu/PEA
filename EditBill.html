@@ -73,90 +73,105 @@ button{
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyF94UTfwqoCK8LS09wxBESuDdQWznuQGguRLuE5eaGIuSWZ1h1yLKLNdIRHbwcdhWy/exec";
 
-search.onchange = async ()=>{
-  msg.textContent="";
+search.onchange = async () => {
+  msg.textContent = "";
   const billNo = search.value.trim();
-  if(!billNo) return;
+  if (!billNo) return;
 
-  const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${billNo}`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${billNo}`);
+    const data = await res.json();
 
-  if(!data.success){
-    msg.style.color="red";
-    msg.textContent=data.message;
-    form.classList.add("hidden");
+    if (!data.success) {
+      msg.style.color = "red";
+      msg.textContent = data.message;
+      form.classList.add("hidden");
+      return;
+    }
+
+    form.classList.remove("hidden");
+    document.getElementById("billNo").value = data.bill.billNo;
+    document.getElementById("place").value = data.bill.place;
+    document.getElementById("detail").value = data.bill.detail;
+    
+  } catch (error) {
+    msg.style.color = "red";
+    msg.textContent = "เกิดข้อผิดพลาดในการเชื่อมต่อ: " + error.message;
+    console.error(error);
+  }
+};
+
+async function save() {
+  const msg = document.getElementById("msg");
+  const billNoInput = document.getElementById("billNo");
+  const placeInput = document.getElementById("place");
+  const detailInput = document.getElementById("detail");
+  
+  msg.textContent = "";
+  
+  if (!billNoInput.value || !placeInput.value) {
+    msg.style.color = "red";
+    msg.textContent = "กรุณากรอกสถานที่";
     return;
   }
 
-  form.classList.remove("hidden");
-  billNoInput = document.getElementById("billNo");
-  billNoInput.value = data.bill.billNo;
-  place.value = data.bill.place;
-  detail.value = data.bill.detail;
-};
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "edit",
+        billNo: billNoInput.value,
+        place: placeInput.value,
+        detail: detailInput.value
+      })
+    });
 
-async function save(){
-  const res = await fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"edit",
-      billNo: billNo.value,
-      place: place.value,
-      detail: detail.value
-    })
-  });
-
-  const data = await res.json();
-  msg.style.color = data.success ? "green" : "red";
-  msg.textContent = data.success ? "แก้ไขเรียบร้อย" : data.message;
-}
-
-async function remove(){
-  if(!confirm("⚠️ ต้องการลบบิลนี้ถาวรหรือไม่?")) return;
-
-  const res = await fetch(SCRIPT_URL,{
-    method:"POST",
-    body:JSON.stringify({
-      action:"delete",
-      billNo: billNo.value
-    })
-  });
-
-  const data = await res.json();
-  msg.style.color = data.success ? "green" : "red";
-  msg.textContent = data.success ? "ลบบิลเรียบร้อย" : data.message;
-
-  if(data.success){
-    form.classList.add("hidden");
-    search.value="";
+    const data = await res.json();
+    msg.style.color = data.success ? "green" : "red";
+    msg.textContent = data.success ? "แก้ไขเรียบร้อย" : data.message;
+    
+  } catch (error) {
+    msg.style.color = "red";
+    msg.textContent = "เกิดข้อผิดพลาด: " + error.message;
+    console.error(error);
   }
-}
-  async function save() {
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"  // เพิ่มบรรทัดนี้
-    },
-    body: JSON.stringify({
-      action: "edit",
-      billNo: billNo.value,
-      place: place.value,
-      detail: detail.value
-    })
-  });
 }
 
 async function remove() {
-  const res = await fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"  // เพิ่มบรรทัดนี้
-    },
-    body: JSON.stringify({
-      action: "delete",
-      billNo: billNo.value
-    })
-  });
+  const msg = document.getElementById("msg");
+  const billNoInput = document.getElementById("billNo");
+  
+  if (!confirm("⚠️ ต้องการลบบิลนี้ถาวรหรือไม่?")) return;
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "delete",
+        billNo: billNoInput.value
+      })
+    });
+
+    const data = await res.json();
+    msg.style.color = data.success ? "green" : "red";
+    msg.textContent = data.success ? "ลบบิลเรียบร้อย" : data.message;
+
+    if (data.success) {
+      document.getElementById("form").classList.add("hidden");
+      document.getElementById("search").value = "";
+    }
+    
+  } catch (error) {
+    msg.style.color = "red";
+    msg.textContent = "เกิดข้อผิดพลาด: " + error.message;
+    console.error(error);
+  }
 }
 </script>
 </body>

@@ -1,877 +1,1083 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard บิลค้างรับ | ระบบจัดการบิล</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-:root {
-  --primary-purple: #8b5cf6;
-  --primary-purple-dark: #7c3aed;
-  --primary-purple-light: #a78bfa;
-  --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-  --light-purple: #f5f3ff;
-  --white: #ffffff;
-  --light-gray: #f8fafc;
-  --border-color: #e2e8f0;
-  --text-primary: #1e293b;
-  --text-secondary: #64748b;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
-  --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.2);
-  --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.06);
-  --radius: 16px;
-  --radius-lg: 24px;
-  --transition: all 0.3s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', 'Sukhumvit Set', 'Kanit', sans-serif;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header */
-.header {
-  background: var(--gradient-purple);
-  padding: 20px 0;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
-  position: relative;
-  overflow: hidden;
-}
-
-.header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-  background-size: 30px 30px;
-  opacity: 0.3;
-}
-
-.header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  z-index: 1;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: white;
-  text-decoration: none;
-}
-
-.logo-icon {
-  font-size: 28px;
-  background: rgba(255, 255, 255, 0.2);
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-text {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.nav-links {
-  display: flex;
-  gap: 25px;
-}
-
-.nav-links a {
-  color: rgba(255, 255, 255, 0.9);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: var(--transition);
-  padding: 8px 16px;
-  border-radius: 50px;
-}
-
-.nav-links a:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-}
-
-.nav-links a i {
-  font-size: 18px;
-}
-
-/* Main Content */
-.main-content {
-  flex: 1;
-  padding: 40px 20px;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Page Header */
-.page-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.page-title {
-  font-size: 36px;
-  font-weight: 800;
-  color: var(--primary-purple-dark);
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.page-title i {
-  font-size: 38px;
-  background: var(--light-purple);
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page-subtitle {
-  color: var(--text-secondary);
-  font-size: 17px;
-  font-weight: 500;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* Stats Cards */
-.stats-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
-  margin-bottom: 50px;
-}
-
-.stat-card {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 30px;
-  box-shadow: var(--shadow);
-  transition: var(--transition);
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-}
-
-.stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-hover);
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-}
-
-.stat-card.total::before {
-  background: var(--primary-purple);
-}
-
-.stat-card.pending::before {
-  background: var(--warning);
-}
-
-.stat-card.received::before {
-  background: var(--success);
-}
-
-.stat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.stat-title {
-  font-size: 17px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 5px;
-}
-
-.stat-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-}
-
-.stat-card.total .stat-icon {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--primary-purple);
-}
-
-.stat-card.pending .stat-icon {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--warning);
-}
-
-.stat-card.received .stat-icon {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
-}
-
-.stat-value {
-  font-size: 42px;
-  font-weight: 800;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-
-.stat-card.total .stat-value {
-  color: var(--primary-purple-dark);
-}
-
-.stat-card.pending .stat-value {
-  color: var(--warning);
-}
-
-.stat-card.received .stat-value {
-  color: var(--success);
-}
-
-.stat-trend {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.stat-card.total .stat-trend {
-  background: rgba(139, 92, 246, 0.1);
-  color: var(--primary-purple);
-}
-
-.stat-card.pending .stat-trend {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--warning);
-}
-
-.stat-card.received .stat-trend {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
-}
-
-/* Table Section */
-.table-section {
-  background: var(--white);
-  border-radius: var(--radius);
-  padding: 35px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.section-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--primary-purple-dark);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.section-title i {
-  color: var(--primary-purple);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary-purple);
-  color: white;
-  font-weight: 700;
-  min-width: 28px;
-  height: 28px;
-  border-radius: 14px;
-  font-size: 14px;
-  padding: 0 10px;
-}
-
-/* Table */
-.table-responsive {
-  overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 700px;
-}
-
-.data-table thead {
-  background: var(--light-purple);
-}
-
-.data-table th {
-  padding: 18px 20px;
-  text-align: left;
-  font-weight: 700;
-  color: var(--primary-purple-dark);
-  font-size: 15px;
-  border-bottom: 2px solid var(--border-color);
-}
-
-.data-table tbody tr {
-  border-bottom: 1px solid var(--border-color);
-  transition: var(--transition);
-}
-
-.data-table tbody tr:hover {
-  background: var(--light-purple);
-}
-
-.data-table td {
-  padding: 18px 20px;
-  color: var(--text-primary);
-}
-
-.bill-number {
-  font-weight: 700;
-  color: var(--primary-purple-dark);
-}
-
-.bill-place {
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.bill-place i {
-  color: var(--primary-purple);
-  font-size: 14px;
-}
-
-.bill-detail {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Empty State */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-secondary);
-}
-
-.empty-state-icon {
-  font-size: 70px;
-  margin-bottom: 25px;
-  color: var(--primary-purple);
-  opacity: 0.5;
-}
-
-.empty-state-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 10px;
-  color: var(--primary-purple-dark);
-}
-
-.empty-state-subtitle {
-  font-size: 16px;
-  margin-bottom: 30px;
-  max-width: 400px;
-  margin: 0 auto 30px;
-}
-
-.celebrate-icon {
-  font-size: 40px;
-  margin-top: 20px;
-  color: var(--success);
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Loading State */
-.loading {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.loading-spinner {
-  border: 4px solid var(--light-purple);
-  border-top: 4px solid var(--primary-purple);
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-  color: var(--primary-purple);
-  font-weight: 600;
-  font-size: 17px;
-}
-
-/* Footer */
-.footer {
-  background: var(--white);
-  padding: 30px 0;
-  border-top: 1px solid var(--border-color);
-  margin-top: 50px;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  text-align: center;
-}
-
-.footer-text {
-  color: var(--text-secondary);
-  font-size: 15px;
-  margin-bottom: 10px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 20px;
-  flex-wrap: wrap;
-}
-
-.footer-links a {
-  color: var(--primary-purple);
-  text-decoration: none;
-  font-weight: 600;
-  transition: var(--transition);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer-links a:hover {
-  color: var(--primary-purple-dark);
-  text-decoration: underline;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .page-title {
-    font-size: 30px;
-  }
-  
-  .page-title i {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
-  }
-  
-  .stats-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .stat-value {
-    font-size: 36px;
-  }
-  
-  .section-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .nav-links {
-    gap: 15px;
-  }
-  
-  .nav-links a {
-    padding: 6px 12px;
-    font-size: 15px;
-  }
-  
-  .table-section {
-    padding: 25px;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-title {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .stat-value {
-    font-size: 32px;
-  }
-  
-  .nav-links {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .data-table th,
-  .data-table td {
-    padding: 14px 16px;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบค้นหาและรับบิล | ระบบจัดการบิล</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #8b5cf6;
+            --primary-purple-dark: #7c3aed;
+            --primary-purple-light: #a78bfa;
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --light-purple: #f5f3ff;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+            --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.2);
+            --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Sukhumvit Set', 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--gradient-purple);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .nav-links a i {
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .main-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-purple);
+            border-radius: 2px;
+        }
+
+        .card-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .card-title i {
+            font-size: 36px;
+            background: var(--light-purple);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Dashboard Button */
+        .dashboard-btn-container {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gradient-purple);
+            color: white;
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 17px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+            transition: var(--transition);
+        }
+
+        .dashboard-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.35);
+        }
+
+        .dashboard-btn i {
+            font-size: 20px;
+        }
+
+        /* Search Box */
+        .search-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-purple);
+            font-size: 20px;
+            z-index: 2;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--light-gray);
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-hint {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Results List */
+        .results-container {
+            position: relative;
+            z-index: 100;
+        }
+
+        .results-list {
+            margin-top: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            background: var(--white);
+            display: none;
+        }
+
+        .results-list.active {
+            display: block;
+        }
+
+        .result-item {
+            padding: 18px 20px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: var(--light-purple);
+        }
+
+        .result-info {
+            flex: 1;
+        }
+
+        .bill-number {
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .bill-place {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bill-place i {
+            font-size: 13px;
+        }
+
+        .bill-status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .bill-status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .bill-status-received {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* Bill Details Card */
+        .bill-details-card {
+            margin-top: 30px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bill-details-card.active {
+            display: block;
+        }
+
+        .details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .details-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-title i {
+            color: var(--primary-purple);
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .detail-label {
+            width: 120px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .detail-label i {
+            color: var(--primary-purple);
+            font-size: 16px;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Status Display */
+        .status-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-received {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* Update Section */
+        .update-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .confirm-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-input {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--primary-purple);
+            background: var(--white);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .checkbox-input.checked {
+            background-color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .checkbox-input.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            user-select: none;
+        }
+
+        .update-btn {
+            background: var(--gradient-purple);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            width: 100%;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .update-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .update-btn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        /* Message */
+        .message {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            display: flex;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--white);
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-purple-dark);
+            text-decoration: underline;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-sub {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-purple);
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--light-purple);
+            border-top: 3px solid var(--primary-purple);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .main-card {
+                padding: 30px 25px;
+            }
+
+            .card-title {
+                font-size: 28px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 15px;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-label {
+                width: 100%;
+            }
+
+            .results-list {
+                max-height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-title i {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .dashboard-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bill-status-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
 </head>
 
 <body>
-  <!-- Header -->
-  <header class="header">
-    <div class="header-content">
-      <a href="index.html" class="logo">
-        <div class="logo-icon">
-          <i class="fas fa-file-invoice-dollar"></i>
-        </div>
-        <div class="logo-text">ระบบจัดการบิล</div>
-      </a>
-      
-      <nav class="nav-links">
-        <a href="index.html">
-          <i class="fas fa-search"></i>
-          <span>ค้นหา/รับบิล</span>
-        </a>
-        <a href="report.html">
-          <i class="fas fa-chart-bar"></i>
-          <span>รายงาน</span>
-        </a>
-        <a href="add.html">
-          <i class="fas fa-plus-circle"></i>
-          <span>เพิ่มบิล</span>
-        </a>
-        <a href="#" class="active">
-          <i class="fas fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="main-content">
-    <div class="container">
-      <!-- Page Header -->
-      <div class="page-header">
-        <h1 class="page-title">
-          <i class="fas fa-chart-pie"></i>
-          Dashboard สรุปบิลค้างรับ
-        </h1>
-        <p class="page-subtitle">ภาพรวมสถิติบิลและรายการบิลที่ยังค้างรับทั้งหมดในระบบ</p>
-      </div>
-      
-      <!-- Stats Cards -->
-      <div class="stats-container">
-        <div class="stat-card total">
-          <div class="stat-header">
-            <div>
-              <div class="stat-title">บิลทั้งหมด</div>
-              <div class="stat-value" id="total">0</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-file-invoice"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-chart-line"></i>
-            ภาพรวมทั้งหมด
-          </div>
-        </div>
-        
-        <div class="stat-card pending">
-          <div class="stat-header">
-            <div>
-              <div class="stat-title">บิลค้างรับ</div>
-              <div class="stat-value" id="pending">0</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-exclamation-circle"></i>
-            ต้องการดำเนินการ
-          </div>
-        </div>
-        
-        <div class="stat-card received">
-          <div class="stat-header">
-            <div>
-              <div class="stat-title">รับบิลแล้ว</div>
-              <div class="stat-value" id="done">0</div>
-            </div>
-            <div class="stat-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
-          </div>
-          <div class="stat-trend">
-            <i class="fas fa-check"></i>
-            ดำเนินการเสร็จสิ้น
-          </div>
-        </div>
-      </div>
-      
-      <!-- Pending Bills Table -->
-      <div class="table-section">
-        <div class="section-header">
-          <h2 class="section-title">
-            <i class="fas fa-list-alt"></i>
-            รายการบิลค้างรับ
-            <span class="badge" id="pendingCount">0</span>
-          </h2>
-          <div class="section-actions">
-            <a href="index.html" class="dashboard-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background: var(--gradient-purple); color: white; padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 14px;">
-              <i class="fas fa-external-link-alt"></i>
-              ไปที่หน้าค้นหาบิล
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="logo-text">ระบบจัดการบิล</div>
             </a>
-          </div>
+
+            <nav class="nav-links">
+                <a href="#" class="active">
+                    <i class="fas fa-search"></i>
+                    <span>ค้นหา/รับบิล</span>
+                </a>
+                <a href="report.html">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>รายงาน</span>
+                </a>
+                <a href="add.html">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>เพิ่มบิล</span>
+                </a>
+                <a href="DashBoard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
         </div>
-        
-        <div class="table-responsive">
-          <table class="data-table" id="billsTable">
-            <thead>
-              <tr>
-                <th width="25%">
-                  <i class="fas fa-hashtag"></i>
-                  เลขบิล
-                </th>
-                <th width="30%">
-                  <i class="fas fa-map-marker-alt"></i>
-                  สถานที่
-                </th>
-                <th width="45%">
-                  <i class="fas fa-align-left"></i>
-                  รายละเอียด
-                </th>
-              </tr>
-            </thead>
-            <tbody id="tbody">
-              <!-- Data will be loaded here -->
-            </tbody>
-          </table>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="main-card">
+                <div class="card-header">
+                    <h1 class="card-title">
+                        <i class="fas fa-search-dollar"></i>
+                        ระบบค้นหาและรับบิล
+                    </h1>
+                    <p class="card-subtitle">พิมพ์เลขบิล ระบบค้นหาให้อัตโนมัติ</p>
+                </div>
+
+                <!-- Dashboard Button -->
+                <div class="dashboard-btn-container">
+                    <a href="DashBoard.html" class="dashboard-btn">
+                        <i class="fas fa-chart-pie"></i>
+                        Dashboard บิลค้างรับ
+                    </a>
+                </div>
+
+                <!-- Search Box -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="billInput" class="search-input" placeholder="พิมพ์เลขบิลหรือส่วนหนึ่งของเลขบิล เช่น INV-2025, BILL-001">
+                    </div>
+                    <div class="search-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        ค้นหาจาก 5 ตัวท้ายสุดหรือพิมพ์ส่วนใดส่วนหนึ่งของเลขบิล
+                    </div>
+                </div>
+
+                <!-- Search Results -->
+                <div class="results-container">
+                    <div id="resultsList" class="results-list"></div>
+                </div>
+
+                <!-- Bill Details -->
+                <div id="billDetails" class="bill-details-card">
+                    <div class="details-header">
+                        <h2 class="details-title">
+                            <i class="fas fa-file-invoice"></i>
+                            รายละเอียดบิล
+                        </h2>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fas fa-hashtag"></i>
+                            เลขที่บิล:
+                        </div>
+                        <div id="cBill" class="detail-value"></div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            สถานที่:
+                        </div>
+                        <div id="cPlace" class="detail-value"></div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fas fa-align-left"></i>
+                            รายละเอียด:
+                        </div>
+                        <div id="cDetail" class="detail-value"></div>
+                    </div>
+
+                    <div class="detail-row">
+                        <div class="detail-label">
+                            <i class="fas fa-info-circle"></i>
+                            สถานะ:
+                        </div>
+                        <div id="cStatus" class="status-display"></div>
+                    </div>
+
+                    <!-- Update Section -->
+                    <div id="updateBox" class="update-section">
+                        <div class="confirm-checkbox" id="confirmCheckboxContainer">
+                            <div class="checkbox-input" id="confirmCheckbox"></div>
+                            <div class="checkbox-label">ยืนยันการรับบิลแล้ว</div>
+                        </div>
+
+                        <button id="updateBtn" class="update-btn" disabled>
+                            <i class="fas fa-check-circle"></i>
+                            ยืนยันรับบิล
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Message -->
+                <div id="msg" class="message"></div>
+            </div>
         </div>
-        
-        <!-- Loading State -->
-        <div id="loadingState" class="loading">
-          <div class="loading-spinner"></div>
-          <div class="loading-text">กำลังโหลดข้อมูล...</div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">ระบบค้นหาและรับบิล &copy; 2025 | พัฒนาโดย Sarawut.C</p>
+            <p class="footer-text">สำหรับใช้ภายในองค์กรเท่านั้น เพื่อสะดวกต่อการทำงาน</p>
+
+            <div class="footer-links">
+                <a href="index.html">
+                    <i class="fas fa-search"></i>
+                    ค้นหาบิล
+                </a>
+                <a href="report.html">
+                    <i class="fas fa-chart-pie"></i>
+                    สรุปรายงาน
+                </a>
+                <a href="add.html">
+                    <i class="fas fa-plus-circle"></i>
+                    เพิ่มบิลใหม่
+                </a>
+            </div>
         </div>
-        
-        <!-- Empty State -->
-        <div id="emptyState" class="empty-state" style="display: none;">
-          <div class="empty-state-icon">
-            <i class="fas fa-check-circle"></i>
-          </div>
-          <h3 class="empty-state-title">ไม่มีบิลค้างรับ</h3>
-          <p class="empty-state-subtitle">ทุกบิลได้รับการดำเนินการเรียบร้อยแล้ว</p>
-          <div class="celebrate-icon">
-            <i class="fas fa-party-horn"></i>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
+    </footer>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-content">
-      <p class="footer-text">ระบบจัดการบิล Dashboard &copy; 2025 | พัฒนาโดย Sarawut.C</p>
-      <p class="footer-text">สำหรับใช้ภายในองค์กรเท่านั้น เพื่อการติดตามงานที่มีประสิทธิภาพ</p>
-      
-      <div class="footer-links">
-        <a href="index.html">
-          <i class="fas fa-search"></i>
-          ค้นหาบิล
-        </a>
-        <a href="report.html">
-          <i class="fas fa-chart-pie"></i>
-          สรุปรายงาน
-        </a>
-        <a href="add.html">
-          <i class="fas fa-plus-circle"></i>
-          เพิ่มบิลใหม่
-        </a>
-      </div>
-    </div>
-  </footer>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6xj52pFOlDfvI9SvEPhhSrmvXnfmAsFLbqtaBlDDBN6gM0bQIvH-VuAwPaDd8Ke_r/exec";
+        let currentBill = null;
+        let timer = null;
 
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6xj52pFOlDfvI9SvEPhhSrmvXnfmAsFLbqtaBlDDBN6gM0bQIvH-VuAwPaDd8Ke_r/exec";
+        // DOM Elements
+        const billInput = document.getElementById("billInput");
+        const resultsList = document.getElementById("resultsList");
+        const billDetails = document.getElementById("billDetails");
+        const msg = document.getElementById("msg");
+        const confirmCheckbox = document.getElementById("confirmCheckbox");
+        const confirmCheckboxContainer = document.getElementById("confirmCheckboxContainer");
+        const updateBtn = document.getElementById("updateBtn");
 
-// DOM Elements
-const totalEl = document.getElementById('total');
-const pendingEl = document.getElementById('pending');
-const doneEl = document.getElementById('done');
-const pendingCountEl = document.getElementById('pendingCount');
-const tbody = document.getElementById('tbody');
-const loadingState = document.getElementById('loadingState');
-const emptyState = document.getElementById('emptyState');
-const billsTable = document.getElementById('billsTable');
+        // Debounce function
+        const debounce = (fn, delay = 400) => (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
 
-async function loadDashboard() {
-  try {
-    // Show loading
-    loadingState.style.display = 'block';
-    tbody.innerHTML = '';
-    emptyState.style.display = 'none';
-    billsTable.style.display = 'none';
-    
-    const res = await fetch(`${SCRIPT_URL}?action=dashboard`);
-    const data = await res.json();
+        // Search input event
+        billInput.addEventListener("input", debounce(async e => {
+            const keyword = e.target.value.trim();
+            billDetails.classList.remove("active");
+            msg.className = "message";
+            msg.textContent = "";
+            
+            if (keyword.length < 2) {
+                resultsList.classList.remove("active");
+                resultsList.innerHTML = "";
+                return;
+            }
+            
+            // Show loading
+            resultsList.classList.add("active");
+            resultsList.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>กำลังค้นหา...</div>
+                </div>
+            `;
+            
+            try {
+                const res = await fetch(
+                    `${SCRIPT_URL}?action=search&keyword=${encodeURIComponent(keyword)}`
+                );
+                const data = await res.json();
 
-    // Hide loading
-    loadingState.style.display = 'none';
-    
-    if (!data.success) {
-      showErrorMessage();
-      return;
-    }
+                if (!data.success) {
+                    showEmptyResults(data.message || "ไม่พบข้อมูล");
+                    return;
+                }
 
-    // Update stats
-    totalEl.textContent = data.total;
-    pendingEl.textContent = data.pendingCount;
-    doneEl.textContent = data.received;
-    pendingCountEl.textContent = data.pendingCount;
+                if (data.results.length === 0) {
+                    showEmptyResults("ไม่พบบิลที่ตรงกับการค้นหา");
+                    return;
+                }
 
-    // Update table
-    if (data.pending && data.pending.length > 0) {
-      billsTable.style.display = 'table';
-      renderPendingBills(data.pending);
-    } else {
-      emptyState.style.display = 'block';
-    }
-    
-  } catch (error) {
-    console.error('Error loading dashboard:', error);
-    loadingState.style.display = 'none';
-    showErrorMessage();
-  }
-}
+                renderResults(data.results);
+            } catch (error) {
+                showEmptyResults("เกิดข้อผิดพลาดในการค้นหา");
+                console.error('Search error:', error);
+            }
+        }));
 
-function renderPendingBills(bills) {
-  tbody.innerHTML = '';
-  
-  bills.forEach(bill => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>
-        <div class="bill-number">${bill.billNo}</div>
-      </td>
-      <td>
-        <div class="bill-place">
-          <i class="fas fa-building"></i>
-          ${bill.place}
-        </div>
-      </td>
-      <td>
-        <div class="bill-detail" title="${bill.detail || 'ไม่มีรายละเอียด'}">
-          ${bill.detail || '- ไม่มีรายละเอียด -'}
-        </div>
-      </td>
-    `;
-    
-    // Add click handler to navigate to search page
-    row.style.cursor = 'pointer';
-    row.addEventListener('click', () => {
-      window.location.href = `index.html?search=${encodeURIComponent(bill.billNo)}`;
-    });
-    
-    tbody.appendChild(row);
-  });
-}
+        function showEmptyResults(message) {
+            resultsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>${message}</p>
+                    <p class="empty-state-sub">ลองพิมพ์คำค้นหาอื่น</p>
+                </div>
+            `;
+            resultsList.classList.add("active");
+        }
 
-function showErrorMessage() {
-  tbody.innerHTML = `
-    <tr>
-      <td colspan="3" style="text-align: center; padding: 40px; color: var(--danger);">
-        <i class="fas fa-exclamation-circle" style="font-size: 24px; margin-bottom: 10px; display: block;"></i>
-        <div style="font-weight: 600;">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>
-        <div style="margin-top: 10px; font-size: 14px;">กรุณาลองใหม่อีกครั้งในภายหลัง</div>
-      </td>
-    </tr>
-  `;
-  billsTable.style.display = 'table';
-}
+        function renderResults(results) {
+            resultsList.innerHTML = "";
+            results.forEach(b => {
+                const item = document.createElement("div");
+                item.className = "result-item";
+                item.innerHTML = `
+                    <div class="result-info">
+                        <div class="bill-number">${b.billNo}</div>
+                        <div class="bill-place">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${b.place}
+                        </div>
+                    </div>
+                    <div class="bill-status-badge ${b.status === "รับบิลแล้ว" ? "bill-status-received" : "bill-status-pending"}">
+                        ${b.status === "รับบิลแล้ว" ? "✅ รับแล้ว" : "⏳ รอรับ"}
+                    </div>
+                `;
+                item.onclick = () => selectBill(b);
+                resultsList.appendChild(item);
+            });
+            resultsList.classList.add("active");
+        }
 
-// Load dashboard on page load
-document.addEventListener('DOMContentLoaded', loadDashboard);
+        function selectBill(b) {
+            currentBill = b.billNo;
+            resultsList.classList.remove("active");
+            billDetails.classList.add("active");
+            
+            // Set bill details
+            document.getElementById("cBill").textContent = b.billNo;
+            document.getElementById("cPlace").textContent = b.place;
+            document.getElementById("cDetail").textContent = b.detail || "- ไม่มีรายละเอียดเพิ่มเติม -";
+            
+            // Set status
+            const cStatus = document.getElementById("cStatus");
+            if (b.status === "รับบิลแล้ว") {
+                cStatus.className = "status-display status-received";
+                cStatus.innerHTML = '<i class="fas fa-check-circle"></i> รับบิลแล้ว';
+                document.getElementById("updateBox").style.display = "none";
+            } else {
+                cStatus.className = "status-display status-pending";
+                cStatus.innerHTML = '<i class="fas fa-clock"></i> รอรับบิล';
+                document.getElementById("updateBox").style.display = "block";
+            }
+            
+            // Reset confirmation
+            confirmCheckbox.classList.remove("checked");
+            updateBtn.disabled = true;
+            
+            // Scroll to details
+            billDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
 
-// Auto-refresh every 30 seconds
-setInterval(loadDashboard, 30000);
-</script>
+        // Checkbox handling
+        confirmCheckboxContainer.onclick = () => {
+            confirmCheckbox.classList.toggle("checked");
+            updateBtn.disabled = !confirmCheckbox.classList.contains("checked");
+        };
+
+        // Update button handling
+        updateBtn.onclick = async () => {
+            if (!currentBill) return;
+            
+            // Disable button and show loading
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดทสถานะ...';
+            
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "update",
+                        billNo: currentBill
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Update UI
+                    const cStatus = document.getElementById("cStatus");
+                    cStatus.className = "status-display status-received";
+                    cStatus.innerHTML = '<i class="fas fa-check-circle"></i> รับบิลแล้ว';
+                    document.getElementById("updateBox").style.display = "none";
+                    
+                    // Show success message
+                    msg.className = "message success";
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเรียบร้อยแล้ว';
+                    
+                    // Clear search input
+                    billInput.value = "";
+                    
+                    // Auto hide message after 5 seconds
+                    setTimeout(() => {
+                        msg.style.opacity = '0';
+                        setTimeout(() => {
+                            msg.className = "message";
+                            msg.style.opacity = '1';
+                        }, 300);
+                    }, 5000);
+                } else {
+                    msg.className = "message error";
+                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการอัพเดท'}`;
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันรับบิล';
+                }
+            } catch (error) {
+                msg.className = "message error";
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                console.error('Update error:', error);
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันรับบิล';
+            }
+        };
+
+        // Initialize checkbox
+        confirmCheckbox.classList.remove("checked");
+        updateBtn.disabled = true;
+
+        // Check for URL parameter to auto-search
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            if (searchParam) {
+                billInput.value = searchParam;
+                billInput.dispatchEvent(new Event('input'));
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,540 +1,1030 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>รายงานตามสถานที่</title>
-<style>
-:root {
-  --primary-purple: #7c3aed;
-  --primary-purple-light: #8b5cf6;
-  --primary-purple-dark: #5b21b6;
-  --light-purple: #f5f3ff;
-  --white: #ffffff;
-  --light-gray: #f9fafb;
-  --medium-gray: #e5e7eb;
-  --dark-gray: #6b7280;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --radius: 12px;
-  --radius-sm: 8px;
-}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ระบบจัดการบิล | รายงานตามสถานที่</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-purple: #8b5cf6;
+            --primary-purple-dark: #7c3aed;
+            --primary-purple-light: #a78bfa;
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --light-purple: #f5f3ff;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+            --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.2);
+            --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s ease;
+        }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-  color: #333;
-  line-height: 1.6;
-  padding: 20px;
-  min-height: 100vh;
-}
+        body {
+            font-family: 'Segoe UI', 'Sukhumvit Set', 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
+        /* Header */
+        .header {
+            background: var(--gradient-purple);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
 
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  border-left: 6px solid var(--primary-purple);
-}
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
 
-.header h1 {
-  color: var(--primary-purple-dark);
-  font-size: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
 
-.header h1::before {
-  content: "📊";
-  font-size: 32px;
-}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
 
-.filter-section {
-  background-color: var(--white);
-  padding: 24px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  margin-bottom: 30px;
-}
+        .logo-icon {
+            font-size: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.select-container {
-  position: relative;
-  max-width: 400px;
-}
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
 
-.select-container::before {
-  content: "📍";
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 18px;
-  z-index: 2;
-}
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
 
-#placeSelect {
-  width: 100%;
-  padding: 16px 20px 16px 48px;
-  font-size: 16px;
-  border: 2px solid var(--medium-gray);
-  border-radius: var(--radius-sm);
-  background-color: var(--white);
-  color: #333;
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  background-size: 16px;
-  transition: all 0.3s ease;
-}
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: 50px;
+        }
 
-#placeSelect:hover {
-  border-color: var(--primary-purple-light);
-}
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
 
-#placeSelect:focus {
-  outline: none;
-  border-color: var(--primary-purple);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
-}
+        .nav-links a i {
+            font-size: 18px;
+        }
 
-.summary-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px 20px;
+        }
 
-.card {
-  background-color: var(--white);
-  border-radius: var(--radius);
-  padding: 24px;
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-.card-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-}
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary-purple-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
 
-.card.total .card-icon {
-  background-color: rgba(124, 58, 237, 0.1);
-  color: var(--primary-purple);
-}
+        .page-title i {
+            font-size: 38px;
+            background: var(--light-purple);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.card.received .card-icon {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--success);
-}
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 17px;
+            font-weight: 500;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-.card.pending .card-icon {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-}
+        /* Filter Section */
+        .filter-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
 
-.card-content h3 {
-  font-size: 16px;
-  color: var(--dark-gray);
-  margin-bottom: 8px;
-  font-weight: 500;
-}
+        .filter-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-.card-value {
-  font-size: 32px;
-  font-weight: 700;
-  color: #1f2937;
-}
+        .filter-header i {
+            color: var(--primary-purple);
+            font-size: 24px;
+        }
 
-.table-container {
-  background-color: var(--white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-}
+        .filter-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+        }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+        .select-container {
+            position: relative;
+            max-width: 500px;
+        }
 
-thead {
-  background-color: var(--primary-purple);
-}
+        .select-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-purple);
+            font-size: 18px;
+            z-index: 2;
+        }
 
-thead th {
-  color: var(--white);
-  font-weight: 600;
-  text-align: left;
-  padding: 18px 16px;
-  font-size: 16px;
-}
+        #placeSelect {
+            width: 100%;
+            padding: 18px 20px 18px 48px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--light-gray);
+            color: var(--text-primary);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 18px center;
+            background-size: 16px;
+            transition: var(--transition);
+        }
 
-thead th:first-child {
-  border-top-left-radius: var(--radius);
-}
+        #placeSelect:hover {
+            border-color: var(--primary-purple-light);
+            background: var(--white);
+        }
 
-thead th:last-child {
-  border-top-right-radius: var(--radius);
-}
+        #placeSelect:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
 
-tbody tr {
-  border-bottom: 1px solid var(--medium-gray);
-  transition: background-color 0.2s ease;
-}
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
 
-tbody tr:hover {
-  background-color: var(--light-purple);
-}
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
 
-tbody td {
-  padding: 16px;
-  color: #374151;
-}
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
 
-.status-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  min-width: 100px;
-}
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+        }
 
-.status-received {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: var(--success);
-}
+        .stat-card.total::before {
+            background: var(--primary-purple);
+        }
 
-.status-pending {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: var(--danger);
-}
+        .stat-card.received::before {
+            background: var(--success);
+        }
 
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--dark-gray);
-}
+        .stat-card.pending::before {
+            background: var(--warning);
+        }
 
-.empty-state-icon {
-  font-size: 60px;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
 
-.empty-state p {
-  font-size: 18px;
-  margin-bottom: 10px;
-}
+        .stat-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
 
-.empty-state-sub {
-  color: var(--dark-gray);
-  font-size: 15px;
-}
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
 
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: var(--primary-purple);
-  font-size: 16px;
-}
+        .stat-card.total .stat-icon {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary-purple);
+        }
 
-.loading-spinner {
-  border: 4px solid var(--light-purple);
-  border-top: 4px solid var(--primary-purple);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
+        .stat-card.received .stat-icon {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
+        .stat-card.pending .stat-icon {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
 
-.footer {
-  text-align: center;
-  margin-top: 40px;
-  padding: 20px;
-  color: var(--dark-gray);
-  font-size: 14px;
-}
+        .stat-value {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
 
-@media (max-width: 768px) {
-  .summary-cards {
-    grid-template-columns: 1fr;
-  }
-  
-  thead {
-    display: none;
-  }
-  
-  tbody tr {
-    display: block;
-    margin-bottom: 16px;
-    border-radius: var(--radius-sm);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  
-  tbody td {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--medium-gray);
-  }
-  
-  tbody td:before {
-    content: attr(data-label);
-    font-weight: 600;
-    color: var(--primary-purple);
-    margin-right: 10px;
-  }
-  
-  .card {
-    padding: 20px;
-  }
-  
-  .card-value {
-    font-size: 28px;
-  }
-}
-</style>
+        .stat-card.total .stat-value {
+            color: var(--primary-purple-dark);
+        }
+
+        .stat-card.received .stat-value {
+            color: var(--success);
+        }
+
+        .stat-card.pending .stat-value {
+            color: var(--warning);
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 35px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: var(--primary-purple);
+        }
+
+        .bill-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-purple);
+            color: white;
+            font-weight: 700;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            font-size: 14px;
+            padding: 0 10px;
+            margin-left: 10px;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        .data-table thead {
+            background: var(--light-purple);
+        }
+
+        .data-table th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            font-size: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--light-purple);
+        }
+
+        .data-table td {
+            padding: 18px 20px;
+            color: var(--text-primary);
+            vertical-align: top;
+        }
+
+        .bill-number {
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+        }
+
+        .bill-detail {
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .status-received {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 70px;
+            margin-bottom: 25px;
+            color: var(--primary-purple);
+            opacity: 0.5;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary-purple-dark);
+        }
+
+        .empty-state-subtitle {
+            font-size: 16px;
+            margin-bottom: 30px;
+            max-width: 400px;
+            margin: 0 auto 30px;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            border: 4px solid var(--light-purple);
+            border-top: 4px solid var(--primary-purple);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--primary-purple);
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--white);
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-purple-dark);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .page-title {
+                font-size: 30px;
+            }
+
+            .page-title i {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 36px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 15px;
+            }
+
+            .table-section {
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .stat-value {
+                font-size: 32px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .data-table th,
+            .data-table td {
+                padding: 14px 16px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="logo-text">ระบบจัดการบิล</div>
+            </a>
 
-<div class="container">
-  <div class="header">
-    <h1>รายงานตามสถานที่</h1>
-    <p style="color: var(--dark-gray); margin-top: 8px;">ตรวจสอบข้อมูลบิลตามสถานที่ที่เลือก</p>
-  </div>
+            <nav class="nav-links">
+                <a href="https://sarawutc6689-cpu.github.io/PEA/CheckBill.html">
+                    <i class="fas fa-search"></i>
+                    <span>ค้นหา/รับบิล</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/Report.html" class="active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>รายงาน</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/AddBill.html">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>เพิ่มบิล</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/DashBoard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+        </div>
+    </header>
 
-  <div class="filter-section">
-    <div class="select-container">
-      <select id="placeSelect">
-        <option value="">-- เลือกสถานที่ --</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="summary-cards">
-    <div class="card total">
-      <div class="card-icon">📦</div>
-      <div class="card-content">
-        <h3>ทั้งหมด</h3>
-        <div class="card-value" id="total">0</div>
-      </div>
-    </div>
-    
-    <div class="card received">
-      <div class="card-icon">✅</div>
-      <div class="card-content">
-        <h3>รับบิลแล้ว</h3>
-        <div class="card-value" id="received">0</div>
-      </div>
-    </div>
-    
-    <div class="card pending">
-      <div class="card-icon">⏳</div>
-      <div class="card-content">
-        <h3>คงเหลือ</h3>
-        <div class="card-value" id="pending">0</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="table-container">
-    <table>
-      <thead>
-        <tr>
-          <th width="25%">เลขบิล</th>
-          <th width="55%">รายละเอียด</th>
-          <th width="20%">สถานะ</th>
-        </tr>
-      </thead>
-      <tbody id="result">
-        <tr>
-          <td colspan="3">
-            <div class="empty-state">
-              <div class="empty-state-icon">📋</div>
-              <p>เลือกสถานที่เพื่อดูรายงาน</p>
-              <p class="empty-state-sub">ข้อมูลบิลจะแสดงที่นี่เมื่อคุณเลือกสถานที่จาก dropdown ด้านบน</p>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-chart-pie"></i>
+                    รายงานตามสถานที่
+                </h1>
+                <p class="page-subtitle">ตรวจสอบข้อมูลบิลและสถิติตามสถานที่ที่เลือก</p>
             </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
 
-  <div class="footer">
-      <p>ระบบค้นหาใบเสร็จ  © 2026 | พัฒนาโดย Sarawut.C</p>
-      <p>สำหรับใช้ส่วนตัวเท่านั้น</p>
-  </div>
-</div>
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>เลือกสถานที่</h3>
+                </div>
+                <div class="select-container">
+                    <i class="fas fa-building select-icon"></i>
+                    <select id="placeSelect">
+                        <option value="">-- เลือกสถานที่ --</option>
+                    </select>
+                </div>
+            </div>
 
-<script>
-const API = "https://script.google.com/macros/s/AKfycbz6xj52pFOlDfvI9SvEPhhSrmvXnfmAsFLbqtaBlDDBN6gM0bQIvH-VuAwPaDd8Ke_r/exec";
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card total">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">บิลทั้งหมด</div>
+                            <div class="stat-value" id="total">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-file-invoice"></i>
+                        </div>
+                    </div>
+                    <div class="stat-info">
+                        จำนวนบิลทั้งหมดในสถานที่ที่เลือก
+                    </div>
+                </div>
+                
+                <div class="stat-card received">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">รับบิลแล้ว</div>
+                            <div class="stat-value" id="received">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-info">
+                        บิลที่ได้รับการดำเนินการเสร็จสิ้น
+                    </div>
+                </div>
+                
+                <div class="stat-card pending">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-title">คงเหลือ</div>
+                            <div class="stat-value" id="pending">0</div>
+                        </div>
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-info">
+                        บิลที่ยังรอดำเนินการ
+                    </div>
+                </div>
+            </div>
 
-// ฟังก์ชันแสดงสถานะโหลด
-function showLoading() {
-  result.innerHTML = `
-    <tr>
-      <td colspan="3">
-        <div class="loading">
-          <div class="loading-spinner"></div>
-          <p>กำลังโหลดข้อมูล...</p>
+            <!-- Bills Table -->
+            <div class="table-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list-alt"></i>
+                        รายการบิล
+                        <span class="bill-count" id="billCount">0</span>
+                    </h2>
+                    <div class="section-actions">
+                        <button id="exportBtn" style="display: none; padding: 10px 20px; background: var(--gradient-purple); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-download"></i>
+                            ดาวน์โหลดรายงาน
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="data-table" id="billsTable">
+                        <thead>
+                            <tr>
+                                <th width="25%">
+                                    <i class="fas fa-hashtag"></i>
+                                    เลขบิล
+                                </th>
+                                <th width="55%">
+                                    <i class="fas fa-align-left"></i>
+                                    รายละเอียด
+                                </th>
+                                <th width="20%">
+                                    <i class="fas fa-info-circle"></i>
+                                    สถานะ
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="result">
+                            <!-- Initial empty state -->
+                            <tr>
+                                <td colspan="3">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </div>
+                                        <h3 class="empty-state-title">เลือกสถานที่เพื่อดูรายงาน</h3>
+                                        <p class="empty-state-subtitle">ข้อมูลบิลจะแสดงที่นี่เมื่อคุณเลือกสถานที่จาก dropdown ด้านบน</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </td>
-    </tr>
-  `;
-}
+    </main>
 
-// ฟังก์ชันแสดงข้อมูลว่าง
-function showEmpty() {
-  result.innerHTML = `
-    <tr>
-      <td colspan="3">
-        <div class="empty-state">
-          <div class="empty-state-icon">📋</div>
-          <p>เลือกสถานที่เพื่อดูรายงาน</p>
-          <p class="empty-state-sub">ข้อมูลบิลจะแสดงที่นี่เมื่อคุณเลือกสถานที่จาก dropdown ด้านบน</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">ระบบจัดการใบเสร็จ © 2026 | พัฒนาโดย Sarawut.C</p>
+            <p class="footer-text">สำหรับใช้ส่วนตัวท่านั้น</p>
         </div>
-      </td>
-    </tr>
-  `;
-}
+    </footer>
 
-// ดึงข้อมูลสถานที่จาก API
-fetch(API + "?action=places")
-  .then(r => r.json())
-  .then(d => {
-    if (d.success) {
-      d.places.forEach(p => {
-        placeSelect.innerHTML += `<option value="${p}">${p}</option>`;
-      });
-    }
-  })
-  .catch(error => {
-    console.error("Error loading places:", error);
-  });
+    <script>
+        const API = "https://script.google.com/macros/s/AKfycbz6xj52pFOlDfvI9SvEPhhSrmvXnfmAsFLbqtaBlDDBN6gM0bQIvH-VuAwPaDd8Ke_r/exec";
 
-// เมื่อเปลี่ยนสถานที่
-placeSelect.onchange = () => {
-  if (!placeSelect.value) {
-    showEmpty();
-    total.textContent = "0";
-    received.textContent = "0";
-    pending.textContent = "0";
-    return;
-  }
+        // DOM Elements
+        const placeSelect = document.getElementById('placeSelect');
+        const totalEl = document.getElementById('total');
+        const receivedEl = document.getElementById('received');
+        const pendingEl = document.getElementById('pending');
+        const billCountEl = document.getElementById('billCount');
+        const result = document.getElementById('result');
+        const exportBtn = document.getElementById('exportBtn');
+        const billsTable = document.getElementById('billsTable');
 
-  showLoading();
-  
-  fetch(API + "?action=report&place=" + encodeURIComponent(placeSelect.value))
-    .then(r => r.json())
-    .then(d => {
-      // อัพเดทตัวเลขสรุป
-      total.textContent = d.total;
-      received.textContent = d.received;
-      pending.textContent = d.pending;
+        // Load places from API
+        async function loadPlaces() {
+            try {
+                const res = await fetch(API + "?action=places");
+                const data = await res.json();
 
-      // แสดงข้อมูลในตาราง
-      if (d.items && d.items.length > 0) {
-        result.innerHTML = "";
-        
-        // สำหรับโทรศัพท์มือถือ: เพิ่ม data-label attribute
-        const isMobile = window.innerWidth <= 768;
-        
-        d.items.forEach(i => {
-          const statusClass = i.status === 'รับบิลแล้ว' ? 'status-received' : 'status-pending';
-          const statusText = i.status === 'รับบิลแล้ว' ? '✅ รับบิลแล้ว' : '⏳ รอรับบิล';
-          
-          if (isMobile) {
-            result.innerHTML += `
-              <tr>
-                <td data-label="เลขบิล">${i.billNo}</td>
-                <td data-label="รายละเอียด">${i.detail}</td>
-                <td data-label="สถานะ">
-                  <span class="status-badge ${statusClass}">${statusText}</span>
-                </td>
-              </tr>
+                if (data.success && data.places && data.places.length > 0) {
+                    // Clear existing options except the first one
+                    while (placeSelect.options.length > 1) {
+                        placeSelect.remove(1);
+                    }
+                    
+                    // Add places to select
+                    data.places.forEach(place => {
+                        const option = document.createElement('option');
+                        option.value = place;
+                        option.textContent = place;
+                        placeSelect.appendChild(option);
+                    });
+                } else {
+                    const option = document.createElement('option');
+                    option.value = "";
+                    option.textContent = "ไม่พบข้อมูลสถานที่";
+                    option.disabled = true;
+                    placeSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error("Error loading places:", error);
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "ไม่สามารถโหลดข้อมูลสถานที่";
+                option.disabled = true;
+                placeSelect.appendChild(option);
+            }
+        }
+
+        // Show loading state
+        function showLoading() {
+            result.innerHTML = `
+                <tr>
+                    <td colspan="3">
+                        <div class="loading">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">กำลังโหลดข้อมูล...</div>
+                        </div>
+                    </td>
+                </tr>
             `;
-          } else {
-            result.innerHTML += `
-              <tr>
-                <td>${i.billNo}</td>
-                <td>${i.detail}</td>
-                <td>
-                  <span class="status-badge ${statusClass}">${statusText}</span>
-                </td>
-              </tr>
+        }
+
+        // Show empty state
+        function showEmpty(message = "ไม่พบข้อมูลบิลสำหรับสถานที่นี้") {
+            result.innerHTML = `
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <h3 class="empty-state-title">${message}</h3>
+                            <p class="empty-state-subtitle">ลองเลือกสถานที่อื่นหรือตรวจสอบอีกครั้งในภายหลัง</p>
+                        </div>
+                    </td>
+                </tr>
             `;
-          }
+        }
+
+        // Load report data
+        async function loadReport(place) {
+            if (!place) {
+                showEmpty("เลือกสถานที่เพื่อดูรายงาน");
+                totalEl.textContent = "0";
+                receivedEl.textContent = "0";
+                pendingEl.textContent = "0";
+                billCountEl.textContent = "0";
+                exportBtn.style.display = 'none';
+                return;
+            }
+
+            // Show loading
+            showLoading();
+            exportBtn.style.display = 'none';
+
+            try {
+                const res = await fetch(API + "?action=report&place=" + encodeURIComponent(place));
+                const data = await res.json();
+
+                // Update stats
+                totalEl.textContent = data.total || 0;
+                receivedEl.textContent = data.received || 0;
+                pendingEl.textContent = data.pending || 0;
+                billCountEl.textContent = data.total || 0;
+
+                // Show/hide export button
+                if (data.total > 0) {
+                    exportBtn.style.display = 'flex';
+                }
+
+                // Update table
+                if (data.items && data.items.length > 0) {
+                    renderBills(data.items);
+                } else {
+                    showEmpty("ไม่พบข้อมูลบิลสำหรับสถานที่นี้");
+                }
+            } catch (error) {
+                console.error("Error loading report:", error);
+                showEmpty("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+                totalEl.textContent = "0";
+                receivedEl.textContent = "0";
+                pendingEl.textContent = "0";
+                billCountEl.textContent = "0";
+            }
+        }
+
+        // Render bills in table
+        function renderBills(bills) {
+            let html = '';
+            
+            bills.forEach(bill => {
+                const statusClass = bill.status === 'รับบิลแล้ว' ? 'status-received' : 'status-pending';
+                const statusIcon = bill.status === 'รับบิลแล้ว' ? 'fas fa-check-circle' : 'fas fa-clock';
+                const statusText = bill.status === 'รับบิลแล้ว' ? 'รับบิลแล้ว' : 'รอรับบิล';
+                
+                html += `
+                    <tr>
+                        <td>
+                            <div class="bill-number">${bill.billNo}</div>
+                        </td>
+                        <td>
+                            <div class="bill-detail">${bill.detail || '-'}</div>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                <i class="${statusIcon}"></i>
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            result.innerHTML = html;
+        }
+
+        // Export report
+        function exportReport() {
+            const place = placeSelect.value;
+            if (!place) {
+                alert('กรุณาเลือกสถานที่ก่อน');
+                return;
+            }
+            
+            // Create CSV content
+            const headers = ['เลขบิล', 'รายละเอียด', 'สถานะ'];
+            const rows = [];
+            
+            // Get data from table
+            const tableRows = result.querySelectorAll('tr');
+            tableRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 3) {
+                    const billNo = cells[0].textContent.trim();
+                    const detail = cells[1].textContent.trim();
+                    const status = cells[2].textContent.trim();
+                    rows.push([billNo, detail, status]);
+                }
+            });
+            
+            if (rows.length === 0) {
+                alert('ไม่มีข้อมูลให้ดาวน์โหลด');
+                return;
+            }
+            
+            // Create CSV
+            let csvContent = headers.join(',') + '\n';
+            rows.forEach(row => {
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Create download link
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `รายงานบิล_${place}_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event listeners
+        placeSelect.addEventListener('change', () => {
+            loadReport(placeSelect.value);
         });
-      } else {
-        result.innerHTML = `
-          <tr>
-            <td colspan="3">
-              <div class="empty-state">
-                <div class="empty-state-icon">📭</div>
-                <p>ไม่พบข้อมูลบิลสำหรับสถานที่นี้</p>
-                <p class="empty-state-sub">ลองเลือกสถานที่อื่นหรือตรวจสอบอีกครั้งในภายหลัง</p>
-              </div>
-            </td>
-          </tr>
-        `;
-      }
-    })
-    .catch(error => {
-      console.error("Error loading report:", error);
-      result.innerHTML = `
-        <tr>
-          <td colspan="3">
-            <div class="empty-state">
-              <div class="empty-state-icon">⚠️</div>
-              <p>เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
-              <p class="empty-state-sub">กรุณาลองใหม่อีกครั้งในภายหลัง</p>
-            </div>
-          </td>
-        </tr>
-      `;
-    });
-};
-</script>
 
+        exportBtn.addEventListener('click', exportReport);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlaces();
+            
+            // Check for URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeParam = urlParams.get('place');
+            if (placeParam) {
+                placeSelect.value = placeParam;
+                loadReport(placeParam);
+            }
+        });
+    </script>
 </body>
 </html>

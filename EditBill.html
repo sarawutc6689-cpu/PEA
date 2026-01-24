@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แก้ไข / ลบบิล</title>
+
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+  margin:0;
+  background:linear-gradient(135deg,#f3ecff,#ffffff);
+  min-height:100vh;
+}
+.container{
+  max-width:650px;
+  margin:60px auto;
+  background:#fff;
+  padding:35px;
+  border-radius:22px;
+  box-shadow:0 18px 45px rgba(138,43,226,.18);
+}
+h1{text-align:center;color:#6a0dad;margin-bottom:25px}
+input,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:2px solid #e3d7ff;
+  margin-bottom:15px;
+}
+button{
+  padding:14px 22px;
+  border:none;
+  border-radius:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.btn-edit{
+  background:linear-gradient(135deg,#8a2be2,#9370db);
+  color:#fff;
+}
+.btn-del{
+  background:#ffebee;
+  color:#c62828;
+  margin-left:10px;
+}
+.actions{margin-top:15px}
+.msg{text-align:center;font-weight:600;margin-top:20px}
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>✏️ แก้ไข / ลบบิล</h1>
+
+  <input id="search" placeholder="กรอกเลขบิลเพื่อค้นหา">
+
+  <div id="form" class="hidden">
+    <input id="billNo" disabled>
+    <input id="place" placeholder="สถานที่">
+    <textarea id="detail" rows="3" placeholder="รายละเอียด"></textarea>
+
+    <div class="actions">
+      <button class="btn-edit" onclick="save()">บันทึกแก้ไข</button>
+      <button class="btn-del" onclick="remove()">ลบบิล</button>
+    </div>
+  </div>
+
+  <div id="msg" class="msg"></div>
+</div>
+
+<script>
+const SCRIPT_URL = "PUT_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+search.onchange = async ()=>{
+  msg.textContent="";
+  const billNo = search.value.trim();
+  if(!billNo) return;
+
+  const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${billNo}`);
+  const data = await res.json();
+
+  if(!data.success){
+    msg.style.color="red";
+    msg.textContent=data.message;
+    form.classList.add("hidden");
+    return;
+  }
+
+  form.classList.remove("hidden");
+  billNoInput = document.getElementById("billNo");
+  billNoInput.value = data.bill.billNo;
+  place.value = data.bill.place;
+  detail.value = data.bill.detail;
+};
+
+async function save(){
+  const res = await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"edit",
+      billNo: billNo.value,
+      place: place.value,
+      detail: detail.value
+    })
+  });
+
+  const data = await res.json();
+  msg.style.color = data.success ? "green" : "red";
+  msg.textContent = data.success ? "แก้ไขเรียบร้อย" : data.message;
+}
+
+async function remove(){
+  if(!confirm("⚠️ ต้องการลบบิลนี้ถาวรหรือไม่?")) return;
+
+  const res = await fetch(SCRIPT_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"delete",
+      billNo: billNo.value
+    })
+  });
+
+  const data = await res.json();
+  msg.style.color = data.success ? "green" : "red";
+  msg.textContent = data.success ? "ลบบิลเรียบร้อย" : data.message;
+
+  if(data.success){
+    form.classList.add("hidden");
+    search.value="";
+  }
+}
+</script>
+</body>
+</html>

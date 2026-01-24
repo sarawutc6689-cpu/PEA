@@ -72,6 +72,38 @@ button{
   font-weight:600;
   text-decoration:none;
 }
+  /* Footer */
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray-color);
+      font-size: 0.9rem;
+      border-top: 1px solid #eee;
+      background-color: rgba(248, 249, 250, 0.8);
+    }
+    
+    footer p {
+      margin-bottom: 8px;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+    }
+    
+    .footer-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .footer-links a:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
 </style>
 </head>
 
@@ -103,6 +135,12 @@ button{
   </div>
 </div>
 
+<!-- Footer -->
+    <footer>
+      <p>ระบบค้นหาใบเสร็จ  © 2026 | พัฒนาโดย Sarawut.C</p>
+      <p>สำหรับใช้ส่วนตัวเท่านั้น</p>
+    </footer>
+  
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyF94UTfwqoCK8LS09wxBESuDdQWznuQGguRLuE5eaGIuSWZ1h1yLKLNdIRHbwcdhWy/exec";
 

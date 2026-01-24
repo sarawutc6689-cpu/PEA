@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการบิล | หน้าหลัก</title>
+    <title>Features Section | ระบบจัดการบิล</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -29,192 +29,166 @@
         }
 
         body {
-            background-color: #f5f7fb;
+            background: linear-gradient(135deg, #f5f7fb 0%, #eef2ff 100%);
             color: var(--dark);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            width: 100%;
             padding: 0 20px;
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 1.5rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .logo i {
-            font-size: 2.2rem;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: var(--transition);
-        }
-
-        nav a:hover, nav a.active {
-            background-color: rgba(255, 255, 255, 0.15);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background-color: white;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 4rem 0;
-            background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
-            background-size: cover;
-            background-position: center;
+        /* Section Title */
+        .section-title {
             text-align: center;
+            margin-bottom: 4rem;
         }
 
-        .hero h1 {
+        .section-title h2 {
             font-size: 3rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: var(--gray);
-        }
-
-        .cta-button {
+            position: relative;
             display: inline-block;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 1.2rem;
-            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
-            transition: var(--transition);
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.4);
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
         }
 
         /* Features Section */
         .features {
             padding: 4rem 0;
-            background-color: white;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .section-title p {
-            color: var(--gray);
-            font-size: 1.1rem;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
         }
 
         .feature-card {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 16px;
+            padding: 2.5rem;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
-            border-top: 5px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            transition: var(--transition);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(67, 97, 238, 0.15);
+        }
+
+        .feature-card:hover::before {
+            height: 100%;
+            opacity: 0.03;
         }
 
         .feature-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--success) 100%);
-            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg);
+            border-radius: 50%;
         }
 
         .feature-icon i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
         }
 
+        .feature-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: 0;
+            transform: scale(0);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon::after {
+            transform: scale(1);
+        }
+
         .feature-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             margin-bottom: 1rem;
             color: var(--dark);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .feature-card h3::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            bottom: 0;
+            left: 0;
+            border-radius: 1.5px;
         }
 
         .feature-card p {
             color: var(--gray);
             margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.05rem;
         }
 
         .feature-link {
@@ -223,504 +197,310 @@
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            transition: var(--transition);
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .feature-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            bottom: 0;
+            left: 0;
             transition: var(--transition);
         }
 
         .feature-link:hover {
             color: var(--secondary);
-            gap: 10px;
+            gap: 12px;
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            padding: 4rem 0;
-            background-color: var(--light);
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .action-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-card i {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .action-card h3 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .action-button {
-            display: inline-block;
-            background-color: var(--primary);
-            color: white;
-            padding: 0.8rem 1.8rem;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            margin-top: 1rem;
+        .feature-link:hover::after {
             width: 100%;
         }
 
-        .action-button:hover {
-            background-color: var(--primary-dark);
+        .feature-link i {
+            font-size: 0.9rem;
         }
 
-        /* Recent Activity */
-        .recent-activity {
-            padding: 4rem 0;
-            background-color: white;
+        /* Feature Tags */
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 1.5rem;
         }
 
-        .activity-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-
-        .activity-table thead {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
-
-        .activity-table th {
-            padding: 1.2rem 1.5rem;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .activity-table tbody tr {
-            border-bottom: 1px solid var(--light-gray);
-            transition: var(--transition);
-        }
-
-        .activity-table tbody tr:hover {
-            background-color: rgba(67, 97, 238, 0.05);
-        }
-
-        .activity-table td {
-            padding: 1.2rem 1.5rem;
-        }
-
-        .status {
-            display: inline-block;
-            padding: 0.4rem 1rem;
+        .tag {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+            padding: 6px 12px;
             border-radius: 50px;
             font-size: 0.85rem;
             font-weight: 600;
         }
 
-        .status.paid {
-            background-color: rgba(76, 201, 240, 0.2);
-            color: #0a9396;
-        }
-
-        .status.pending {
-            background-color: rgba(248, 150, 30, 0.2);
-            color: #f8961e;
-        }
-
-        .status.overdue {
-            background-color: rgba(247, 37, 133, 0.2);
-            color: #f72585;
-        }
-
-        /* Footer */
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 3rem 0 1.5rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            font-size: 1.4rem;
-            margin-bottom: 1.5rem;
-            color: var(--light);
-        }
-
-        .footer-section p {
-            color: #adb5bd;
-            margin-bottom: 1rem;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links a {
-            color: #adb5bd;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--success);
-            padding-left: 5px;
-        }
-
-        .copyright {
-            text-align: center;
-            padding-top: 1.5rem;
-            border-top: 1px solid #495057;
-            color: #adb5bd;
-            font-size: 0.9rem;
-        }
-
         /* Responsive */
         @media (max-width: 992px) {
-            .hero h1 {
+            .section-title h2 {
                 font-size: 2.5rem;
             }
             
-            nav ul {
-                gap: 1rem;
+            .features-grid {
+                gap: 2rem;
             }
         }
 
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1.5rem;
-            }
-            
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
             .section-title h2 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
-            .activity-table {
-                display: block;
-                overflow-x: auto;
+            .section-title p {
+                font-size: 1.1rem;
+            }
+            
+            .feature-card {
+                padding: 2rem;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .feature-icon i {
+                font-size: 2.2rem;
             }
         }
 
         @media (max-width: 576px) {
-            .features-grid, .actions-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
             }
             
-            .hero {
-                padding: 3rem 0;
+            .section-title {
+                margin-bottom: 3rem;
             }
             
-            .features, .quick-actions, .recent-activity {
-                padding: 3rem 0;
+            body {
+                padding: 15px;
             }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Back button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(67, 97, 238, 0.4);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <span>Bill Manager</span>
-                </div>
-                
-                <nav>
-                    <ul>
-                        <li><a href="#" class="active">หน้าหลัก</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html">แดชบอร์ด</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/Check3.html">ตรวจสอบบิล</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/AddBill.html">เพิ่มบิล</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/EditBill.html">แก้ไข/ลบบิล</a></li>
-                    </ul>
-                </nav>
-                
-                <div class="user-info">
-                    <div class="user-avatar">SC</div>
-                    <div>
-                        <div class="user-name">สราวุธ</div>
-                        <div class="user-role">ผู้ดูแลระบบ</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+    <a href="javascript:history.back()" class="back-button">
+        <i class="fas fa-arrow-left"></i> กลับหน้าหลัก
+    </a>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>ระบบจัดการบิลครบวงจร</h1>
-            <p>จัดการบิลการชำระเงินทั้งหมดในที่เดียว ด้วยระบบที่ทันสมัยและใช้งานง่าย ช่วยให้คุณติดตามสถานะบิล จัดการการชำระเงิน และวิเคราะห์ข้อมูลทางการเงินได้อย่างมีประสิทธิภาพ</p>
-            <a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html" class="cta-button">เริ่มใช้งานทันที <i class="fas fa-arrow-right"></i></a>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
+    <div class="container">
+        <section class="features">
             <div class="section-title">
                 <h2>ฟีเจอร์หลักของระบบ</h2>
-                <p>ระบบจัดการบิลของเรามีฟีเจอร์ครบครันเพื่อตอบโจทย์ความต้องการของคุณ</p>
+                <p>ระบบจัดการบิลของเรามีฟีเจอร์ครบครันเพื่อตอบโจทย์ความต้องการของคุณ พร้อมใช้งานง่ายและรองรับทุกอุปกรณ์</p>
             </div>
             
             <div class="features-grid">
+                <!-- Feature 1 -->
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
                     <h3>แดชบอร์ดวิเคราะห์ข้อมูล</h3>
-                    <p>ติดตามข้อมูลทางการเงินของคุณผ่านแดชบอร์ดที่แสดงข้อมูลแบบเรียลไทม์ พร้อมกราฟและสถิติที่เข้าใจง่าย</p>
+                    <p>ติดตามข้อมูลทางการเงินของคุณผ่านแดชบอร์ดที่แสดงข้อมูลแบบเรียลไทม์ พร้อมกราฟและสถิติที่เข้าใจง่าย วิเคราะห์แนวโน้มและวางแผนธุรกิจได้อย่างมีประสิทธิภาพ</p>
                     <a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html" class="feature-link">ไปที่แดชบอร์ด <i class="fas fa-external-link-alt"></i></a>
+                    <div class="feature-tags">
+                        <span class="tag">กราฟแบบเรียลไทม์</span>
+                        <span class="tag">รายงานอัตโนมัติ</span>
+                        <span class="tag">วิเคราะห์ข้อมูล</span>
+                    </div>
                 </div>
                 
+                <!-- Feature 2 -->
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-search-dollar"></i>
                     </div>
                     <h3>ตรวจสอบบิล</h3>
-                    <p>ค้นหาและตรวจสอบบิลทั้งหมดได้อย่างรวดเร็ว ด้วยระบบค้นหาที่แม่นยำและหมวดหมู่ที่จัดไว้อย่างเป็นระเบียบ</p>
+                    <p>ค้นหาและตรวจสอบบิลทั้งหมดได้อย่างรวดเร็ว ด้วยระบบค้นหาที่แม่นยำและหมวดหมู่ที่จัดไว้อย่างเป็นระเบียบ พร้อมระบบกรองข้อมูลที่ทันสมัย</p>
                     <a href="https://sarawutc6689-cpu.github.io/TK23/Check3.html" class="feature-link">ตรวจสอบบิล <i class="fas fa-external-link-alt"></i></a>
+                    <div class="feature-tags">
+                        <span class="tag">ค้นหาอัจฉริยะ</span>
+                        <span class="tag">จัดหมวดหมู่</span>
+                        <span class="tag">กรองข้อมูล</span>
+                    </div>
                 </div>
                 
+                <!-- Feature 3 -->
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-plus-circle"></i>
                     </div>
                     <h3>เพิ่มบิลใหม่</h3>
-                    <p>เพิ่มบิลใหม่ได้อย่างง่ายดายด้วยฟอร์มที่ออกแบบมาอย่างดี พร้อมระบบบันทึกข้อมูลอัตโนมัติ</p>
+                    <p>เพิ่มบิลใหม่ได้อย่างง่ายดายด้วยฟอร์มที่ออกแบบมาอย่างดี พร้อมระบบบันทึกข้อมูลอัตโนมัติและตรวจสอบความถูกต้อง ลดความผิดพลาดในการกรอกข้อมูล</p>
                     <a href="https://sarawutc6689-cpu.github.io/TK23/AddBill.html" class="feature-link">เพิ่มบิลใหม่ <i class="fas fa-external-link-alt"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-        <div class="container">
-            <div class="section-title">
-                <h2>การดำเนินการด่วน</h2>
-                <p>เข้าถึงหน้าที่ใช้งานบ่อยได้อย่างรวดเร็ว</p>
-            </div>
-            
-            <div class="actions-grid">
-                <div class="action-card">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <h3>แดชบอร์ด</h3>
-                    <p>ดูภาพรวมและวิเคราะห์ข้อมูลทางการเงิน</p>
-                    <a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html" class="action-button">ไปที่แดชบอร์ด</a>
+                    <div class="feature-tags">
+                        <span class="tag">ฟอร์มอัจฉริยะ</span>
+                        <span class="tag">บันทึกอัตโนมัติ</span>
+                        <span class="tag">ตรวจสอบความถูกต้อง</span>
+                    </div>
                 </div>
                 
-                <div class="action-card">
-                    <i class="fas fa-file-invoice"></i>
-                    <h3>เพิ่มบิลใหม่</h3>
-                    <p>เพิ่มบิลการชำระเงินใหม่เข้าสู่ระบบ</p>
-                    <a href="https://sarawutc6689-cpu.github.io/TK23/AddBill.html" class="action-button">เพิ่มบิลใหม่</a>
-                </div>
-                
-                <div class="action-card">
-                    <i class="fas fa-search"></i>
-                    <h3>ตรวจสอบบิล</h3>
-                    <p>ค้นหาและตรวจสอบบิลทั้งหมดในระบบ</p>
-                    <a href="https://sarawutc6689-cpu.github.io/TK23/Check3.html" class="action-button">ตรวจสอบบิล</a>
-                </div>
-                
-                <div class="action-card">
-                    <i class="fas fa-edit"></i>
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-edit"></i>
+                    </div>
                     <h3>แก้ไข/ลบบิล</h3>
-                    <p>จัดการบิลที่มีอยู่ แก้ไขหรือลบบิล</p>
-                    <a href="https://sarawutc6689-cpu.github.io/TK23/EditBill.html" class="action-button">แก้ไข/ลบบิล</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Recent Activity -->
-    <section class="recent-activity">
-        <div class="container">
-            <div class="section-title">
-                <h2>บิลล่าสุด</h2>
-                <p>ติดตามบิลที่เพิ่มเข้ามาล่าสุดในระบบ</p>
-            </div>
-            
-            <div class="table-container">
-                <table class="activity-table">
-                    <thead>
-                        <tr>
-                            <th>เลขที่บิล</th>
-                            <th>ลูกค้า</th>
-                            <th>วันที่</th>
-                            <th>จำนวนเงิน</th>
-                            <th>สถานะ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>INV-2023-001</td>
-                            <td>บริษัท ABC จำกัด</td>
-                            <td>15 พ.ย. 2023</td>
-                            <td>12,500 บาท</td>
-                            <td><span class="status paid">ชำระแล้ว</span></td>
-                        </tr>
-                        <tr>
-                            <td>INV-2023-002</td>
-                            <td>ห้างสรรพสินค้า XYZ</td>
-                            <td>16 พ.ย. 2023</td>
-                            <td>8,750 บาท</td>
-                            <td><span class="status pending">รอดำเนินการ</span></td>
-                        </tr>
-                        <tr>
-                            <td>INV-2023-003</td>
-                            <td>ร้านค้าเดลิเวอรี่</td>
-                            <td>17 พ.ย. 2023</td>
-                            <td>5,300 บาท</td>
-                            <td><span class="status paid">ชำระแล้ว</span></td>
-                        </tr>
-                        <tr>
-                            <td>INV-2023-004</td>
-                            <td>โรงเรียนสมบูรณ์วิทยา</td>
-                            <td>18 พ.ย. 2023</td>
-                            <td>21,000 บาท</td>
-                            <td><span class="status overdue">เลยกำหนด</span></td>
-                        </tr>
-                        <tr>
-                            <td>INV-2023-005</td>
-                            <td>บริษัทเทคโนโลยี</td>
-                            <td>19 พ.ย. 2023</td>
-                            <td>15,800 บาท</td>
-                            <td><span class="status pending">รอดำเนินการ</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Bill Manager</h3>
-                    <p>ระบบจัดการบิลครบวงจรที่ออกแบบมาสำหรับธุรกิจทุกขนาด ช่วยให้คุณจัดการการเงินได้อย่างมีประสิทธิภาพ</p>
-                    <p>ติดต่อ: info@billmanager.com</p>
-                    <p>โทร: 02-123-4567</p>
+                    <p>จัดการบิลที่มีอยู่ได้อย่างสะดวกรวดเร็ว สามารถแก้ไขข้อมูล ลบ หรืออัปเดตสถานะบิลได้ทันที พร้อมระบบยืนยันการลบเพื่อป้องกันข้อผิดพลาด</p>
+                    <a href="https://sarawutc6689-cpu.github.io/TK23/EditBill.html" class="feature-link">แก้ไข/ลบบิล <i class="fas fa-external-link-alt"></i></a>
+                    <div class="feature-tags">
+                        <span class="tag">แก้ไขทันที</span>
+                        <span class="tag">ยืนยันการลบ</span>
+                        <span class="tag">อัปเดตสถานะ</span>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h3>ลิงก์ด่วน</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">หน้าหลัก</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/DashBoard.html">แดชบอร์ด</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/Check3.html">ตรวจสอบบิล</a></li>
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/AddBill.html">เพิ่มบิล</a></li>
-                    </ul>
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>ส่งออกรายงาน</h3>
+                    <p>ส่งออกรายงานทางการเงินในรูปแบบต่างๆ ทั้ง PDF, Excel และ CSV เพื่อนำไปใช้งานต่อหรือส่งให้ลูกค้า พร้อมเทมเพลตรายงานที่สวยงามและเป็นมืออาชีพ</p>
+                    <a href="#" class="feature-link">ส่งออกรายงาน <i class="fas fa-external-link-alt"></i></a>
+                    <div class="feature-tags">
+                        <span class="tag">PDF, Excel, CSV</span>
+                        <span class="tag">เทมเพลตสวยงาม</span>
+                        <span class="tag">กำหนดรูปแบบเองได้</span>
+                    </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h3>ระบบย่อย</h3>
-                    <ul class="footer-links">
-                        <li><a href="https://sarawutc6689-cpu.github.io/TK23/EditBill.html">แก้ไข/ลบบิล</a></li>
-                        <li><a href="#">รายงาน</a></li>
-                        <li><a href="#">การตั้งค่า</a></li>
-                        <li><a href="#">ความช่วยเหลือ</a></li>
-                    </ul>
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>แจ้งเตือนอัตโนมัติ</h3>
+                    <p>รับการแจ้งเตือนเมื่อบิลใกล้ครบกำหนดหรือเลยกำหนดชำระ พร้อมระบบแจ้งเตือนผ่านหลายช่องทาง อีเมล และแอปพลิเคชัน เพื่อไม่ให้พลาดการติดตามบิลสำคัญ</p>
+                    <a href="#" class="feature-link">ตั้งค่าการแจ้งเตือน <i class="fas fa-external-link-alt"></i></a>
+                    <div class="feature-tags">
+                        <span class="tag">แจ้งเตือนหลายช่องทาง</span>
+                        <span class="tag">กำหนดเวลาเองได้</span>
+                        <span class="tag">รายงานสรุป</span>
+                    </div>
                 </div>
             </div>
-            
-            <div class="copyright">
-                <p>&copy; 2023 Bill Manager. สงวนลิขสิทธิ์ทุกประการ.</p>
-            </div>
-        </div>
-    </footer>
+        </section>
+    </div>
 
     <script>
-        // เพิ่มเอฟเฟกต์เมื่อเลื่อนหน้าจอ
         document.addEventListener('DOMContentLoaded', function() {
-            // ทำให้เมนูเปลี่ยนสีเมื่อเลื่อน
-            const header = document.querySelector('header');
-            
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 50) {
-                    header.style.backgroundColor = 'rgba(67, 97, 238, 0.95)';
-                } else {
-                    header.style.backgroundColor = '';
-                }
-            });
-            
-            // เพิ่มเอฟเฟกต์เมื่อโหลดหน้า
+            // เอฟเฟกต์เมื่อ hover บนการ์ด
             const featureCards = document.querySelectorAll('.feature-card');
-            featureCards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
-                card.classList.add('animate-fade-in');
-            });
             
-            // เปลี่ยนสีพื้นหลังของแถวในตารางแบบสลับกัน
-            const tableRows = document.querySelectorAll('.activity-table tbody tr');
-            tableRows.forEach((row, index) => {
-                if (index % 2 === 0) {
-                    row.style.backgroundColor = 'rgba(248, 249, 250, 0.5)';
-                }
-            });
-            
-            // เพิ่มเอฟเฟกต์เมื่อกดปุ่ม CTA
-            const ctaButton = document.querySelector('.cta-button');
-            ctaButton.addEventListener('click', function(e) {
-                // ไม่ต้องทำอะไรถ้าเป็นลิงก์ปกติ
-            });
-            
-            // เพิ่มเอฟเฟกต์ hover ให้กับการ์ด actions
-            const actionCards = document.querySelectorAll('.action-card');
-            actionCards.forEach(card => {
+            featureCards.forEach(card => {
+                // เพิ่มเอฟเฟกต์เมื่อ hover
                 card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-8px)';
+                    const icon = this.querySelector('.feature-icon');
+                    icon.style.transform = 'scale(1.1)';
                 });
                 
                 card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
+                    const icon = this.querySelector('.feature-icon');
+                    icon.style.transform = '';
+                });
+                
+                // เพิ่มเอฟเฟกต์คลิก
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.feature-link')) {
+                        this.style.transform = 'translateY(-15px) scale(1.02)';
+                        setTimeout(() => {
+                            this.style.transform = 'translateY(-15px)';
+                        }, 300);
+                    }
+                });
+            });
+            
+            // เอฟเฟกต์ให้ไอคอนหมุนเมื่อโหลดหน้า
+            setTimeout(() => {
+                const icons = document.querySelectorAll('.feature-icon');
+                icons.forEach((icon, index) => {
+                    setTimeout(() => {
+                        icon.style.transform = 'rotateY(180deg)';
+                        setTimeout(() => {
+                            icon.style.transform = '';
+                        }, 600);
+                    }, index * 200);
+                });
+            }, 1000);
+            
+            // เอฟเฟกต์ tag เมื่อ hover
+            const tags = document.querySelectorAll('.tag');
+            tags.forEach(tag => {
+                tag.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px)';
+                    this.style.boxShadow = '0 5px 10px rgba(0,0,0,0.1)';
+                });
+                
+                tag.addEventListener('mouseleave', function() {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
                 });
             });
         });

@@ -131,6 +131,33 @@ async function remove(){
     search.value="";
   }
 }
+  async function save() {
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"  // เพิ่มบรรทัดนี้
+    },
+    body: JSON.stringify({
+      action: "edit",
+      billNo: billNo.value,
+      place: place.value,
+      detail: detail.value
+    })
+  });
+}
+
+async function remove() {
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"  // เพิ่มบรรทัดนี้
+    },
+    body: JSON.stringify({
+      action: "delete",
+      billNo: billNo.value
+    })
+  });
+}
 </script>
 </body>
 </html>

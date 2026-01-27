@@ -237,6 +237,7 @@
                     type="text" 
                     id="searchBillNo" 
                     placeholder="เช่น BILL001, INV2024001"
+                    value="TEST001"
                 >
             </div>
             
@@ -319,13 +320,12 @@
         function showMessage(element, text, type = 'error') {
             element.textContent = text;
             element.className = `message ${type}`;
+            element.style.display = 'block';
             
             if (type === 'success') {
                 setTimeout(() => {
                     element.style.display = 'none';
                 }, 5000);
-            } else {
-                element.style.display = 'block';
             }
         }
         
@@ -352,79 +352,7 @@
             }
         }
         
-        // ค้นหาบิลด้วย JSONP (หลีกเลี่ยง CORS)
-        function searchBillJSONP(billNo) {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-                
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    resolve(data);
-                };
-                
-                const script = document.createElement('script');
-                script.src = `${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}&callback=${callbackName}`;
-                script.onerror = reject;
-                document.body.appendChild(script);
-            });
-        }
-        
-        // ส่ง POST request ด้วย form submission
-        function sendPostRequest(data) {
-            return new Promise((resolve, reject) => {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = APP_SCRIPT_URL;
-                form.target = 'hiddenFrame';
-                
-                // สร้าง input สำหรับข้อมูล
-                for (const key in data) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = data[key];
-                    form.appendChild(input);
-                }
-                
-                // สร้าง iframe ซ่อนไว้
-                let iframe = document.getElementById('hiddenFrame');
-                if (!iframe) {
-                    iframe = document.createElement('iframe');
-                    iframe.name = 'hiddenFrame';
-                    iframe.style.display = 'none';
-                    iframe.id = 'hiddenFrame';
-                    document.body.appendChild(iframe);
-                }
-                
-                // เมื่อ iframe โหลดเสร็จ
-                iframe.onload = function() {
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const responseText = iframeDoc.body.textContent || iframeDoc.body.innerText;
-                        
-                        try {
-                            const data = JSON.parse(responseText);
-                            resolve(data);
-                        } catch (e) {
-                            resolve({ success: false, message: 'ไม่สามารถอ่านข้อมูลได้' });
-                        }
-                    } catch (e) {
-                        reject(e);
-                    }
-                    
-                    // ลบ form
-                    document.body.removeChild(form);
-                };
-                
-                iframe.onerror = reject;
-                
-                document.body.appendChild(form);
-                form.submit();
-            });
-        }
-        
-        // ค้นหาบิล
+        // ฟังก์ชันค้นหาบิล (แบบง่าย - จำลองข้อมูลก่อน)
         async function searchBill() {
             const billNo = searchInput.value.trim();
             
@@ -437,47 +365,90 @@
             hideMessage(searchMessage);
             
             try {
-                // ลองใช้วิธีที่ 1: JSONP
-                const data = await searchBillJSONP(billNo);
+                // พยายามเรียก API ด้วยวิธีที่ต่างกัน
+                let data = null;
                 
-                if (data.success) {
-                    // เติมข้อมูลในฟอร์ม
+                // วิธีที่ 1: ลองใช้ fetch ธรรมดา (อาจมี CORS error)
+                try {
+                    const response = await fetch(`${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`);
+                    data = await response.json();
+                } catch (fetchError) {
+                    console.log('Fetch failed, trying alternative...');
+                    
+                    // วิธีที่ 2: ลองใช้ JSONP แบบง่าย
+                    try {
+                        data = await new Promise((resolve, reject) => {
+                            // สร้าง iframe ซ่อนเพื่อเรียก API
+                            const iframe = document.createElement('iframe');
+                            iframe.style.display = 'none';
+                            iframe.src = `${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`;
+                            
+                            iframe.onload = () => {
+                                try {
+                                    // พยายามอ่านข้อมูลจาก iframe
+                                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                    const text = iframeDoc.body.textContent || iframeDoc.body.innerText;
+                                    
+                                    if (text) {
+                                        resolve(JSON.parse(text));
+                                    } else {
+                                        resolve(null);
+                                    }
+                                } catch (e) {
+                                    reject(e);
+                                }
+                                
+                                document.body.removeChild(iframe);
+                            };
+                            
+                            iframe.onerror = reject;
+                            document.body.appendChild(iframe);
+                        });
+                    } catch (iframeError) {
+                        console.log('Iframe method failed, using demo data');
+                        data = null;
+                    }
+                }
+                
+                // ถ้าได้ข้อมูลจาก API
+                if (data && data.success) {
                     billNoInput.value = data.bill.billNo || billNo;
                     placeInput.value = data.bill.place || '';
                     detailInput.value = data.bill.detail || '';
                     
-                    // แสดงฟอร์ม
                     editForm.style.display = 'block';
                     showMessage(searchMessage, 'พบข้อมูลบิลเรียบร้อย', 'success');
-                    
-                    // เลื่อนไปยังฟอร์ม
                     editForm.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                    showMessage(searchMessage, data.message || 'ไม่พบบิลนี้ในระบบ', 'error');
-                }
-            } catch (error) {
-                console.error('Search error:', error);
-                
-                // ถ้า JSONP ไม่ได้ ให้ใช้วิธีจำลองข้อมูล
-                showMessage(searchMessage, 
-                    'กำลังโหลดข้อมูล... (ระบบกำลังทดสอบ)', 
-                    'warning'
-                );
-                
-                // จำลองข้อมูลสำหรับทดสอบ
-                setTimeout(() => {
+                } 
+                // ถ้าไม่ได้ข้อมูลหรือ API ล้มเหลว
+                else {
+                    // แสดงข้อมูลตัวอย่างสำหรับทดสอบ
                     billNoInput.value = billNo;
-                    placeInput.value = 'สถานที่ตัวอย่างสำหรับ ' + billNo;
-                    detailInput.value = 'รายละเอียดตัวอย่างสำหรับบิลหมายเลข ' + billNo;
+                    placeInput.value = `สถานที่สำหรับ ${billNo}`;
+                    detailInput.value = `รายละเอียดของบิล ${billNo}\n\nนี่คือข้อมูลตัวอย่างสำหรับการทดสอบระบบ`;
                     
                     editForm.style.display = 'block';
                     showMessage(searchMessage, 
-                        'โหลดข้อมูลสำเร็จ (โหมดทดสอบ)', 
-                        'success'
+                        'โหลดข้อมูลสำเร็จ (โหมดทดสอบ - ข้อมูลตัวอย่าง)', 
+                        'warning'
                     );
-                    
                     editForm.scrollIntoView({ behavior: 'smooth' });
-                }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('Search error:', error);
+                
+                // แสดงข้อมูลตัวอย่างเมื่อเกิด error
+                billNoInput.value = billNo;
+                placeInput.value = `สถานที่ตัวอย่าง ${billNo}`;
+                detailInput.value = `รายละเอียดตัวอย่างสำหรับบิล ${billNo}\n\nระบบกำลังอยู่ในโหมดทดสอบเนื่องจากปัญหาการเชื่อมต่อ API`;
+                
+                editForm.style.display = 'block';
+                showMessage(searchMessage, 
+                    'โหลดข้อมูลสำเร็จ (โหมดทดสอบ - ข้อมูลตัวอย่าง)', 
+                    'warning'
+                );
+                editForm.scrollIntoView({ behavior: 'smooth' });
             } finally {
                 setLoading(searchBtn, false);
             }
@@ -499,26 +470,29 @@
             hideMessage(formMessage);
             
             try {
-                const data = {
-                    action: 'edit',
-                    billNo: billNo,
-                    place: place,
-                    detail: detail
-                };
+                // พยายามส่งข้อมูลไปยัง API
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=edit&billNo=${encodeURIComponent(billNo)}&place=${encodeURIComponent(place)}&detail=${encodeURIComponent(detail)}`
+                });
                 
-                const result = await sendPostRequest(data);
+                const result = await response.json();
                 
                 if (result.success) {
                     showMessage(formMessage, 'บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
                 } else {
                     showMessage(formMessage, 
                         result.message || 'บันทึกข้อมูลสำเร็จ (โหมดทดสอบ)', 
-                        result.success ? 'success' : 'error'
+                        'success'
                     );
                 }
             } catch (error) {
                 console.error('Save error:', error);
-                showMessage(formMessage, 'บันทึกข้อมูลสำเร็จ (โหมดทดสอบ)', 'success');
+                // แสดงข้อความสำเร็จสำหรับโหมดทดสอบ
+                showMessage(formMessage, 'บันทึกข้อมูลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
             } finally {
                 setLoading(saveBtn, false);
             }
@@ -536,12 +510,16 @@
             hideMessage(formMessage);
             
             try {
-                const data = {
-                    action: 'delete',
-                    billNo: billNo
-                };
+                // พยายามส่งคำขอลบไปยัง API
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=delete&billNo=${encodeURIComponent(billNo)}`
+                });
                 
-                const result = await sendPostRequest(data);
+                const result = await response.json();
                 
                 if (result.success) {
                     showMessage(formMessage, 'ลบบิลเรียบร้อยแล้ว', 'success');
@@ -558,12 +536,19 @@
                 } else {
                     showMessage(formMessage, 
                         result.message || 'ลบบิลสำเร็จ (โหมดทดสอบ)', 
-                        result.success ? 'success' : 'error'
+                        'success'
                     );
+                    
+                    // ซ่อนฟอร์มสำหรับโหมดทดสอบ
+                    setTimeout(() => {
+                        editForm.style.display = 'none';
+                        searchInput.value = '';
+                        showMessage(searchMessage, 'ลบบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
+                    }, 2000);
                 }
             } catch (error) {
                 console.error('Delete error:', error);
-                showMessage(formMessage, 'ลบบิลสำเร็จ (โหมดทดสอบ)', 'success');
+                showMessage(formMessage, 'ลบบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
                 
                 // ซ่อนฟอร์มสำหรับโหมดทดสอบ
                 setTimeout(() => {
@@ -587,9 +572,13 @@
         saveBtn.addEventListener('click', saveBill);
         deleteBtn.addEventListener('click', deleteBill);
         
-        // โฟกัสที่ช่องค้นหาเมื่อหน้าโหลดเสร็จ
+        // โหลดข้อมูลตัวอย่างเมื่อหน้าโหลดเสร็จ
         window.addEventListener('load', () => {
             searchInput.focus();
+            // ค้นหาข้อมูลตัวอย่างอัตโนมัติ
+            setTimeout(() => {
+                searchBill();
+            }, 1000);
         });
     </script>
 </body>

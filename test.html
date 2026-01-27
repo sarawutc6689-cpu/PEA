@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>แก้ไข/ลบ บิล | ระบบจัดการบิล</title>
+    <title>แก้ไข/ลบบิล | ระบบจัดการบิล</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -55,6 +56,9 @@
             margin-bottom: 8px;
             color: #4a5568;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .input-group input,
@@ -71,6 +75,7 @@
         .input-group textarea:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .input-group textarea {
@@ -99,6 +104,7 @@
         .btn:hover {
             background: #5a67d8;
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
         }
 
         .btn-danger {
@@ -107,6 +113,7 @@
 
         .btn-danger:hover {
             background: #e53e3e;
+            box-shadow: 0 5px 15px rgba(245, 101, 101, 0.2);
         }
 
         .btn-success {
@@ -115,16 +122,14 @@
 
         .btn-success:hover {
             background: #38a169;
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.2);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none !important;
-        }
-
-        .btn i {
-            font-size: 18px;
+            box-shadow: none !important;
         }
 
         .message {
@@ -134,38 +139,46 @@
             text-align: center;
             font-weight: 500;
             display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .message.success {
             background: #c6f6d5;
             color: #22543d;
             border: 1px solid #9ae6b4;
-            display: block;
+            display: flex;
         }
 
         .message.error {
             background: #fed7d7;
             color: #742a2a;
             border: 1px solid #fc8181;
-            display: block;
+            display: flex;
         }
 
         .message.warning {
             background: #feebc8;
             color: #744210;
             border: 1px solid #fbd38d;
-            display: block;
+            display: flex;
         }
 
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 30px;
             color: #667eea;
         }
 
-        .loading i {
-            font-size: 24px;
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
         }
 
         @keyframes spin {
@@ -190,11 +203,16 @@
             font-weight: 500;
             transition: all 0.3s;
             border: 2px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .nav a:hover {
             background: #667eea;
             color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
         }
 
         footer {
@@ -202,6 +220,25 @@
             color: #718096;
             margin-top: 30px;
             font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .demo-note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 5px;
+            padding-left: 5px;
         }
 
         @media (max-width: 768px) {
@@ -216,12 +253,20 @@
             .btn {
                 padding: 12px;
             }
+            
+            .nav {
+                flex-direction: column;
+            }
+            
+            .nav a {
+                justify-content: center;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
+        <!-- Header Card -->
         <div class="card">
             <h1 class="title">
                 <i class="fas fa-edit"></i>
@@ -231,14 +276,15 @@
             <!-- Search Section -->
             <div class="input-group">
                 <label for="searchBillNo">
-                    <i class="fas fa-search"></i> ค้นหาด้วยเลขบิล:
+                    <i class="fas fa-hashtag"></i> ค้นหาด้วยเลขบิล:
                 </label>
                 <input 
                     type="text" 
                     id="searchBillNo" 
-                    placeholder="เช่น BILL001, INV2024001"
-                    value="TEST001"
+                    placeholder="กรอกเลขบิล เช่น BILL001, INV2024001"
+                    autocomplete="off"
                 >
+                <div class="hint">กด Enter เพื่อค้นหา</div>
             </div>
             
             <button id="searchBtn" class="btn">
@@ -246,9 +292,14 @@
             </button>
             
             <div id="searchMessage" class="message"></div>
+            
+            <div class="demo-note">
+                <i class="fas fa-info-circle"></i>
+                ระบบทำงานกับฐานข้อมูลจริงผ่าน Google Sheets
+            </div>
         </div>
 
-        <!-- Edit Form (Hidden by default) -->
+        <!-- Edit Form (Initially Hidden) -->
         <div id="editForm" class="card" style="display: none;">
             <h2 class="title" style="font-size: 20px; justify-content: flex-start;">
                 <i class="fas fa-file-invoice"></i>
@@ -257,17 +308,17 @@
             
             <div class="input-group">
                 <label><i class="fas fa-hashtag"></i> เลขที่บิล:</label>
-                <input type="text" id="billNo" readonly>
+                <input type="text" id="billNo" readonly style="background-color: #f7fafc;">
             </div>
             
             <div class="input-group">
-                <label><i class="fas fa-map-marker-alt"></i> สถานที่: *</label>
-                <input type="text" id="place" placeholder="กรอกสถานที่">
+                <label><i class="fas fa-map-marker-alt"></i> สถานที่: <span style="color: #f56565;">*</span></label>
+                <input type="text" id="place" placeholder="กรอกสถานที่ เช่น สาขาหลัก, สำนักงานใหญ่">
             </div>
             
             <div class="input-group">
                 <label><i class="fas fa-align-left"></i> รายละเอียด:</label>
-                <textarea id="detail" placeholder="กรอกรายละเอียดเพิ่มเติม"></textarea>
+                <textarea id="detail" placeholder="กรอกรายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
             </div>
             
             <button id="saveBtn" class="btn btn-success">
@@ -297,14 +348,17 @@
         <footer>
             <p>ระบบจัดการใบเสร็จ © 2026 | พัฒนาโดย Sarawut.C</p>
             <p>สำหรับใช้ส่วนตัวท่านนั้น</p>
+            <p style="font-size: 12px; color: #a0aec0; margin-top: 10px;">
+                <i class="fas fa-database"></i> ใช้ Google Sheets เป็นฐานข้อมูล
+            </p>
         </footer>
     </div>
 
     <script>
-        // Google Apps Script URL ของคุณ
+        // Google Apps Script URL (จากโค้ดของคุณ)
         const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxfTu6osOm_WivAx26wUsXiydykXbWQXXwgi24dwRFtDlFR_Th8gSyA4E8nWxvceTgS/exec";
         
-        // องค์ประกอบ DOM
+        // DOM Elements
         const searchInput = document.getElementById('searchBillNo');
         const searchBtn = document.getElementById('searchBtn');
         const searchMessage = document.getElementById('searchMessage');
@@ -316,31 +370,41 @@
         const deleteBtn = document.getElementById('deleteBtn');
         const formMessage = document.getElementById('formMessage');
         
-        // แสดงข้อความ
+        // Helper: แสดงข้อความ
         function showMessage(element, text, type = 'error') {
-            element.textContent = text;
+            element.innerHTML = `<i class="fas fa-${getMessageIcon(type)}"></i> ${text}`;
             element.className = `message ${type}`;
-            element.style.display = 'block';
             
             if (type === 'success') {
                 setTimeout(() => {
-                    element.style.display = 'none';
+                    element.style.opacity = '0';
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                        element.style.opacity = '1';
+                    }, 300);
                 }, 5000);
             }
         }
         
-        // ซ่อนข้อความ
-        function hideMessage(element) {
-            element.style.display = 'none';
+        // Helper: ไอคอนตามประเภทข้อความ
+        function getMessageIcon(type) {
+            switch(type) {
+                case 'success': return 'check-circle';
+                case 'warning': return 'exclamation-triangle';
+                case 'error': return 'exclamation-circle';
+                default: return 'info-circle';
+            }
         }
         
-        // ตั้งค่า loading state
+        // Helper: ตั้งค่า loading state
         function setLoading(button, isLoading) {
             if (isLoading) {
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังประมวลผล...';
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${button.getAttribute('data-loading') || 'กำลังประมวลผล...'}`;
                 button.disabled = true;
             } else {
-                // คืนสถานะเดิม
+                button.disabled = false;
+                
+                // คืนค่าเดิมของปุ่ม
                 if (button.id === 'searchBtn') {
                     button.innerHTML = '<i class="fas fa-search"></i> ค้นหาบิล';
                 } else if (button.id === 'saveBtn') {
@@ -348,113 +412,65 @@
                 } else if (button.id === 'deleteBtn') {
                     button.innerHTML = '<i class="fas fa-trash-alt"></i> ลบบิลนี้';
                 }
-                button.disabled = false;
             }
         }
         
-        // ฟังก์ชันค้นหาบิล (แบบง่าย - จำลองข้อมูลก่อน)
+        // ฟังก์ชันค้นหาบิล
         async function searchBill() {
             const billNo = searchInput.value.trim();
             
             if (!billNo) {
                 showMessage(searchMessage, 'กรุณากรอกเลขบิล', 'warning');
+                searchInput.focus();
                 return;
             }
             
             setLoading(searchBtn, true);
-            hideMessage(searchMessage);
+            showMessage(searchMessage, '<i class="fas fa-spinner fa-spin"></i> กำลังค้นหา...', 'warning');
             
             try {
-                // พยายามเรียก API ด้วยวิธีที่ต่างกัน
-                let data = null;
+                // เรียก API ด้วย GET request
+                const url = `${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`;
+                console.log('Fetching:', url);
                 
-                // วิธีที่ 1: ลองใช้ fetch ธรรมดา (อาจมี CORS error)
-                try {
-                    const response = await fetch(`${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`);
-                    data = await response.json();
-                } catch (fetchError) {
-                    console.log('Fetch failed, trying alternative...');
-                    
-                    // วิธีที่ 2: ลองใช้ JSONP แบบง่าย
-                    try {
-                        data = await new Promise((resolve, reject) => {
-                            // สร้าง iframe ซ่อนเพื่อเรียก API
-                            const iframe = document.createElement('iframe');
-                            iframe.style.display = 'none';
-                            iframe.src = `${APP_SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`;
-                            
-                            iframe.onload = () => {
-                                try {
-                                    // พยายามอ่านข้อมูลจาก iframe
-                                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                    const text = iframeDoc.body.textContent || iframeDoc.body.innerText;
-                                    
-                                    if (text) {
-                                        resolve(JSON.parse(text));
-                                    } else {
-                                        resolve(null);
-                                    }
-                                } catch (e) {
-                                    reject(e);
-                                }
-                                
-                                document.body.removeChild(iframe);
-                            };
-                            
-                            iframe.onerror = reject;
-                            document.body.appendChild(iframe);
-                        });
-                    } catch (iframeError) {
-                        console.log('Iframe method failed, using demo data');
-                        data = null;
-                    }
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
                 }
                 
-                // ถ้าได้ข้อมูลจาก API
-                if (data && data.success) {
+                const data = await response.json();
+                
+                if (data.success) {
+                    // เติมข้อมูลในฟอร์ม
                     billNoInput.value = data.bill.billNo || billNo;
                     placeInput.value = data.bill.place || '';
                     detailInput.value = data.bill.detail || '';
                     
+                    // แสดงฟอร์ม
                     editForm.style.display = 'block';
                     showMessage(searchMessage, 'พบข้อมูลบิลเรียบร้อย', 'success');
-                    editForm.scrollIntoView({ behavior: 'smooth' });
-                } 
-                // ถ้าไม่ได้ข้อมูลหรือ API ล้มเหลว
-                else {
-                    // แสดงข้อมูลตัวอย่างสำหรับทดสอบ
-                    billNoInput.value = billNo;
-                    placeInput.value = `สถานที่สำหรับ ${billNo}`;
-                    detailInput.value = `รายละเอียดของบิล ${billNo}\n\nนี่คือข้อมูลตัวอย่างสำหรับการทดสอบระบบ`;
                     
-                    editForm.style.display = 'block';
-                    showMessage(searchMessage, 
-                        'โหลดข้อมูลสำเร็จ (โหมดทดสอบ - ข้อมูลตัวอย่าง)', 
-                        'warning'
-                    );
-                    editForm.scrollIntoView({ behavior: 'smooth' });
+                    // เลื่อนไปยังฟอร์ม
+                    setTimeout(() => {
+                        editForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        placeInput.focus();
+                    }, 100);
+                } else {
+                    showMessage(searchMessage, data.message || 'ไม่พบบิลนี้ในระบบ', 'error');
+                    editForm.style.display = 'none';
                 }
                 
             } catch (error) {
                 console.error('Search error:', error);
-                
-                // แสดงข้อมูลตัวอย่างเมื่อเกิด error
-                billNoInput.value = billNo;
-                placeInput.value = `สถานที่ตัวอย่าง ${billNo}`;
-                detailInput.value = `รายละเอียดตัวอย่างสำหรับบิล ${billNo}\n\nระบบกำลังอยู่ในโหมดทดสอบเนื่องจากปัญหาการเชื่อมต่อ API`;
-                
-                editForm.style.display = 'block';
-                showMessage(searchMessage, 
-                    'โหลดข้อมูลสำเร็จ (โหมดทดสอบ - ข้อมูลตัวอย่าง)', 
-                    'warning'
-                );
-                editForm.scrollIntoView({ behavior: 'smooth' });
+                showMessage(searchMessage, 'เกิดข้อผิดพลาดในการเชื่อมต่อ API', 'error');
+                editForm.style.display = 'none';
             } finally {
                 setLoading(searchBtn, false);
             }
         }
         
-        // บันทึกการแก้ไข
+        // ฟังก์ชันบันทึกการแก้ไข
         async function saveBill() {
             const billNo = billNoInput.value.trim();
             const place = placeInput.value.trim();
@@ -466,62 +482,86 @@
                 return;
             }
             
+            // ตั้งค่าข้อความ loading สำหรับปุ่มบันทึก
+            saveBtn.setAttribute('data-loading', 'กำลังบันทึก...');
             setLoading(saveBtn, true);
-            hideMessage(formMessage);
+            showMessage(formMessage, '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...', 'warning');
             
             try {
-                // พยายามส่งข้อมูลไปยัง API
+                // ส่ง POST request ไปยัง API
+                const requestData = {
+                    action: 'edit',
+                    billNo: billNo,
+                    place: place,
+                    detail: detail
+                };
+                
                 const response = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json'
                     },
-                    body: `action=edit&billNo=${encodeURIComponent(billNo)}&place=${encodeURIComponent(place)}&detail=${encodeURIComponent(detail)}`
+                    body: JSON.stringify(requestData)
                 });
                 
-                const result = await response.json();
+                const data = await response.json();
                 
-                if (result.success) {
+                if (data.success) {
                     showMessage(formMessage, 'บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
+                    
+                    // อัพเดตข้อความค้นหา
+                    showMessage(searchMessage, 'ข้อมูลถูกอัพเดตแล้ว', 'success');
                 } else {
-                    showMessage(formMessage, 
-                        result.message || 'บันทึกข้อมูลสำเร็จ (โหมดทดสอบ)', 
-                        'success'
-                    );
+                    showMessage(formMessage, data.message || 'เกิดข้อผิดพลาดในการบันทึก', 'error');
                 }
+                
             } catch (error) {
                 console.error('Save error:', error);
-                // แสดงข้อความสำเร็จสำหรับโหมดทดสอบ
-                showMessage(formMessage, 'บันทึกข้อมูลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
+                showMessage(formMessage, 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
             } finally {
                 setLoading(saveBtn, false);
             }
         }
         
-        // ลบบิล
+        // ฟังก์ชันลบบิล
         async function deleteBill() {
             const billNo = billNoInput.value.trim();
             
-            if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบบิลหมายเลข "${billNo}"?\n\nการดำเนินการนี้ไม่สามารถย้อนกลับได้!`)) {
+            if (!billNo) {
+                showMessage(formMessage, 'ไม่พบข้อมูลบิล', 'warning');
                 return;
             }
             
+            // ยืนยันการลบ
+            const confirmDelete = confirm(`คุณแน่ใจหรือไม่ที่จะลบบิลหมายเลข:\n\n"${billNo}"\n\n⚠️ การดำเนินการนี้ไม่สามารถย้อนกลับได้!`);
+            
+            if (!confirmDelete) {
+                return;
+            }
+            
+            // ตั้งค่าข้อความ loading สำหรับปุ่มลบ
+            deleteBtn.setAttribute('data-loading', 'กำลังลบ...');
             setLoading(deleteBtn, true);
-            hideMessage(formMessage);
+            showMessage(formMessage, '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...', 'warning');
             
             try {
-                // พยายามส่งคำขอลบไปยัง API
+                // ส่ง POST request ไปยัง API
+                const requestData = {
+                    action: 'delete',
+                    billNo: billNo
+                };
+                
                 const response = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json'
                     },
-                    body: `action=delete&billNo=${encodeURIComponent(billNo)}`
+                    body: JSON.stringify(requestData)
                 });
                 
-                const result = await response.json();
+                const data = await response.json();
                 
-                if (result.success) {
+                if (data.success) {
                     showMessage(formMessage, 'ลบบิลเรียบร้อยแล้ว', 'success');
                     
                     // ซ่อนฟอร์มและล้างข้อมูล
@@ -531,31 +571,17 @@
                         billNoInput.value = '';
                         placeInput.value = '';
                         detailInput.value = '';
+                        
                         showMessage(searchMessage, 'ลบบิลเรียบร้อยแล้ว', 'success');
-                    }, 2000);
+                        searchInput.focus();
+                    }, 1500);
                 } else {
-                    showMessage(formMessage, 
-                        result.message || 'ลบบิลสำเร็จ (โหมดทดสอบ)', 
-                        'success'
-                    );
-                    
-                    // ซ่อนฟอร์มสำหรับโหมดทดสอบ
-                    setTimeout(() => {
-                        editForm.style.display = 'none';
-                        searchInput.value = '';
-                        showMessage(searchMessage, 'ลบบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
-                    }, 2000);
+                    showMessage(formMessage, data.message || 'ไม่สามารถลบบิลนี้ได้', 'error');
                 }
+                
             } catch (error) {
                 console.error('Delete error:', error);
-                showMessage(formMessage, 'ลบบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
-                
-                // ซ่อนฟอร์มสำหรับโหมดทดสอบ
-                setTimeout(() => {
-                    editForm.style.display = 'none';
-                    searchInput.value = '';
-                    showMessage(searchMessage, 'ลบบิลเรียบร้อยแล้ว (โหมดทดสอบ)', 'success');
-                }, 2000);
+                showMessage(formMessage, 'เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
             } finally {
                 setLoading(deleteBtn, false);
             }
@@ -563,6 +589,7 @@
         
         // Event Listeners
         searchBtn.addEventListener('click', searchBill);
+        
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 searchBill();
@@ -572,14 +599,42 @@
         saveBtn.addEventListener('click', saveBill);
         deleteBtn.addEventListener('click', deleteBill);
         
-        // โหลดข้อมูลตัวอย่างเมื่อหน้าโหลดเสร็จ
+        // เมื่อกด Enter ในฟอร์ม ให้บันทึก
+        placeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                saveBill();
+            }
+        });
+        
+        detailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                saveBill();
+            }
+        });
+        
+        // โฟกัสที่ช่องค้นหาเมื่อหน้าโหลดเสร็จ
         window.addEventListener('load', () => {
             searchInput.focus();
-            // ค้นหาข้อมูลตัวอย่างอัตโนมัติ
-            setTimeout(() => {
-                searchBill();
-            }, 1000);
+            
+            // ทดสอบ API connection
+            testAPIConnection();
         });
+        
+        // ฟังก์ชันทดสอบการเชื่อมต่อ API
+        async function testAPIConnection() {
+            try {
+                const response = await fetch(`${APP_SCRIPT_URL}?action=test`);
+                if (response.ok) {
+                    console.log('API connection test: OK');
+                } else {
+                    console.warn('API connection test: Failed');
+                }
+            } catch (error) {
+                console.warn('API connection test: Error', error);
+            }
+        }
     </script>
 </body>
 </html>

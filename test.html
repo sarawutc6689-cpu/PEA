@@ -654,12 +654,15 @@
     </footer>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxfTu6osOm_WivAx26wUsXiydykXbWQXXwgi24dwRFtDlFR_Th8gSyA4E8nWxvceTgS/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMJ2Rt3gfKoyzgBwZ3qXzNl503910Vw2V9p7phGRkAEn5FDrRTYfrJoJJcnVpp2wz2/exec";
 
         // DOM Elements
         const searchInput = document.getElementById('search');
         const editForm = document.getElementById('editForm');
         const msg = document.getElementById('msg');
+
+        // Store form elements references
+        let billNoInput, placeInput, detailInput, saveBtn, deleteBtn;
 
         // Search for bill
         const searchBill = async (billNo) => {
@@ -671,8 +674,7 @@
                 return;
             }
 
-            // Show loading in edit form
-            editForm.classList.add('active');
+            // Show loading
             const originalContent = editForm.innerHTML;
             editForm.innerHTML = `
                 <div class="loading">
@@ -680,6 +682,7 @@
                     <div>กำลังค้นหาบิล...</div>
                 </div>
             `;
+            editForm.classList.add('active');
 
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`);
@@ -692,14 +695,23 @@
                     return;
                 }
 
-                // Update form with data
-                document.getElementById('billNo').value = data.bill.billNo;
-                document.getElementById('place').value = data.bill.place || '';
-                document.getElementById('detail').value = data.bill.detail || '';
+                // Restore form and fill with data
+                editForm.innerHTML = originalContent;
+                
+                // Get references to form elements
+                billNoInput = document.getElementById('billNo');
+                placeInput = document.getElementById('place');
+                detailInput = document.getElementById('detail');
+                saveBtn = document.getElementById('saveBtn');
+                deleteBtn = document.getElementById('deleteBtn');
+                
+                // Fill form with data
+                billNoInput.value = data.bill.billNo || '';
+                placeInput.value = data.bill.place || '';
+                detailInput.value = data.bill.detail || '';
                 
                 // Show form
                 editForm.classList.add('active');
-                editForm.innerHTML = originalContent;
 
             } catch (error) {
                 msg.className = 'message error';
@@ -711,9 +723,11 @@
 
         // Save changes
         const saveBill = async () => {
-            const billNo = document.getElementById('billNo').value;
-            const place = document.getElementById('place').value;
-            const detail = document.getElementById('detail').value;
+            if (!billNoInput || !placeInput || !detailInput) return;
+            
+            const billNo = billNoInput.value;
+            const place = placeInput.value;
+            const detail = detailInput.value;
             
             msg.className = 'message';
             msg.textContent = '';
@@ -721,62 +735,65 @@
             if (!place) {
                 msg.className = 'message warning';
                 msg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> กรุณากรอกสถานที่';
-                document.getElementById('place').focus();
+                placeInput.focus();
                 return;
             }
 
             // Disable button and show loading
-            const saveBtn = document.getElementById('saveBtn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
-            saveBtn.disabled = true;
+            if (saveBtn) {
+                const originalText = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+                saveBtn.disabled = true;
 
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "edit",
-                        billNo: billNo,
-                        place: place,
-                        detail: detail
-                    })
-                });
+                try {
+                    const res = await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            action: "edit",
+                            billNo: billNo,
+                            place: place,
+                            detail: detail
+                        })
+                    });
 
-                const data = await res.json();
-                
-                if (data.success) {
-                    msg.className = 'message success';
-                    msg.innerHTML = '<i class="fas fa-check-circle"></i> แก้ไขข้อมูลบิลเรียบร้อยแล้ว';
+                    const data = await res.json();
                     
-                    // Auto hide message after 5 seconds
-                    setTimeout(() => {
-                        msg.style.opacity = '0';
+                    if (data.success) {
+                        msg.className = 'message success';
+                        msg.innerHTML = '<i class="fas fa-check-circle"></i> แก้ไขข้อมูลบิลเรียบร้อยแล้ว';
+                        
+                        // Auto hide message after 5 seconds
                         setTimeout(() => {
-                            msg.className = 'message';
-                            msg.style.opacity = '1';
-                        }, 300);
-                    }, 5000);
-                } else {
+                            msg.style.opacity = '0';
+                            setTimeout(() => {
+                                msg.className = 'message';
+                                msg.style.opacity = '1';
+                            }, 300);
+                        }, 5000);
+                    } else {
+                        msg.className = 'message error';
+                        msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการบันทึก'}`;
+                    }
+                } catch (error) {
                     msg.className = 'message error';
-                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการบันทึก'}`;
+                    msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                    console.error('Save error:', error);
+                } finally {
+                    // Restore button state
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
                 }
-            } catch (error) {
-                msg.className = 'message error';
-                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
-                console.error('Save error:', error);
-            } finally {
-                // Restore button state
-                saveBtn.innerHTML = originalText;
-                saveBtn.disabled = false;
             }
         };
 
         // Delete bill
         const deleteBill = async () => {
-            const billNo = document.getElementById('billNo').value;
+            if (!billNoInput) return;
+            
+            const billNo = billNoInput.value;
             
             // Show confirmation dialog
             const confirmDelete = await showConfirmationDialog(
@@ -788,53 +805,54 @@
             if (!confirmDelete) return;
 
             // Disable button and show loading
-            const deleteBtn = document.getElementById('deleteBtn');
-            const originalText = deleteBtn.innerHTML;
-            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...';
-            deleteBtn.disabled = true;
+            if (deleteBtn) {
+                const originalText = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...';
+                deleteBtn.disabled = true;
 
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "delete",
-                        billNo: billNo
-                    })
-                });
+                try {
+                    const res = await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            action: "delete",
+                            billNo: billNo
+                        })
+                    });
 
-                const data = await res.json();
-                
-                if (data.success) {
-                    msg.className = 'message success';
-                    msg.innerHTML = '<i class="fas fa-check-circle"></i> ลบบิลเรียบร้อยแล้ว';
+                    const data = await res.json();
                     
-                    // Clear form and search
-                    searchInput.value = '';
-                    editForm.classList.remove('active');
-                    
-                    // Auto hide message after 5 seconds
-                    setTimeout(() => {
-                        msg.style.opacity = '0';
+                    if (data.success) {
+                        msg.className = 'message success';
+                        msg.innerHTML = '<i class="fas fa-check-circle"></i> ลบบิลเรียบร้อยแล้ว';
+                        
+                        // Clear form and search
+                        searchInput.value = '';
+                        editForm.classList.remove('active');
+                        
+                        // Auto hide message after 5 seconds
                         setTimeout(() => {
-                            msg.className = 'message';
-                            msg.style.opacity = '1';
-                        }, 300);
-                    }, 5000);
-                } else {
+                            msg.style.opacity = '0';
+                            setTimeout(() => {
+                                msg.className = 'message';
+                                msg.style.opacity = '1';
+                            }, 300);
+                        }, 5000);
+                    } else {
+                        msg.className = 'message error';
+                        msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการลบ'}`;
+                    }
+                } catch (error) {
                     msg.className = 'message error';
-                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการลบ'}`;
+                    msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                    console.error('Delete error:', error);
+                } finally {
+                    // Restore button state
+                    deleteBtn.innerHTML = originalText;
+                    deleteBtn.disabled = false;
                 }
-            } catch (error) {
-                msg.className = 'message error';
-                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
-                console.error('Delete error:', error);
-            } finally {
-                // Restore button state
-                deleteBtn.innerHTML = originalText;
-                deleteBtn.disabled = false;
             }
         };
 
@@ -910,18 +928,25 @@
             }
         });
 
+        // Use event delegation for dynamic buttons
         document.addEventListener('click', (e) => {
-            if (e.target.id === 'saveBtn' || e.target.closest('#saveBtn')) {
+            if (e.target && (e.target.id === 'saveBtn' || e.target.closest('#saveBtn'))) {
                 saveBill();
             }
             
-            if (e.target.id === 'deleteBtn' || e.target.closest('#deleteBtn')) {
+            if (e.target && (e.target.id === 'deleteBtn' || e.target.closest('#deleteBtn'))) {
                 deleteBill();
             }
         });
 
-        // Initialize
+        // Initialize - get references to form elements on page load
         document.addEventListener('DOMContentLoaded', () => {
+            billNoInput = document.getElementById('billNo');
+            placeInput = document.getElementById('place');
+            detailInput = document.getElementById('detail');
+            saveBtn = document.getElementById('saveBtn');
+            deleteBtn = document.getElementById('deleteBtn');
+            
             // Focus on search input
             searchInput.focus();
         });

@@ -3,923 +3,953 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการบิล - แก้ไข/ลบบิล</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>ระบบจัดการบิล| แก้ไข / ลบบิล </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --danger: #e63946;
-            --success: #2a9d8f;
-            --warning: #f4a261;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --border-radius: 10px;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --primary-purple: #8b5cf6;
+            --primary-purple-dark: #7c3aed;
+            --primary-purple-light: #a78bfa;
+            --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            --light-purple: #f5f3ff;
+            --white: #ffffff;
+            --light-gray: #f8fafc;
+            --border-color: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
+            --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.2);
+            --shadow-card: 0 8px 20px rgba(0, 0, 0, 0.06);
+            --radius: 16px;
+            --radius-lg: 24px;
+            --transition: all 0.3s ease;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Sarabun', sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: var(--dark);
+            font-family: 'Segoe UI', 'Sukhumvit Set', 'Kanit', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
-        
-        .container {
-            max-width: 900px;
+
+        /* Header */
+        .header {
+            background: var(--gradient-purple);
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.3;
+        }
+
+        .header-content {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
         }
-        
-        header {
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 25px 30px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-            border-left: 5px solid var(--primary);
-        }
-        
-        h1 {
-            color: var(--dark);
-            margin-bottom: 8px;
+
+        .logo {
             display: flex;
             align-items: center;
             gap: 12px;
+            color: white;
+            text-decoration: none;
         }
-        
-        h1 i {
-            color: var(--primary);
-        }
-        
-        .subtitle {
-            color: var(--gray);
-            font-size: 1.05rem;
-        }
-        
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            padding: 28px;
-            margin-bottom: 25px;
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-3px);
-        }
-        
-        .card-title {
-            color: var(--primary);
-            margin-bottom: 22px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+
+        .logo-icon {
+            font-size: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.35rem;
+            justify-content: center;
         }
-        
-        .card-title i {
-            font-size: 1.2rem;
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
-        
-        .form-group {
-            margin-bottom: 22px;
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
             font-weight: 600;
-            color: var(--dark);
-        }
-        
-        .required::after {
-            content: " *";
-            color: var(--danger);
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 14px 18px;
-            border: 2px solid #e1e5eb;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
-        }
-        
-        .search-section {
+            font-size: 16px;
             display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            padding: 8px 16px;
+            border-radius: 50px;
         }
-        
-        .search-box {
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .nav-links a i {
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
             flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .main-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 35px;
             position: relative;
         }
-        
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-purple);
+            border-radius: 2px;
+        }
+
+        .card-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .card-title i {
+            font-size: 36px;
+            background: var(--light-purple);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Search Box */
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
         .search-icon {
             position: absolute;
-            left: 18px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray);
+            color: var(--primary-purple);
+            font-size: 20px;
+            z-index: 2;
         }
-        
+
         .search-input {
-            padding-left: 50px;
+            width: 100%;
+            padding: 18px 20px 18px 55px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--light-gray);
+            transition: var(--transition);
+            font-family: inherit;
         }
-        
-        .btn {
-            display: inline-flex;
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-hint {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding-left: 10px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 14px 26px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            white-space: nowrap;
+            gap: 6px;
         }
-        
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #d32f3e;
-            transform: translateY(-2px);
-        }
-        
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #248277;
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-        
-        .bill-details {
-            background: #f8fafc;
-            border-radius: 8px;
-            padding: 22px;
-            margin: 25px 0;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .detail-row {
-            display: flex;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .detail-row:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            min-width: 130px;
-            color: var(--gray);
-        }
-        
-        .detail-value {
-            flex: 1;
-            color: var(--dark);
-        }
-        
-        .status-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .status-pending {
-            background: rgba(244, 162, 97, 0.15);
-            color: #e76f51;
-        }
-        
-        .status-completed {
-            background: rgba(42, 157, 143, 0.15);
-            color: var(--success);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 18px;
+
+        /* Edit Form */
+        .edit-form {
+            display: none;
             margin-top: 30px;
-        }
-        
-        .alert {
-            padding: 18px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
             animation: fadeIn 0.5s ease;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
-        .alert-success {
-            background: rgba(42, 157, 143, 0.1);
-            border-left: 4px solid var(--success);
-            color: #1a7569;
+
+        .edit-form.active {
+            display: block;
         }
-        
-        .alert-error {
-            background: rgba(230, 57, 70, 0.1);
-            border-left: 4px solid var(--danger);
-            color: #c52a35;
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
         }
-        
-        .alert-warning {
-            background: rgba(244, 162, 97, 0.1);
-            border-left: 4px solid var(--warning);
-            color: #cc7c38;
+
+        .form-header i {
+            color: var(--primary-purple);
+            font-size: 24px;
         }
-        
-        .alert i {
-            font-size: 1.3rem;
-            flex-shrink: 0;
+
+        .form-header h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
         }
-        
-        .hidden {
-            display: none !important;
+
+        .form-group {
+            margin-bottom: 20px;
         }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--primary-purple-dark);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+
+        .form-label i {
+            color: var(--primary-purple);
+            font-size: 16px;
         }
-        
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
+
+        .form-input, .form-textarea {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 16px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--light-gray);
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f1f5f9;
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .btn-save {
+            background: var(--gradient-purple);
+            color: white;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Message */
+        .message {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            display: flex;
+        }
+
+        .message.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            display: flex;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-purple);
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--light-purple);
+            border-top: 3px solid var(--primary-purple);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--white);
+            padding: 30px 0;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
             display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal.show .modal-content {
-            transform: translateY(0);
-        }
-        
-        .modal-header {
-            margin-bottom: 22px;
-            padding-bottom: 18px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .modal-title {
-            color: var(--danger);
-            font-size: 1.4rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .modal-body {
-            margin-bottom: 28px;
-            line-height: 1.6;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--gray);
-        }
-        
-        .no-results i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #dbe2e8;
-        }
-        
-        .no-results h3 {
-            margin-bottom: 12px;
-            color: #adb5bd;
-        }
-        
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(0, 0, 0, 0.08);
-            color: var(--gray);
-            font-size: 0.95rem;
-        }
-        
-        .connection-info {
-            background: #f0f7ff;
-            border-radius: 8px;
-            padding: 15px;
+            gap: 25px;
             margin-top: 20px;
-            font-size: 0.9rem;
-            color: #4a6fa5;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
-        
-        .connection-info i {
-            color: var(--primary);
-            font-size: 1.2rem;
+
+        .footer-links a:hover {
+            color: var(--primary-purple-dark);
+            text-decoration: underline;
         }
-        
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 0 10px;
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
             }
-            
-            .search-section {
+
+            .main-card {
+                padding: 30px 25px;
+            }
+
+            .card-title {
+                font-size: 28px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                padding: 6px 12px;
+                font-size: 15px;
+            }
+
+            .form-actions {
                 flex-direction: column;
             }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
+
             .btn {
                 width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-title i {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
                 justify-content: center;
-            }
-            
-            .detail-row {
-                flex-direction: column;
-                gap: 8px;
-            }
-            
-            .detail-label {
-                min-width: auto;
             }
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-file-invoice-dollar"></i> ระบบจัดการบิล - แก้ไข/ลบบิล</h1>
-            <p class="subtitle">ค้นหา แก้ไข และลบข้อมูลบิลในระบบ</p>
-        </header>
-        
-        <!-- ส่วนการค้นหา -->
-        <div class="card">
-            <h2 class="card-title"><i class="fas fa-search"></i> ค้นหาบิลเพื่อจัดการ</h2>
-            <p>กรอกเลขที่บิลที่ต้องการแก้ไขหรือลบข้อมูล</p>
-            
-            <div class="search-section">
-                <div class="search-box">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="billNoSearch" class="form-control search-input" 
-                           placeholder="เช่น INV-2025-001, INV-2025-002" autocomplete="off">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
                 </div>
-                <button id="searchBtn" class="btn btn-primary">
-                    <i class="fas fa-search"></i> ค้นหาบิล
-                </button>
-            </div>
+                <div class="logo-text">ระบบจัดการบิล</div>
+            </a>
+
+            <nav class="nav-links">
+                <a href="https://sarawutc6689-cpu.github.io/PEA/CheckBill.html">
+                    <i class="fas fa-search"></i>
+                    <span>ค้นหา/รับบิล</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/Report.html">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>รายงาน</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/AddBill.html">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>เพิ่มบิล</span>
+                </a>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/EditBill.html" class="active">
+                    <i class="fas fa-edit"></i>
+                    <span>แก้ไข/ลบ</span>
+                </a>
+            </nav>
         </div>
-        
-        <!-- แสดงข้อความแจ้งเตือน -->
-        <div id="alertContainer"></div>
-        
-        <!-- แสดงผลลัพธ์การค้นหา -->
-        <div id="billDetailsContainer" class="hidden">
-            <div class="card">
-                <h2 class="card-title"><i class="fas fa-file-alt"></i> รายละเอียดบิลที่พบ</h2>
-                
-                <div id="billDetails" class="bill-details">
-                    <!-- ข้อมูลบิลจะแสดงที่นี่ -->
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="main-card">
+                <div class="card-header">
+                    <h1 class="card-title">
+                        <i class="fas fa-edit"></i>
+                        แก้ไข / ลบบิล
+                    </h1>
+                    <p class="card-subtitle">ค้นหาบิลด้วยเลขบิลเพื่อแก้ไขหรือลบข้อมูล</p>
                 </div>
-                
-                <h3 class="card-title"><i class="fas fa-edit"></i> แก้ไขข้อมูลบิล</h3>
-                
-                <form id="editForm">
-                    <div class="form-group">
-                        <label for="editBillNo" class="required">เลขที่บิล</label>
-                        <input type="text" id="editBillNo" class="form-control" readonly>
-                        <small style="color: var(--gray); font-size: 0.9rem; display: block; margin-top: 6px;">
-                            <i class="fas fa-info-circle"></i> เลขที่บิลไม่สามารถแก้ไขได้
-                        </small>
+
+                <!-- Search Box -->
+                <div class="search-container">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="search" class="search-input" placeholder="กรอกเลขบิลเพื่อค้นหา">
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="editPlace" class="required">สถานที่</label>
-                        <input type="text" id="editPlace" class="form-control" required>
+                    <div class="search-hint">
+                        <i class="fas fa-lightbulb"></i>
+                        ระบบจะค้นหาบิลที่ตรงกับเลขบิลที่คุณกรอก
                     </div>
-                    
-                    <div class="form-group">
-                        <label for="editDetail">รายละเอียด</label>
-                        <textarea id="editDetail" class="form-control" rows="4" 
-                                  placeholder="รายละเอียดเพิ่มเติมเกี่ยวกับบิลนี้"></textarea>
+                </div>
+
+                <!-- Edit Form -->
+                <div id="editForm" class="edit-form">
+                    <div class="form-header">
+                        <i class="fas fa-file-invoice"></i>
+                        <h3>รายละเอียดบิล</h3>
                     </div>
-                    
+
                     <div class="form-group">
-                        <label>สถานะบิล</label>
-                        <div id="statusDisplay" class="status-badge status-pending">กำลังโหลด...</div>
-                        <small style="color: var(--gray); font-size: 0.9rem; display: block; margin-top: 6px;">
-                            <i class="fas fa-info-circle"></i> สถานะบิลไม่สามารถแก้ไขได้จากหน้านี้
-                        </small>
+                        <label class="form-label">
+                            <i class="fas fa-hashtag"></i>
+                            เลขที่บิล
+                        </label>
+                        <input type="text" id="billNo" class="form-input" disabled>
                     </div>
-                    
-                    <div class="action-buttons">
-                        <button type="submit" id="saveEditBtn" class="btn btn-success">
-                            <i class="fas fa-save"></i> บันทึกการแก้ไข
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            สถานที่
+                            <span style="color: var(--danger); margin-left: 5px;">*</span>
+                        </label>
+                        <input type="text" id="place" class="form-input" placeholder="กรอกสถานที่ของบิล">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            รายละเอียด
+                        </label>
+                        <textarea id="detail" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="saveBtn" class="btn btn-save">
+                            <i class="fas fa-save"></i>
+                            บันทึกแก้ไข
                         </button>
-                        <button type="button" id="deleteBtn" class="btn btn-danger">
-                            <i class="fas fa-trash-alt"></i> ลบบิลนี้
+                        <button id="deleteBtn" class="btn btn-delete">
+                            <i class="fas fa-trash-alt"></i>
+                            ลบบิล
                         </button>
                     </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- ไม่พบผลลัพธ์ -->
-        <div id="noResults" class="no-results hidden">
-            <i class="fas fa-file-search"></i>
-            <h3>ไม่พบข้อมูลบิล</h3>
-            <p>กรุณาระบุเลขที่บิลที่ต้องการค้นหา หรือลองเลขบิลอื่น</p>
-        </div>
-        
-        <!-- ข้อมูลการเชื่อมต่อ -->
-        <div class="connection-info">
-            <i class="fas fa-database"></i>
-            <div>
-                <strong>เชื่อมต่อกับ:</strong> 
-                <span id="connectionStatus">กำลังตรวจสอบการเชื่อมต่อ...</span>
-                <span id="sheetInfo" class="hidden"></span>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal ยืนยันการลบ -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-exclamation-triangle"></i> ยืนยันการลบ</h3>
-            </div>
-            <div class="modal-body">
-                <p>คุณแน่ใจหรือไม่ว่าต้องการลบบิล <strong id="deleteBillNoText"></strong> ออกจากระบบ?</p>
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <div>
-                        <strong>คำเตือน:</strong> การลบข้อมูลนี้จะไม่สามารถกู้คืนได้ กรุณาตรวจสอบให้แน่ใจก่อนดำเนินการ
-                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button id="cancelDeleteBtn" class="btn" style="background: #e9ecef; color: var(--dark);">
-                    ยกเลิก
-                </button>
-                <button id="confirmDeleteBtn" class="btn btn-danger">
-                    <i class="fas fa-trash-alt"></i> ลบข้อมูลทันที
-                </button>
+
+                <!-- Message -->
+                <div id="msg" class="message"></div>
             </div>
         </div>
-    </div>
-    
-    <footer>
-        <p>ระบบจัดการบิล &copy; <span id="currentYear"></span> | พัฒนาด้วย Google Apps Script</p>
-        <p style="font-size: 0.85rem; margin-top: 5px; opacity: 0.7;">
-            เชื่อมต่อกับ Google Sheet: <span id="sheetIdDisplay"></span>
-        </p>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">ระบบจัดการใบเสร็จ © 2026 | พัฒนาโดย Sarawut.C</p>
+            <p class="footer-text">สำหรับใช้ส่วนตัวท่านั้น</p>
+        </div>
     </footer>
 
     <script>
-        // ตั้งค่า URL ของ Google Apps Script Web App
-        // หลังจากเผยแพร่แล้ว ให้คัดลอก URL มาวางที่นี่
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyhBJPvnrE9AjL6_AJ0iP1MIQnVcSRcEsd_jaFS4qUoxK3VfhIbAHOxD9sJ9jzo4Ot5MA/exec';
-        
-        // ตัวแปรเก็บข้อมูลบิลปัจจุบัน
-        let currentBill = null;
-        let isConnected = false;
-        
-        // แสดงข้อความแจ้งเตือน
-        function showAlert(message, type = 'success', duration = 5000) {
-            const alertContainer = document.getElementById('alertContainer');
-            
-            // ลบข้อความเก่า
-            while (alertContainer.firstChild) {
-                alertContainer.removeChild(alertContainer.firstChild);
-            }
-            
-            // สร้างข้อความใหม่
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            
-            let icon = 'fas fa-check-circle';
-            if (type === 'error') icon = 'fas fa-exclamation-circle';
-            if (type === 'warning') icon = 'fas fa-exclamation-triangle';
-            
-            alertDiv.innerHTML = `
-                <i class="${icon}"></i>
-                <div>${message}</div>
-            `;
-            
-            alertContainer.appendChild(alertDiv);
-            
-            // ซ่อนอัตโนมัติหลังจากเวลาที่กำหนด (ยกเว้น error)
-            if (type !== 'error' && duration > 0) {
-                setTimeout(() => {
-                    if (alertDiv.parentNode === alertContainer) {
-                        alertDiv.style.opacity = '0';
-                        alertDiv.style.transition = 'opacity 0.5s ease';
-                        setTimeout(() => {
-                            if (alertDiv.parentNode === alertContainer) {
-                                alertContainer.removeChild(alertDiv);
-                            }
-                        }, 500);
-                    }
-                }, duration);
-            }
-        }
-        
-        // ตั้งค่าสถานะปุ่ม loading
-        function setButtonLoading(button, isLoading) {
-            if (isLoading) {
-                button.dataset.originalText = button.innerHTML;
-                button.innerHTML = `<div class="loading"></div> กำลังประมวลผล...`;
-                button.disabled = true;
-            } else {
-                if (button.dataset.originalText) {
-                    button.innerHTML = button.dataset.originalText;
-                }
-                button.disabled = false;
-            }
-        }
-        
-        // ฟังก์ชันค้นหาบิล
-        async function searchBill() {
-            const billNo = document.getElementById('billNoSearch').value.trim();
+       const SCRIPT_URL = "https://corsproxy.io/?https://script.google.com/macros/s/AKfycbwMJ2Rt3gfKoyzgBwZ3qXzNl503910Vw2V9p7phGRkAEn5FDrRTYfrJoJJcnVpp2wz2/exec";
+
+        // DOM Elements
+        const searchInput = document.getElementById('search');
+        const editForm = document.getElementById('editForm');
+        const billNoInput = document.getElementById('billNo');
+        const placeInput = document.getElementById('place');
+        const detailInput = document.getElementById('detail');
+        const saveBtn = document.getElementById('saveBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const msg = document.getElementById('msg');
+
+        // Search for bill
+        searchInput.addEventListener('change', async () => {
+            const billNo = searchInput.value.trim();
+            msg.className = 'message';
+            msg.textContent = '';
             
             if (!billNo) {
-                showAlert('กรุณากรอกเลขที่บิลที่ต้องการค้นหา', 'warning');
+                editForm.classList.remove('active');
                 return;
             }
-            
-            const searchBtn = document.getElementById('searchBtn');
-            setButtonLoading(searchBtn, true);
-            
-            try {
-                // เรียก API ค้นหาบิล
-                const url = `${SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`;
-                console.log('เรียก API:', url);
-                
-                const response = await fetch(url);
-                const result = await response.json();
-                
-                console.log('ผลลัพธ์ API:', result);
-                
-                if (result.success) {
-                    currentBill = result.bill;
-                    displayBillDetails(currentBill);
-                    showAlert('พบข้อมูลบิลเรียบร้อยแล้ว', 'success');
-                } else {
-                    showAlert(result.message || 'ไม่พบบิลในระบบ', 'error');
-                    hideBillDetails();
-                }
-            } catch (error) {
-                console.error('Error searching bill:', error);
-                showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
-                hideBillDetails();
-            } finally {
-                setButtonLoading(searchBtn, false);
-            }
-        }
-        
-        // แสดงรายละเอียดบิล
-        function displayBillDetails(bill) {
-            const container = document.getElementById('billDetailsContainer');
-            const noResults = document.getElementById('noResults');
-            
-            container.classList.remove('hidden');
-            noResults.classList.add('hidden');
-            
-            // แสดงข้อมูลในส่วนรายละเอียด
-            const detailsDiv = document.getElementById('billDetails');
-            detailsDiv.innerHTML = `
-                <div class="detail-row">
-                    <div class="detail-label">เลขที่บิล:</div>
-                    <div class="detail-value"><strong>${bill.billNo}</strong></div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">สถานที่:</div>
-                    <div class="detail-value">${bill.place}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">รายละเอียด:</div>
-                    <div class="detail-value">${bill.detail || '<span style="color: #adb5bd;">(ไม่มีรายละเอียด)</span>'}</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">สถานะ:</div>
-                    <div class="detail-value">
-                        <span class="status-badge ${bill.status === 'รับบิลแล้ว' ? 'status-completed' : 'status-pending'}">
-                            ${bill.status}
-                        </span>
-                    </div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">วันที่บันทึก:</div>
-                    <div class="detail-value">${bill.date || '<span style="color: #adb5bd;">(ไม่ระบุ)</span>'}</div>
+
+            // Show loading
+            editForm.classList.add('active');
+            editForm.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>กำลังค้นหาบิล...</div>
                 </div>
             `;
-            
-            // กรอกข้อมูลในฟอร์มแก้ไข
-            document.getElementById('editBillNo').value = bill.billNo;
-            document.getElementById('editPlace').value = bill.place;
-            document.getElementById('editDetail').value = bill.detail || '';
-            
-            // อัพเดตการแสดงสถานะ
-            const statusDisplay = document.getElementById('statusDisplay');
-            statusDisplay.textContent = bill.status;
-            statusDisplay.className = `status-badge ${bill.status === 'รับบิลแล้ว' ? 'status-completed' : 'status-pending'}`;
-            
-            // ตั้งค่าปุ่มลบ (ปิดใช้งานหากบิลถูกรับแล้ว)
-            const deleteBtn = document.getElementById('deleteBtn');
-            if (bill.status === 'รับบิลแล้ว') {
-                deleteBtn.disabled = true;
-                deleteBtn.title = "ไม่สามารถลบบิลที่รับแล้วได้";
-                deleteBtn.innerHTML = '<i class="fas fa-ban"></i> ไม่สามารถลบบิลที่รับแล้วได้';
-            } else {
-                deleteBtn.disabled = false;
-                deleteBtn.title = "ลบบิลนี้";
-                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> ลบบิลนี้';
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`);
+                const data = await res.json();
+
+                if (!data.success) {
+                    msg.className = 'message error';
+                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'ไม่พบบิลนี้ในระบบ'}`;
+                    editForm.classList.remove('active');
+                    return;
+                }
+
+                // Show edit form with data
+                editForm.classList.add('active');
+                editForm.innerHTML = `
+                    <div class="form-header">
+                        <i class="fas fa-file-invoice"></i>
+                        <h3>รายละเอียดบิล</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-hashtag"></i>
+                            เลขที่บิล
+                        </label>
+                        <input type="text" id="billNo" class="form-input" disabled value="${data.bill.billNo}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            สถานที่
+                            <span style="color: var(--danger); margin-left: 5px;">*</span>
+                        </label>
+                        <input type="text" id="place" class="form-input" placeholder="กรอกสถานที่ของบิล" value="${data.bill.place || ''}">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-align-left"></i>
+                            รายละเอียด
+                        </label>
+                        <textarea id="detail" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)">${data.bill.detail || ''}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="saveBtn" class="btn btn-save">
+                            <i class="fas fa-save"></i>
+                            บันทึกแก้ไข
+                        </button>
+                        <button id="deleteBtn" class="btn btn-delete">
+                            <i class="fas fa-trash-alt"></i>
+                            ลบบิล
+                        </button>
+                    </div>
+                `;
+
+                // Reattach event listeners
+                document.getElementById('saveBtn').addEventListener('click', save);
+                document.getElementById('deleteBtn').addEventListener('click', remove);
+
+            } catch (error) {
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                console.error('Search error:', error);
+                editForm.classList.remove('active');
             }
-        }
-        
-        // ซ่อนรายละเอียดบิล
-        function hideBillDetails() {
-            const container = document.getElementById('billDetailsContainer');
-            const noResults = document.getElementById('noResults');
+        });
+
+        // Save changes
+        async function save() {
+            const billNo = document.getElementById('billNo').value;
+            const place = document.getElementById('place').value;
+            const detail = document.getElementById('detail').value;
             
-            container.classList.add('hidden');
-            noResults.classList.remove('hidden');
-            currentBill = null;
-        }
-        
-        // บันทึกการแก้ไขบิล
-        async function saveBillEdit(event) {
-            event.preventDefault();
+            msg.className = 'message';
+            msg.textContent = '';
             
-            const billNo = document.getElementById('editBillNo').value.trim();
-            const place = document.getElementById('editPlace').value.trim();
-            const detail = document.getElementById('editDetail').value.trim();
-            
-            if (!billNo || !place) {
-                showAlert('กรุณากรอกข้อมูลให้ครบถ้วน โดยเฉพาะสถานที่', 'warning');
+            if (!place) {
+                msg.className = 'message warning';
+                msg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> กรุณากรอกสถานที่';
+                document.getElementById('place').focus();
                 return;
             }
-            
-            const saveBtn = document.getElementById('saveEditBtn');
-            setButtonLoading(saveBtn, true);
-            
+
+            // Disable button and show loading
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
+            saveBtn.disabled = true;
+
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        action: 'editBill',
+                        action: "edit",
                         billNo: billNo,
                         place: place,
                         detail: detail
                     })
                 });
+
+                const data = await res.json();
                 
-                const result = await response.json();
-                
-                if (result.success) {
-                    showAlert('บันทึกการแก้ไขบิลเรียบร้อยแล้ว', 'success');
+                if (data.success) {
+                    msg.className = 'message success';
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> แก้ไขข้อมูลบิลเรียบร้อยแล้ว';
                     
-                    // อัพเดตข้อมูลบิลปัจจุบัน
-                    if (currentBill) {
-                        currentBill.place = place;
-                        currentBill.detail = detail;
-                        currentBill.date = result.updatedBill?.updatedAt || currentBill.date;
-                        displayBillDetails(currentBill);
-                    }
+                    // Auto hide message after 5 seconds
+                    setTimeout(() => {
+                        msg.style.opacity = '0';
+                        setTimeout(() => {
+                            msg.className = 'message';
+                            msg.style.opacity = '1';
+                        }, 300);
+                    }, 5000);
                 } else {
-                    showAlert(result.message || 'เกิดข้อผิดพลาดในการแก้ไขบิล', 'error');
+                    msg.className = 'message error';
+                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการบันทึก'}`;
                 }
             } catch (error) {
-                console.error('Error saving bill:', error);
-                showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                console.error('Save error:', error);
             } finally {
-                setButtonLoading(saveBtn, false);
+                // Restore button state
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
             }
         }
-        
-        // เปิดโมดัลยืนยันการลบ
-        function openDeleteModal() {
-            if (!currentBill) return;
+
+        // Delete bill
+        async function remove() {
+            const billNo = document.getElementById('billNo').value;
             
-            if (currentBill.status === 'รับบิลแล้ว') {
-                showAlert('ไม่สามารถลบบิลที่รับแล้วได้', 'warning');
-                return;
-            }
+            // Show confirmation dialog
+            const confirmDelete = await showConfirmationDialog(
+                'ยืนยันการลบบิล',
+                `คุณแน่ใจหรือไม่ที่ต้องการลบบิล <strong>${billNo}</strong> ?<br><br>การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
+                'danger'
+            );
             
-            document.getElementById('deleteBillNoText').textContent = currentBill.billNo;
-            
-            const modal = document.getElementById('deleteModal');
-            modal.classList.add('show');
-        }
-        
-        // ปิดโมดัลยืนยันการลบ
-        function closeDeleteModal() {
-            const modal = document.getElementById('deleteModal');
-            modal.classList.remove('show');
-        }
-        
-        // ลบบิล
-        async function deleteBill() {
-            if (!currentBill) return;
-            
-            const confirmBtn = document.getElementById('confirmDeleteBtn');
-            setButtonLoading(confirmBtn, true);
-            
+            if (!confirmDelete) return;
+
+            // Disable button and show loading
+            const deleteBtn = document.getElementById('deleteBtn');
+            const originalText = deleteBtn.innerHTML;
+            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...';
+            deleteBtn.disabled = true;
+
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        action: 'deleteBill',
-                        billNo: currentBill.billNo
+                        action: "delete",
+                        billNo: billNo
                     })
                 });
+
+                const data = await res.json();
                 
-                const result = await response.json();
-                
-                if (result.success) {
-                    showAlert('ลบบิลเรียบร้อยแล้ว', 'success');
+                if (data.success) {
+                    msg.className = 'message success';
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> ลบบิลเรียบร้อยแล้ว';
                     
-                    // รีเซ็ตฟอร์ม
-                    document.getElementById('billNoSearch').value = '';
-                    hideBillDetails();
+                    // Clear form and search
+                    searchInput.value = '';
+                    editForm.classList.remove('active');
                     
-                    // ปิดโมดัล
-                    closeDeleteModal();
+                    // Auto hide message after 5 seconds
+                    setTimeout(() => {
+                        msg.style.opacity = '0';
+                        setTimeout(() => {
+                            msg.className = 'message';
+                            msg.style.opacity = '1';
+                        }, 300);
+                    }, 5000);
                 } else {
-                    showAlert(result.message || 'เกิดข้อผิดพลาดในการลบบิล', 'error');
+                    msg.className = 'message error';
+                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการลบ'}`;
                 }
             } catch (error) {
-                console.error('Error deleting bill:', error);
-                showAlert('เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์', 'error');
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                console.error('Delete error:', error);
             } finally {
-                setButtonLoading(confirmBtn, false);
+                // Restore button state
+                deleteBtn.innerHTML = originalText;
+                deleteBtn.disabled = false;
             }
         }
-        
-        // ตรวจสอบการเชื่อมต่อ
-        async function checkConnection() {
-            const statusElement = document.getElementById('connectionStatus');
-            const sheetInfoElement = document.getElementById('sheetInfo');
-            
-            try {
-                // ส่งคำขอแบบง่ายเพื่อทดสอบ
-                const testUrl = `${SCRIPT_URL}?action=getBill&billNo=TEST`;
-                const response = await fetch(testUrl, { mode: 'no-cors' }).catch(() => null);
-                
-                statusElement.innerHTML = `<span style="color: #2a9d8f;"><i class="fas fa-check-circle"></i> เชื่อมต่อแล้ว</span>`;
-                sheetInfoElement.innerHTML = ` | Sheet ID: ${SPREADSHEET_ID.substring(0, 8)}...`;
-                sheetInfoElement.classList.remove('hidden');
-                
-                document.getElementById('sheetIdDisplay').textContent = SPREADSHEET_ID.substring(0, 12) + '...';
-                isConnected = true;
-                
-            } catch (error) {
-                statusElement.innerHTML = `<span style="color: #e63946;"><i class="fas fa-times-circle"></i> ยังไม่ได้ตั้งค่า URL</span>`;
-                statusElement.innerHTML += `<br><small>กรุณาตั้งค่า SCRIPT_URL ในโค้ด JavaScript</small>`;
-                isConnected = false;
-            }
-        }
-        
-        // ตรวจสอบการกด Enter ในช่องค้นหา
-        function checkSearchKey(event) {
-            if (event.key === 'Enter') {
-                searchBill();
-            }
-        }
-        
-        // ตั้งค่าเบื้องต้นเมื่อโหลดหน้า
-        function init() {
-            // ตั้งค่าปีปัจจุบันใน footer
-            document.getElementById('currentYear').textContent = new Date().getFullYear();
-            
-            // ตั้งค่า event listeners
-            document.getElementById('searchBtn').addEventListener('click', searchBill);
-            document.getElementById('billNoSearch').addEventListener('keypress', checkSearchKey);
-            document.getElementById('editForm').addEventListener('submit', saveBillEdit);
-            document.getElementById('deleteBtn').addEventListener('click', openDeleteModal);
-            document.getElementById('cancelDeleteBtn').addEventListener('click', closeDeleteModal);
-            document.getElementById('confirmDeleteBtn').addEventListener('click', deleteBill);
-            
-            // ปิดโมดัลเมื่อคลิกพื้นหลัง
-            document.getElementById('deleteModal').addEventListener('click', function(e) {
-                if (e.target === this) closeDeleteModal();
+
+        // Custom confirmation dialog
+        function showConfirmationDialog(title, message, type = 'warning') {
+            return new Promise((resolve) => {
+                const dialog = document.createElement('div');
+                dialog.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1000;
+                `;
+
+                const dialogContent = document.createElement('div');
+                dialogContent.style.cssText = `
+                    background: white;
+                    padding: 30px;
+                    border-radius: 16px;
+                    max-width: 400px;
+                    width: 90%;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+                `;
+
+                const icon = type === 'danger' ? 'fas fa-exclamation-triangle' : 'fas fa-question-circle';
+                const iconColor = type === 'danger' ? 'var(--danger)' : 'var(--warning)';
+
+                dialogContent.innerHTML = `
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <i class="${icon}" style="font-size: 48px; color: ${iconColor}; margin-bottom: 15px;"></i>
+                        <h3 style="margin: 0 0 10px; color: var(--text-primary);">${title}</h3>
+                        <div style="color: var(--text-secondary); line-height: 1.5;">${message}</div>
+                    </div>
+                    <div style="display: flex; gap: 15px;">
+                        <button id="confirmCancel" style="flex: 1; padding: 12px; border: 2px solid var(--border-color); background: white; color: var(--text-primary); border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            ยกเลิก
+                        </button>
+                        <button id="confirmOk" style="flex: 1; padding: 12px; border: none; background: ${type === 'danger' ? 'var(--danger)' : 'var(--warning)'}; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                            ตกลง
+                        </button>
+                    </div>
+                `;
+
+                dialog.appendChild(dialogContent);
+                document.body.appendChild(dialog);
+
+                dialogContent.querySelector('#confirmCancel').onclick = () => {
+                    document.body.removeChild(dialog);
+                    resolve(false);
+                };
+
+                dialogContent.querySelector('#confirmOk').onclick = () => {
+                    document.body.removeChild(dialog);
+                    resolve(true);
+                };
             });
-            
-            // ตรวจสอบการเชื่อมต่อ
-            checkConnection();
-            
-            // ฟอกช่องค้นหาเมื่อโหลดหน้าใหม่
-            const urlParams = new URLSearchParams(window.location.search);
-            const billNoParam = urlParams.get('billNo');
-            if (billNoParam) {
-                document.getElementById('billNoSearch').value = billNoParam;
-                setTimeout(() => searchBill(), 500);
-            }
-            
-            console.log('ระบบจัดการบิลพร้อมใช้งานแล้ว');
         }
-        
-        // เริ่มต้นเมื่อโหลดหน้าเสร็จ
-        document.addEventListener('DOMContentLoaded', init);
+
+        // Enter key to search
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchInput.dispatchEvent(new Event('change'));
+            }
+        });
     </script>
 </body>
 </html>

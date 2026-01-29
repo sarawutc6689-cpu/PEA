@@ -654,21 +654,37 @@
     </footer>
 
     <script>
-       const SCRIPT_URL = "https://corsproxy.io/?https://script.google.com/macros/s/AKfycbwMJ2Rt3gfKoyzgBwZ3qXzNl503910Vw2V9p7phGRkAEn5FDrRTYfrJoJJcnVpp2wz2/exec";
+        // ใช้ Google Apps Script Web App URL โดยตรง (หลังจากตั้งค่า Anyone)
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMJ2Rt3gfKoyzgBwZ3qXzNl503910Vw2V9p7phGRkAEn5FDrRTYfrJoJJcnVpp2wz2/exec";
 
         // DOM Elements
         const searchInput = document.getElementById('search');
         const editForm = document.getElementById('editForm');
-        const billNoInput = document.getElementById('billNo');
-        const placeInput = document.getElementById('place');
-        const detailInput = document.getElementById('detail');
-        const saveBtn = document.getElementById('saveBtn');
-        const deleteBtn = document.getElementById('deleteBtn');
         const msg = document.getElementById('msg');
 
+        // Function สำหรับเรียกใช้ Apps Script ด้วย POST method
+        async function callAppsScript(action, data = {}) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        action: action,
+                        ...data
+                    })
+                });
+                
+                return await response.json();
+            } catch (error) {
+                console.error(`Error calling Apps Script (${action}):`, error);
+                throw error;
+            }
+        }
+
         // Search for bill
-        searchInput.addEventListener('change', async () => {
-            const billNo = searchInput.value.trim();
+        async function searchBill(billNo) {
             msg.className = 'message';
             msg.textContent = '';
             
@@ -687,8 +703,7 @@
             `;
 
             try {
-                const res = await fetch(`${SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(billNo)}`);
-                const data = await res.json();
+                const data = await callAppsScript('getBill', { billNo: billNo });
 
                 if (!data.success) {
                     msg.className = 'message error';
@@ -710,7 +725,7 @@
                             <i class="fas fa-hashtag"></i>
                             เลขที่บิล
                         </label>
-                        <input type="text" id="billNo" class="form-input" disabled value="${data.bill.billNo}">
+                        <input type="text" id="billNoInput" class="form-input" disabled value="${data.bill.billNo}">
                     </div>
 
                     <div class="form-group">
@@ -719,7 +734,7 @@
                             สถานที่
                             <span style="color: var(--danger); margin-left: 5px;">*</span>
                         </label>
-                        <input type="text" id="place" class="form-input" placeholder="กรอกสถานที่ของบิล" value="${data.bill.place || ''}">
+                        <input type="text" id="placeInput" class="form-input" placeholder="กรอกสถานที่ของบิล" value="${data.bill.place || ''}">
                     </div>
 
                     <div class="form-group">
@@ -727,7 +742,7 @@
                             <i class="fas fa-align-left"></i>
                             รายละเอียด
                         </label>
-                        <textarea id="detail" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)">${data.bill.detail || ''}</textarea>
+                        <textarea id="detailInput" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)">${data.bill.detail || ''}</textarea>
                     </div>
 
                     <div class="form-actions">
@@ -743,8 +758,8 @@
                 `;
 
                 // Reattach event listeners
-                document.getElementById('saveBtn').addEventListener('click', save);
-                document.getElementById('deleteBtn').addEventListener('click', remove);
+                document.getElementById('saveBtn').addEventListener('click', saveChanges);
+                document.getElementById('deleteBtn').addEventListener('click', deleteBill);
 
             } catch (error) {
                 msg.className = 'message error';
@@ -752,13 +767,13 @@
                 console.error('Search error:', error);
                 editForm.classList.remove('active');
             }
-        });
+        }
 
         // Save changes
-        async function save() {
-            const billNo = document.getElementById('billNo').value;
-            const place = document.getElementById('place').value;
-            const detail = document.getElementById('detail').value;
+        async function saveChanges() {
+            const billNo = document.getElementById('billNoInput').value;
+            const place = document.getElementById('placeInput').value;
+            const detail = document.getElementById('detailInput').value;
             
             msg.className = 'message';
             msg.textContent = '';
@@ -766,7 +781,7 @@
             if (!place) {
                 msg.className = 'message warning';
                 msg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> กรุณากรอกสถานที่';
-                document.getElementById('place').focus();
+                document.getElementById('placeInput').focus();
                 return;
             }
 
@@ -777,20 +792,11 @@
             saveBtn.disabled = true;
 
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "edit",
-                        billNo: billNo,
-                        place: place,
-                        detail: detail
-                    })
+                const data = await callAppsScript('edit', {
+                    billNo: billNo,
+                    place: place,
+                    detail: detail
                 });
-
-                const data = await res.json();
                 
                 if (data.success) {
                     msg.className = 'message success';
@@ -820,8 +826,8 @@
         }
 
         // Delete bill
-        async function remove() {
-            const billNo = document.getElementById('billNo').value;
+        async function deleteBill() {
+            const billNo = document.getElementById('billNoInput').value;
             
             // Show confirmation dialog
             const confirmDelete = await showConfirmationDialog(
@@ -839,18 +845,7 @@
             deleteBtn.disabled = true;
 
             try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        action: "delete",
-                        billNo: billNo
-                    })
-                });
-
-                const data = await res.json();
+                const data = await callAppsScript('delete', { billNo: billNo });
                 
                 if (data.success) {
                     msg.className = 'message success';
@@ -944,12 +939,23 @@
             });
         }
 
-        // Enter key to search
+        // Event listeners
+        searchInput.addEventListener('change', () => {
+            searchBill(searchInput.value.trim());
+        });
+
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                searchInput.dispatchEvent(new Event('change'));
+                searchBill(searchInput.value.trim());
             }
         });
+
+        // Helper function for safe HTML escaping
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
     </script>
 </body>
 </html>

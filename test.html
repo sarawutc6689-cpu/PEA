@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการบิล| แก้ไข / ลบบิล </title>
+    <title>ระบบค้นหาและรับบิล | ระบบจัดการบิล</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
@@ -139,7 +139,7 @@
 
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 850px;
             margin: 0 auto;
         }
 
@@ -201,10 +201,40 @@
             font-weight: 500;
         }
 
+        /* Dashboard Button */
+        .dashboard-btn-container {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gradient-purple);
+            color: white;
+            padding: 16px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 17px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
+            transition: var(--transition);
+        }
+
+        .dashboard-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.35);
+        }
+
+        .dashboard-btn i {
+            font-size: 20px;
+        }
+
         /* Search Box */
         .search-container {
             position: relative;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         .search-box {
@@ -249,10 +279,97 @@
             gap: 6px;
         }
 
-        /* Edit Form */
-        .edit-form {
+        /* Results List */
+        .results-container {
+            position: relative;
+            z-index: 100;
+        }
+
+        .results-list {
+            margin-top: 10px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            background: var(--white);
             display: none;
+        }
+
+        .results-list.active {
+            display: block;
+        }
+
+        .result-item {
+            padding: 18px 20px;
+            background: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-item:hover {
+            background: var(--light-purple);
+        }
+
+        .result-info {
+            flex: 1;
+        }
+
+        .bill-number {
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .bill-place {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .bill-place i {
+            font-size: 13px;
+        }
+
+        .bill-status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .bill-status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .bill-status-received {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* Bill Details Card */
+        .bill-details-card {
             margin-top: 30px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            display: none;
             animation: fadeIn 0.5s ease;
         }
 
@@ -267,88 +384,134 @@
             }
         }
 
-        .edit-form.active {
+        .bill-details-card.active {
             display: block;
         }
 
-        .form-header {
+        .details-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
             margin-bottom: 25px;
             padding-bottom: 15px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        .form-header i {
-            color: var(--primary-purple);
-            font-size: 24px;
-        }
-
-        .form-header h3 {
+        .details-title {
             font-size: 22px;
             font-weight: 700;
             color: var(--primary-purple-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .form-group {
+        .details-title i {
+            color: var(--primary-purple);
+        }
+
+        .detail-row {
+            display: flex;
             margin-bottom: 20px;
+            align-items: flex-start;
         }
 
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
+        .detail-label {
+            width: 120px;
             font-weight: 600;
-            color: var(--primary-purple-dark);
-            font-size: 16px;
+            color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
         }
 
-        .form-label i {
+        .detail-label i {
             color: var(--primary-purple);
             font-size: 16px;
         }
 
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 16px 20px;
-            font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--light-gray);
-            transition: var(--transition);
-            font-family: inherit;
-        }
-
-        .form-input:focus, .form-textarea:focus {
-            outline: none;
-            border-color: var(--primary-purple);
-            background: var(--white);
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
-        }
-
-        .form-input:disabled {
-            background: #f1f5f9;
+        .detail-value {
+            flex: 1;
             color: var(--text-secondary);
-            cursor: not-allowed;
+            line-height: 1.5;
+            word-break: break-word;
         }
 
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
+        /* Status Display */
+        .status-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
         }
 
-        .form-actions {
+        .status-pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-received {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* Update Section */
+        .update-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .confirm-checkbox {
             display: flex;
-            gap: 15px;
-            margin-top: 30px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            cursor: pointer;
         }
 
-        .btn {
-            padding: 18px 30px;
+        .checkbox-input {
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid var(--primary-purple);
+            background: var(--white);
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .checkbox-input.checked {
+            background-color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .checkbox-input.checked::after {
+            content: '✓';
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            user-select: none;
+        }
+
+        .update-btn {
+            background: var(--gradient-purple);
+            color: white;
             border: none;
+            padding: 18px 30px;
+            width: 100%;
             border-radius: 12px;
             font-size: 17px;
             font-weight: 700;
@@ -358,35 +521,18 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            flex: 1;
         }
 
-        .btn-save {
-            background: var(--gradient-purple);
-            color: white;
-        }
-
-        .btn-save:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 2px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-delete:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .btn:disabled {
+        .update-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
             box-shadow: none !important;
+        }
+
+        .update-btn:not(:disabled):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
         }
 
         /* Message */
@@ -414,35 +560,6 @@
             color: var(--danger);
             border: 1px solid rgba(239, 68, 68, 0.3);
             display: flex;
-        }
-
-        .message.warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            display: flex;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: var(--primary-purple);
-        }
-
-        .loading-spinner {
-            border: 3px solid var(--light-purple);
-            border-top: 3px solid var(--primary-purple);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         /* Footer */
@@ -489,6 +606,167 @@
             text-decoration: underline;
         }
 
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: var(--primary-purple);
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-sub {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-purple);
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--light-purple);
+            border-top: 3px solid var(--primary-purple);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* NEW: Month Dates Section */
+        .month-dates-section {
+            margin-top: 20px;
+            padding: 20px;
+            background: var(--light-purple);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .months-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .months-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-months-btn {
+            background: var(--white);
+            border: 1px solid var(--primary-purple);
+            color: var(--primary-purple);
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-months-btn:hover {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        .month-dates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .month-dates-grid.expanded {
+            max-height: 500px;
+        }
+
+        .month-date-item {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .month-date-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .month-name {
+            font-weight: 700;
+            color: var(--primary-purple-dark);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .month-name i {
+            font-size: 12px;
+        }
+
+        .month-date {
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding: 4px 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+        }
+
+        .month-date.empty {
+            color: #94a3b8;
+            font-style: italic;
+            background: #f8fafc;
+        }
+
+        /* Current Month Highlight */
+        .month-date-item.current-month {
+            border: 2px solid var(--primary-purple);
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-content {
@@ -515,12 +793,21 @@
                 font-size: 15px;
             }
 
-            .form-actions {
+            .detail-row {
                 flex-direction: column;
+                gap: 5px;
             }
 
-            .btn {
+            .detail-label {
                 width: 100%;
+            }
+
+            .results-list {
+                max-height: 250px;
+            }
+
+            .month-dates-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
             }
         }
 
@@ -534,6 +821,20 @@
             .nav-links {
                 flex-wrap: wrap;
                 justify-content: center;
+            }
+
+            .dashboard-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bill-status-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .month-dates-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -551,7 +852,7 @@
             </a>
 
             <nav class="nav-links">
-                <a href="https://sarawutc6689-cpu.github.io/PEA/CheckBill.html">
+                <a href="#" class="active">
                     <i class="fas fa-search"></i>
                     <span>ค้นหา/รับบิล</span>
                 </a>
@@ -563,9 +864,9 @@
                     <i class="fas fa-plus-circle"></i>
                     <span>เพิ่มบิล</span>
                 </a>
-                <a href="https://sarawutc6689-cpu.github.io/PEA/EditBill.html" class="active">
-                    <i class="fas fa-edit"></i>
-                    <span>แก้ไข/ลบ</span>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/DashBoard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
                 </a>
             </nav>
         </div>
@@ -577,66 +878,40 @@
             <div class="main-card">
                 <div class="card-header">
                     <h1 class="card-title">
-                        <i class="fas fa-edit"></i>
-                        แก้ไข / ลบบิล
+                        <i class="fas fa-search-dollar"></i>
+                        ระบบค้นหาและรับบิล
                     </h1>
-                    <p class="card-subtitle">ค้นหาบิลด้วยเลขบิลเพื่อแก้ไขหรือลบข้อมูล</p>
+                    <p class="card-subtitle">พิมพ์เลขบิล ระบบค้นหาให้อัตโนมัติ</p>
+                </div>
+
+                <!-- Dashboard Button -->
+                <div class="dashboard-btn-container">
+                    <a href="DashBoard.html" class="dashboard-btn">
+                        <i class="fas fa-chart-pie"></i>
+                        Dashboard บิลค้างรับ
+                    </a>
                 </div>
 
                 <!-- Search Box -->
                 <div class="search-container">
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
-                        <input type="text" id="search" class="search-input" placeholder="กรอกเลขบิลเพื่อค้นหา">
+                        <input type="text" id="billInput" class="search-input" placeholder="พิมพ์เลขที่ใบเสร็จ">
                     </div>
                     <div class="search-hint">
                         <i class="fas fa-lightbulb"></i>
-                        ระบบจะค้นหาบิลที่ตรงกับเลขบิลที่คุณกรอก
+                        ค้นหาจาก 5 ตัวท้ายสุดหรือพิมพ์ส่วนใดส่วนหนึ่งของเลขบิล
                     </div>
                 </div>
 
-                <!-- Edit Form -->
-                <div id="editForm" class="edit-form">
-                    <div class="form-header">
-                        <i class="fas fa-file-invoice"></i>
-                        <h3>รายละเอียดบิล</h3>
-                    </div>
+                <!-- Search Results -->
+                <div class="results-container">
+                    <div id="resultsList" class="results-list"></div>
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-hashtag"></i>
-                            เลขที่บิล
-                        </label>
-                        <input type="text" id="billNo" class="form-input" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-map-marker-alt"></i>
-                            สถานที่
-                            <span style="color: var(--danger); margin-left: 5px;">*</span>
-                        </label>
-                        <input type="text" id="place" class="form-input" placeholder="กรอกสถานที่ของบิล">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">
-                            <i class="fas fa-align-left"></i>
-                            รายละเอียด
-                        </label>
-                        <textarea id="detail" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)"></textarea>
-                    </div>
-
-                    <div class="form-actions">
-                        <button id="saveBtn" class="btn btn-save">
-                            <i class="fas fa-save"></i>
-                            บันทึกแก้ไข
-                        </button>
-                        <button id="deleteBtn" class="btn btn-delete">
-                            <i class="fas fa-trash-alt"></i>
-                            ลบบิล
-                        </button>
-                    </div>
+                <!-- Bill Details -->
+                <div id="billDetails" class="bill-details-card">
+                    <!-- Content will be dynamically loaded here -->
                 </div>
 
                 <!-- Message -->
@@ -648,372 +923,359 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p class="footer-text">ระบบจัดการใบเสร็จ © 2026 | พัฒนาโดย Sarawut.C</p>
+            <p class="footer-text">ระบบจัดการใบเสร็จ &copy; 2026 | พัฒนาโดย Sarawut.C</p>
             <p class="footer-text">สำหรับใช้ส่วนตัวท่านั้น</p>
         </div>
     </footer>
 
     <script>
-        // ใช้วิธีการข้าม CORS โดยใช้ CORS proxy
-        const SCRIPT_ID = "AKfycbw6u7UyTGcRNgxNlNibV4Aj732VkCFjm9Ui5SN1SsCybFLxJMnOf7YaQKHNlmgiqvaXwQ";
-        const SCRIPT_URL = `https://script.google.com/macros/s/${SCRIPT_ID}/exec`;
-        
-        // ใช้ CORS proxy เพื่อหลีกเลี่ยงปัญหา CORS
-        function getProxyUrl(url) {
-            // ตัวเลือก proxy ต่างๆ (ลองเปลี่ยนถ้าตัวใดไม่ทำงาน)
-            const proxies = [
-                `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-                `https://corsproxy.io/?${encodeURIComponent(url)}`,
-                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
-                `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(url)}`
-            ];
-            return proxies[0]; // เริ่มด้วยตัวแรก
-        }
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby5e-7tY1-K8Cat9fG73Q9b1ByQFUUGOTTo36eF63TlxG_i6hhswd0kjSIo_px9IkmrWg/exec;
+        let currentBill = null;
+        let timer = null;
 
         // DOM Elements
-        const searchInput = document.getElementById('search');
-        const editForm = document.getElementById('editForm');
-        const msg = document.getElementById('msg');
+        const billInput = document.getElementById("billInput");
+        const resultsList = document.getElementById("resultsList");
+        const billDetails = document.getElementById("billDetails");
+        const msg = document.getElementById("msg");
 
-        // ฟังก์ชันสำหรับเรียกใช้ Apps Script (แบบ GET สำหรับค้นหา)
-        async function callAppsScriptGET(action, params = {}) {
-            try {
-                // สร้าง query string
-                const queryParams = new URLSearchParams({
-                    action: action,
-                    ...params
-                }).toString();
-                
-                const url = `${SCRIPT_URL}?${queryParams}`;
-                const proxyUrl = getProxyUrl(url);
-                
-                const response = await fetch(proxyUrl, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                
-                // ถ้าใช้ allorigins proxy จะมีโครงสร้างต่างออกไป
-                if (result.contents) {
-                    return JSON.parse(result.contents);
-                }
-                
-                return result;
-            } catch (error) {
-                console.error(`Error calling Apps Script (${action}):`, error);
-                throw error;
-            }
-        }
+        // เดือนไทย
+        const THAI_MONTHS = [
+            'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+            'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+        ];
 
-        // ฟังก์ชันสำหรับเรียกใช้ Apps Script (แบบ POST สำหรับแก้ไข/ลบ)
-        async function callAppsScriptPOST(action, data = {}) {
-            try {
-                // ใช้ form submission แทน JSON เพื่อหลีกเลี่ยง preflight request
-                const formData = new FormData();
-                formData.append('action', action);
-                
-                // เพิ่มข้อมูลอื่นๆ
-                Object.keys(data).forEach(key => {
-                    formData.append(key, data[key]);
-                });
-                
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData,
-                    mode: 'no-cors'  // ใช้ no-cors mode
-                });
-                
-                // ใน mode no-cors เราอ่าน response ไม่ได้โดยตรง
-                // แต่ Apps Script จะยังทำงานได้
-                return { success: true, message: 'ดำเนินการเรียบร้อย' };
-                
-            } catch (error) {
-                console.error(`Error calling Apps Script (${action}):`, error);
-                // ส่งกลับ success แม้จะ error เพราะในบางกรณีอาจทำงานสำเร็จแล้ว
-                return { success: true, message: 'อาจดำเนินการสำเร็จแล้ว กรุณาตรวจสอบอีกครั้ง' };
-            }
-        }
+        // Debounce function
+        const debounce = (fn, delay = 400) => (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
 
-        // Search for bill
-        async function searchBill(billNo) {
-            msg.className = 'message';
-            msg.textContent = '';
+        // Search input event
+        billInput.addEventListener("input", debounce(async e => {
+            const keyword = e.target.value.trim();
+            billDetails.classList.remove("active");
+            msg.className = "message";
+            msg.textContent = "";
             
-            if (!billNo) {
-                editForm.classList.remove('active');
+            if (keyword.length < 2) {
+                resultsList.classList.remove("active");
+                resultsList.innerHTML = "";
                 return;
             }
-
+            
             // Show loading
-            editForm.classList.add('active');
-            editForm.innerHTML = `
+            resultsList.classList.add("active");
+            resultsList.innerHTML = `
                 <div class="loading">
                     <div class="loading-spinner"></div>
-                    <div>กำลังค้นหาบิล...</div>
+                    <div>กำลังค้นหา...</div>
                 </div>
             `;
-
+            
             try {
-                const data = await callAppsScriptGET('getBill', { billNo: billNo });
+                const res = await fetch(
+                    `${SCRIPT_URL}?action=search&keyword=${encodeURIComponent(keyword)}`
+                );
+                const data = await res.json();
 
                 if (!data.success) {
-                    msg.className = 'message error';
-                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'ไม่พบบิลนี้ในระบบ'}`;
-                    editForm.classList.remove('active');
+                    showEmptyResults(data.message || "ไม่พบข้อมูล");
                     return;
                 }
 
-                // Show edit form with data
-                displayEditForm(data.bill);
+                if (data.results.length === 0) {
+                    showEmptyResults("ไม่พบบิลที่ตรงกับการค้นหา");
+                    return;
+                }
 
+                renderResults(data.results);
             } catch (error) {
-                msg.className = 'message error';
-                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์';
+                showEmptyResults("เกิดข้อผิดพลาดในการค้นหา");
                 console.error('Search error:', error);
-                editForm.classList.remove('active');
             }
-        }
+        }));
 
-        // แสดงฟอร์มแก้ไข
-        function displayEditForm(bill) {
-            editForm.classList.add('active');
-            editForm.innerHTML = `
-                <div class="form-header">
-                    <i class="fas fa-file-invoice"></i>
-                    <h3>รายละเอียดบิล</h3>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-hashtag"></i>
-                        เลขที่บิล
-                    </label>
-                    <input type="text" id="billNoInput" class="form-input" disabled value="${escapeHtml(bill.billNo || '')}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-map-marker-alt"></i>
-                        สถานที่
-                        <span style="color: var(--danger); margin-left: 5px;">*</span>
-                    </label>
-                    <input type="text" id="placeInput" class="form-input" placeholder="กรอกสถานที่ของบิล" value="${escapeHtml(bill.place || '')}">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        <i class="fas fa-align-left"></i>
-                        รายละเอียด
-                    </label>
-                    <textarea id="detailInput" class="form-textarea" placeholder="กรอกรายละเอียดของบิล (ไม่บังคับ)">${escapeHtml(bill.detail || '')}</textarea>
-                </div>
-
-                <div class="form-actions">
-                    <button id="saveBtn" class="btn btn-save">
-                        <i class="fas fa-save"></i>
-                        บันทึกแก้ไข
-                    </button>
-                    <button id="deleteBtn" class="btn btn-delete">
-                        <i class="fas fa-trash-alt"></i>
-                        ลบบิล
-                    </button>
+        function showEmptyResults(message) {
+            resultsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>${message}</p>
+                    <p class="empty-state-sub">ลองพิมพ์คำค้นหาอื่น</p>
                 </div>
             `;
-
-            // Reattach event listeners
-            document.getElementById('saveBtn').addEventListener('click', saveChanges);
-            document.getElementById('deleteBtn').addEventListener('click', deleteBill);
+            resultsList.classList.add("active");
         }
 
-        // Save changes
-        async function saveChanges() {
-            const billNo = document.getElementById('billNoInput').value;
-            const place = document.getElementById('placeInput').value;
-            const detail = document.getElementById('detailInput').value;
+        function renderResults(results) {
+            resultsList.innerHTML = "";
+            results.forEach(b => {
+                const item = document.createElement("div");
+                item.className = "result-item";
+                item.innerHTML = `
+                    <div class="result-info">
+                        <div class="bill-number">${b.billNo}</div>
+                        <div class="bill-place">
+                            <i class="fas fa-map-marker-alt"></i>
+                            ${b.place}
+                        </div>
+                    </div>
+                    <div class="bill-status-badge ${b.status === "รับบิลแล้ว" ? "bill-status-received" : "bill-status-pending"}">
+                        ${b.status === "รับบิลแล้ว" ? "✅ รับแล้ว" : "⏳ รอรับ"}
+                    </div>
+                `;
+                item.onclick = () => selectBill(b);
+                resultsList.appendChild(item);
+            });
+            resultsList.classList.add("active");
+        }
+
+        // Function สำหรับสร้าง Bill Details HTML
+        function createBillDetailsHTML(billData) {
+            const isReceived = billData.status === "รับบิลแล้ว";
+            const currentMonth = new Date().getMonth(); // 0-11
             
-            msg.className = 'message';
-            msg.textContent = '';
+            // สร้าง HTML สำหรับเดือนทั้งหมด
+            let monthDatesHTML = '';
+            THAI_MONTHS.forEach((monthName, index) => {
+                const dateValue = billData.monthDates && billData.monthDates[monthName] 
+                    ? billData.monthDates[monthName] 
+                    : '';
+                
+                const isCurrentMonth = index === currentMonth;
+                const monthClass = isCurrentMonth ? 'month-date-item current-month' : 'month-date-item';
+                
+                monthDatesHTML += `
+                    <div class="${monthClass}">
+                        <div class="month-name">
+                            <i class="fas fa-calendar${dateValue ? '-check' : ''}"></i>
+                            ${monthName}${isCurrentMonth ? ' (ปัจจุบัน)' : ''}
+                        </div>
+                        <div class="month-date ${!dateValue ? 'empty' : ''}">
+                            ${dateValue || 'ยังไม่ได้กำหนด'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            return `
+                <div class="details-header">
+                    <h2 class="details-title">
+                        <i class="fas fa-file-invoice"></i>
+                        รายละเอียดบิล
+                    </h2>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-hashtag"></i>
+                        เลขที่บิล:
+                    </div>
+                    <div class="detail-value">${billData.billNo}</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-map-marker-alt"></i>
+                        สถานที่:
+                    </div>
+                    <div class="detail-value">${billData.place}</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-align-left"></i>
+                        รายละเอียด:
+                    </div>
+                    <div class="detail-value">${billData.detail || "- ไม่มีรายละเอียดเพิ่มเติม -"}</div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-info-circle"></i>
+                        สถานะ:
+                    </div>
+                    <div class="status-display ${isReceived ? 'status-received' : 'status-pending'}">
+                        <i class="fas ${isReceived ? 'fa-check-circle' : 'fa-clock'}"></i>
+                        ${isReceived ? 'รับบิลแล้ว' : 'รอรับบิล'}
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-label">
+                        <i class="fas fa-calendar-day"></i>
+                        วันที่ลงเดือนนี้:
+                    </div>
+                    <div class="detail-value">${billData.currentMonthDate || "- ยังไม่ได้รับบิล -"}</div>
+                </div>
+
+                <!-- Month Dates Section -->
+                <div class="month-dates-section">
+                    <div class="months-header">
+                        <h3 class="months-title">
+                            <i class="fas fa-calendar-alt"></i>
+                            วันที่ลงในแต่ละเดือน
+                        </h3>
+                        <button class="toggle-months-btn" onclick="toggleMonthGrid()">
+                            <i class="fas fa-chevron-down"></i>
+                            แสดงเดือนทั้งหมด
+                        </button>
+                    </div>
+                    
+                    <div id="monthDatesGrid" class="month-dates-grid">
+                        ${monthDatesHTML}
+                    </div>
+                </div>
+
+                ${!isReceived ? `
+                <!-- Update Section -->
+                <div class="update-section">
+                    <div class="confirm-checkbox" id="confirmCheckboxContainer" onclick="toggleConfirmCheckbox()">
+                        <div class="checkbox-input" id="confirmCheckbox"></div>
+                        <div class="checkbox-label">ยืนยันการรับบิลแล้ว</div>
+                    </div>
+
+                    <button id="updateBtn" class="update-btn" onclick="updateBillStatus('${billData.billNo}')" disabled>
+                        <i class="fas fa-check-circle"></i>
+                        ยืนยันรับบิล
+                    </button>
+                </div>
+                ` : ''}
+            `;
+        }
+
+        // Function สำหรับ toggle month grid
+        function toggleMonthGrid() {
+            const grid = document.getElementById('monthDatesGrid');
+            const button = document.querySelector('.toggle-months-btn');
+            const isExpanded = grid.classList.contains('expanded');
             
-            if (!place) {
-                msg.className = 'message warning';
-                msg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> กรุณากรอกสถานที่';
-                document.getElementById('placeInput').focus();
-                return;
+            if (isExpanded) {
+                grid.classList.remove('expanded');
+                button.innerHTML = '<i class="fas fa-chevron-down"></i> แสดงเดือนทั้งหมด';
+            } else {
+                grid.classList.add('expanded');
+                button.innerHTML = '<i class="fas fa-chevron-up"></i> ซ่อนเดือนทั้งหมด';
             }
+        }
 
-            // Disable button and show loading
-            const saveBtn = document.getElementById('saveBtn');
-            const originalText = saveBtn.innerHTML;
-            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังบันทึก...';
-            saveBtn.disabled = true;
+        // Function สำหรับ toggle checkbox
+        function toggleConfirmCheckbox() {
+            const checkbox = document.getElementById('confirmCheckbox');
+            const updateBtn = document.getElementById('updateBtn');
+            
+            checkbox.classList.toggle('checked');
+            updateBtn.disabled = !checkbox.classList.contains('checked');
+        }
 
+        async function selectBill(b) {
+            currentBill = b.billNo;
+            resultsList.classList.remove("active");
+            
+            // Show loading in bill details
+            billDetails.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>กำลังโหลดข้อมูลบิล...</div>
+                </div>
+            `;
+            billDetails.classList.add("active");
+            
             try {
-                const data = await callAppsScriptPOST('edit', {
-                    billNo: billNo,
-                    place: place,
-                    detail: detail
+                const res = await fetch(
+                    `${SCRIPT_URL}?action=getBill&billNo=${encodeURIComponent(b.billNo)}`
+                );
+                const data = await res.json();
+
+                if (!data.success || !data.bill) {
+                    throw new Error(data.message || 'ไม่สามารถโหลดข้อมูลได้');
+                }
+
+                // Render bill details
+                billDetails.innerHTML = createBillDetailsHTML(data.bill);
+                billDetails.classList.add("active");
+                
+                // Scroll to details
+                billDetails.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (error) {
+                billDetails.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>ไม่สามารถโหลดข้อมูลบิลได้</p>
+                        <p class="empty-state-sub">${error.message}</p>
+                    </div>
+                `;
+                console.error('Error loading bill:', error);
+            }
+        }
+
+        // Function สำหรับอัพเดทสถานะบิล
+        async function updateBillStatus(billNo) {
+            const updateBtn = document.getElementById('updateBtn');
+            
+            // Disable button and show loading
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดทสถานะ...';
+            
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "update",
+                        billNo: billNo
+                    })
                 });
                 
-                if (data.success) {
-                    msg.className = 'message success';
-                    msg.innerHTML = '<i class="fas fa-check-circle"></i> แก้ไขข้อมูลบิลเรียบร้อยแล้ว';
-                    
-                    // Auto hide message after 5 seconds
-                    setTimeout(() => {
-                        msg.style.opacity = '0';
-                        setTimeout(() => {
-                            msg.className = 'message';
-                            msg.style.opacity = '1';
-                        }, 300);
-                    }, 5000);
-                } else {
-                    msg.className = 'message warning';
-                    msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> การดำเนินการอาจสำเร็จแล้ว กรุณาตรวจสอบอีกครั้ง';
-                }
-            } catch (error) {
-                msg.className = 'message warning';
-                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> การดำเนินการอาจสำเร็จแล้ว กรุณาตรวจสอบอีกครั้ง';
-                console.error('Save error:', error);
-            } finally {
-                // Restore button state
-                saveBtn.innerHTML = originalText;
-                saveBtn.disabled = false;
-            }
-        }
-
-        // Delete bill
-        async function deleteBill() {
-            const billNo = document.getElementById('billNoInput').value;
-            
-            // Show confirmation dialog
-            const confirmDelete = await showConfirmationDialog(
-                'ยืนยันการลบบิล',
-                `คุณแน่ใจหรือไม่ที่ต้องการลบบิล <strong>${billNo}</strong> ?<br><br>การดำเนินการนี้ไม่สามารถย้อนกลับได้`,
-                'danger'
-            );
-            
-            if (!confirmDelete) return;
-
-            // Disable button and show loading
-            const deleteBtn = document.getElementById('deleteBtn');
-            const originalText = deleteBtn.innerHTML;
-            deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังลบ...';
-            deleteBtn.disabled = true;
-
-            try {
-                const data = await callAppsScriptPOST('delete', { billNo: billNo });
+                const data = await res.json();
                 
                 if (data.success) {
-                    msg.className = 'message success';
-                    msg.innerHTML = '<i class="fas fa-check-circle"></i> ลบบิลเรียบร้อยแล้ว';
+                    // Update UI
+                    const statusDisplay = document.querySelector('.status-display');
+                    statusDisplay.className = 'status-display status-received';
+                    statusDisplay.innerHTML = '<i class="fas fa-check-circle"></i> รับบิลแล้ว';
                     
-                    // Clear form and search
-                    searchInput.value = '';
-                    editForm.classList.remove('active');
+                    // Hide update section
+                    document.querySelector('.update-section').style.display = 'none';
+                    
+                    // Show success message
+                    msg.className = "message success";
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> อัพเดทสถานะเรียบร้อยแล้ว';
+                    
+                    // Clear search input
+                    billInput.value = "";
                     
                     // Auto hide message after 5 seconds
                     setTimeout(() => {
                         msg.style.opacity = '0';
                         setTimeout(() => {
-                            msg.className = 'message';
+                            msg.className = "message";
                             msg.style.opacity = '1';
                         }, 300);
                     }, 5000);
                 } else {
-                    msg.className = 'message warning';
-                    msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> การดำเนินการอาจสำเร็จแล้ว กรุณาตรวจสอบอีกครั้ง';
+                    msg.className = "message error";
+                    msg.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${data.message || 'เกิดข้อผิดพลาดในการอัพเดท'}`;
+                    updateBtn.disabled = false;
+                    updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันรับบิล';
                 }
             } catch (error) {
-                msg.className = 'message warning';
-                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> การดำเนินการอาจสำเร็จแล้ว กรุณาตรวจสอบอีกครั้ง';
-                console.error('Delete error:', error);
-            } finally {
-                // Restore button state
-                deleteBtn.innerHTML = originalText;
-                deleteBtn.disabled = false;
+                msg.className = "message error";
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> เกิดข้อผิดพลาดในการเชื่อมต่อ';
+                console.error('Update error:', error);
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = '<i class="fas fa-check-circle"></i> ยืนยันรับบิล';
             }
         }
 
-        // Custom confirmation dialog
-        function showConfirmationDialog(title, message, type = 'warning') {
-            return new Promise((resolve) => {
-                const dialog = document.createElement('div');
-                dialog.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0, 0, 0, 0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 1000;
-                `;
-
-                const dialogContent = document.createElement('div');
-                dialogContent.style.cssText = `
-                    background: white;
-                    padding: 30px;
-                    border-radius: 16px;
-                    max-width: 400px;
-                    width: 90%;
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-                `;
-
-                const icon = type === 'danger' ? 'fas fa-exclamation-triangle' : 'fas fa-question-circle';
-                const iconColor = type === 'danger' ? 'var(--danger)' : 'var(--warning)';
-
-                dialogContent.innerHTML = `
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <i class="${icon}" style="font-size: 48px; color: ${iconColor}; margin-bottom: 15px;"></i>
-                        <h3 style="margin: 0 0 10px; color: var(--text-primary);">${title}</h3>
-                        <div style="color: var(--text-secondary); line-height: 1.5;">${message}</div>
-                    </div>
-                    <div style="display: flex; gap: 15px;">
-                        <button id="confirmCancel" style="flex: 1; padding: 12px; border: 2px solid var(--border-color); background: white; color: var(--text-primary); border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            ยกเลิก
-                        </button>
-                        <button id="confirmOk" style="flex: 1; padding: 12px; border: none; background: ${type === 'danger' ? 'var(--danger)' : 'var(--warning)'}; color: white; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                            ตกลง
-                        </button>
-                    </div>
-                `;
-
-                dialog.appendChild(dialogContent);
-                document.body.appendChild(dialog);
-
-                dialogContent.querySelector('#confirmCancel').onclick = () => {
-                    document.body.removeChild(dialog);
-                    resolve(false);
-                };
-
-                dialogContent.querySelector('#confirmOk').onclick = () => {
-                    document.body.removeChild(dialog);
-                    resolve(true);
-                };
-            });
-        }
-
-        // Event listeners
-        searchInput.addEventListener('change', () => {
-            searchBill(searchInput.value.trim());
-        });
-
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                searchBill(searchInput.value.trim());
+        // Check for URL parameter to auto-search
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            if (searchParam) {
+                billInput.value = searchParam;
+                billInput.dispatchEvent(new Event('input'));
             }
         });
-
-        // Helper function for safe HTML escaping
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
     </script>
 </body>
 </html>

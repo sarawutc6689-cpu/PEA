@@ -406,7 +406,7 @@
         .data-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 700px;
+            min-width: 800px;
         }
 
         .data-table thead {
@@ -434,7 +434,7 @@
         .data-table td {
             padding: 18px 20px;
             color: var(--text-primary);
-            vertical-align: top;
+            vertical-align: middle;
         }
 
         .bill-number {
@@ -469,44 +469,49 @@
             color: var(--warning);
         }
 
-        /* Action Button */
-        .action-btn {
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-receive {
+            background: linear-gradient(135deg, var(--success) 0%, #0da674 100%);
+            color: white;
+            border: none;
             padding: 8px 16px;
             border-radius: 8px;
-            border: none;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
-            font-size: 14px;
-        }
-
-        .action-btn.primary {
-            background: var(--gradient-purple);
-            color: white;
-        }
-
-        .action-btn.primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .action-btn.primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .action-btn i {
-            font-size: 14px;
-        }
-
-        /* Status Cell */
-        .status-cell {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .btn-receive:hover {
+            background: linear-gradient(135deg, #0da674 0%, #0c9566 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-receive:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-receive i {
+            font-size: 14px;
+        }
+
+        /* สำหรับสถานะที่รับบิลแล้ว */
+        .status-received .btn-receive {
+            display: none;
         }
 
         /* Empty State */
@@ -564,67 +569,23 @@
             font-size: 17px;
         }
 
-        /* Notification */
-        .notification {
+        /* Message */
+        .message {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 18px 24px;
-            box-shadow: var(--shadow-hover);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            border-left: 4px solid var(--primary-purple);
-            max-width: 400px;
-        }
-        
-        .notification-success {
-            border-left-color: var(--success);
-        }
-        
-        .notification-error {
-            border-left-color: var(--danger);
-        }
-        
-        .notification i {
-            font-size: 20px;
-        }
-        
-        .notification-success i {
-            color: var(--success);
-        }
-        
-        .notification-error i {
-            color: var(--danger);
-        }
-        
-        .notification span {
-            flex: 1;
-            font-weight: 500;
-        }
-        
-        .notification-close {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            display: flex;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: none;
             align-items: center;
             justify-content: center;
-            transition: var(--transition);
+            gap: 12px;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease;
         }
-        
-        .notification-close:hover {
-            background: var(--light-gray);
-            color: var(--text-primary);
-        }
-        
+
         @keyframes slideIn {
             from {
                 transform: translateX(100%);
@@ -634,6 +595,20 @@
                 transform: translateX(0);
                 opacity: 1;
             }
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            display: flex;
         }
 
         /* Footer */
@@ -723,10 +698,14 @@
                 padding: 25px;
             }
 
-            .notification {
-                left: 20px;
-                right: 20px;
-                max-width: none;
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-receive {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -750,9 +729,10 @@
                 padding: 14px 16px;
             }
 
-            .action-btn {
-                padding: 6px 12px;
-                font-size: 13px;
+            .message {
+                left: 20px;
+                right: 20px;
+                top: 10px;
             }
         }
     </style>
@@ -888,20 +868,24 @@
                                     <i class="fas fa-hashtag"></i>
                                     เลขบิล
                                 </th>
-                                <th width="55%">
+                                <th width="45%">
                                     <i class="fas fa-align-left"></i>
                                     รายละเอียด
                                 </th>
-                                <th width="20%">
+                                <th width="15%">
                                     <i class="fas fa-info-circle"></i>
-                                    สถานะ/การดำเนินการ
+                                    สถานะ
+                                </th>
+                                <th width="15%">
+                                    <i class="fas fa-cogs"></i>
+                                    การดำเนินการ
                                 </th>
                             </tr>
                         </thead>
                         <tbody id="result">
                             <!-- Initial empty state -->
                             <tr>
-                                <td colspan="3">
+                                <td colspan="4">
                                     <div class="empty-state">
                                         <div class="empty-state-icon">
                                             <i class="fas fa-chart-bar"></i>
@@ -917,6 +901,9 @@
             </div>
         </div>
     </main>
+
+    <!-- Message Display -->
+    <div id="message" class="message"></div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -938,6 +925,7 @@
         const result = document.getElementById('result');
         const exportBtn = document.getElementById('exportBtn');
         const billsTable = document.getElementById('billsTable');
+        const messageEl = document.getElementById('message');
 
         // Load places from API
         async function loadPlaces() {
@@ -979,7 +967,7 @@
         function showLoading() {
             result.innerHTML = `
                 <tr>
-                    <td colspan="3">
+                    <td colspan="4">
                         <div class="loading">
                             <div class="loading-spinner"></div>
                             <div class="loading-text">กำลังโหลดข้อมูล...</div>
@@ -993,7 +981,7 @@
         function showEmpty(message = "ไม่พบข้อมูลบิลสำหรับสถานที่นี้") {
             result.innerHTML = `
                 <tr>
-                    <td colspan="3">
+                    <td colspan="4">
                         <div class="empty-state">
                             <div class="empty-state-icon">
                                 <i class="fas fa-inbox"></i>
@@ -1006,78 +994,19 @@
             `;
         }
 
-        // Update bill status
-        async function updateBillStatus(billNo, button) {
-            if (!confirm(`ต้องการรับบิลเลขที่ ${billNo} ใช่หรือไม่?`)) {
-                return;
-            }
+        // Show message
+        function showMessage(text, type = 'success') {
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.style.display = 'flex';
             
-            // Disable button and show loading
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
-            
-            try {
-                const res = await fetch(API, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'update',
-                        billNo: billNo
-                    })
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    // Refresh the report
-                    loadReport(placeSelect.value);
-                    
-                    // Show success message
-                    showNotification(`รับบิลเลขที่ ${billNo} สำเร็จ`, 'success');
-                } else {
-                    throw new Error(data.message || 'เกิดข้อผิดพลาด');
-                }
-            } catch (error) {
-                console.error("Error updating bill:", error);
-                showNotification(error.message || 'เกิดข้อผิดพลาดในการอัพเดท', 'error');
-                
-                // Re-enable button
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-check"></i> รับบิล';
-            }
-        }
-
-        // Show notification
-        function showNotification(message, type = 'info') {
-            // Remove existing notification
-            const existingNotification = document.querySelector('.notification');
-            if (existingNotification) {
-                existingNotification.remove();
-            }
-            
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                <span>${message}</span>
-                <button class="notification-close"><i class="fas fa-times"></i></button>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Auto remove after 5 seconds
             setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
-                }
-            }, 5000);
-            
-            // Close button event
-            notification.querySelector('.notification-close').addEventListener('click', () => {
-                notification.remove();
-            });
+                messageEl.style.opacity = '0';
+                setTimeout(() => {
+                    messageEl.style.display = 'none';
+                    messageEl.style.opacity = '1';
+                }, 300);
+            }, 3000);
         }
 
         // Load report data
@@ -1136,62 +1065,114 @@
                 const statusIcon = bill.status === 'รับบิลแล้ว' ? 'fas fa-check-circle' : 'fas fa-clock';
                 const statusText = bill.status === 'รับบิลแล้ว' ? 'รับบิลแล้ว' : 'รอรับบิล';
                 
-                // Create status cell content
-                if (bill.status === 'รับบิลแล้ว') {
-                    html += `
-                        <tr>
-                            <td>
-                                <div class="bill-number">${bill.billNo}</div>
-                            </td>
-                            <td>
-                                <div class="bill-detail">${bill.detail || '-'}</div>
-                            </td>
-                            <td>
-                                <span class="status-badge ${statusClass}">
-                                    <i class="${statusIcon}"></i>
-                                    ${statusText}
-                                </span>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    html += `
-                        <tr>
-                            <td>
-                                <div class="bill-number">${bill.billNo}</div>
-                            </td>
-                            <td>
-                                <div class="bill-detail">${bill.detail || '-'}</div>
-                            </td>
-                            <td>
-                                <div class="status-cell">
-                                    <span class="status-badge ${statusClass}">
-                                        <i class="${statusIcon}"></i>
-                                        ${statusText}
-                                    </span>
-                                    <button 
-                                        class="action-btn primary" 
-                                        onclick="updateBillStatus('${bill.billNo}', this)"
-                                        title="คลิกเพื่อรับบิล"
-                                    >
-                                        <i class="fas fa-check"></i>
+                html += `
+                    <tr data-bill-no="${bill.billNo}" data-status="${bill.status}">
+                        <td>
+                            <div class="bill-number">${bill.billNo}</div>
+                        </td>
+                        <td>
+                            <div class="bill-detail">${bill.detail || '-'}</div>
+                        </td>
+                        <td>
+                            <span class="status-badge ${statusClass}">
+                                <i class="${statusIcon}"></i>
+                                ${statusText}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                ${bill.status === 'รอรับบิล' ? 
+                                    `<button class="btn-receive" onclick="receiveBill('${bill.billNo}')">
+                                        <i class="fas fa-check-circle"></i>
                                         รับบิล
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                }
+                                    </button>` : 
+                                    `<span class="status-badge status-received">
+                                        <i class="fas fa-check-circle"></i>
+                                        รับแล้ว
+                                    </span>`
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                `;
             });
             
             result.innerHTML = html;
+        }
+
+        // Receive bill function
+        async function receiveBill(billNo) {
+            // Find the button and disable it
+            const button = document.querySelector(`[onclick="receiveBill('${billNo}')"]`);
+            if (button) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
+            }
+            
+            try {
+                const res = await fetch(API, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "update",
+                        billNo: billNo
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Update the row in table
+                    const row = document.querySelector(`tr[data-bill-no="${billNo}"]`);
+                    if (row) {
+                        // Update status badge
+                        const statusCell = row.querySelector('.status-badge');
+                        statusCell.className = 'status-badge status-received';
+                        statusCell.innerHTML = '<i class="fas fa-check-circle"></i> รับบิลแล้ว';
+                        
+                        // Update action buttons
+                        const actionCell = row.querySelector('.action-buttons');
+                        actionCell.innerHTML = `
+                            <span class="status-badge status-received">
+                                <i class="fas fa-check-circle"></i>
+                                รับแล้ว
+                            </span>
+                        `;
+                        
+                        // Update data attribute
+                        row.setAttribute('data-status', 'รับบิลแล้ว');
+                    }
+                    
+                    // Update stats
+                    const currentReceived = parseInt(receivedEl.textContent) || 0;
+                    const currentPending = parseInt(pendingEl.textContent) || 0;
+                    
+                    receivedEl.textContent = currentReceived + 1;
+                    pendingEl.textContent = Math.max(0, currentPending - 1);
+                    
+                    // Show success message
+                    showMessage(`อัพเดทสถานะบิล ${billNo} เรียบร้อยแล้ว`, 'success');
+                } else {
+                    showMessage(data.message || 'เกิดข้อผิดพลาดในการอัพเดท', 'error');
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = '<i class="fas fa-check-circle"></i> รับบิล';
+                    }
+                }
+            } catch (error) {
+                console.error("Error updating bill:", error);
+                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-check-circle"></i> รับบิล';
+                }
+            }
         }
 
         // Export report
         function exportReport() {
             const place = placeSelect.value;
             if (!place) {
-                alert('กรุณาเลือกสถานที่ก่อน');
+                showMessage('กรุณาเลือกสถานที่ก่อน', 'error');
                 return;
             }
             
@@ -1203,7 +1184,7 @@
             const tableRows = result.querySelectorAll('tr');
             tableRows.forEach(row => {
                 const cells = row.querySelectorAll('td');
-                if (cells.length === 3) {
+                if (cells.length === 4) {
                     const billNo = cells[0].textContent.trim();
                     const detail = cells[1].textContent.trim();
                     const status = cells[2].textContent.trim();
@@ -1212,7 +1193,7 @@
             });
             
             if (rows.length === 0) {
-                alert('ไม่มีข้อมูลให้ดาวน์โหลด');
+                showMessage('ไม่มีข้อมูลให้ดาวน์โหลด', 'error');
                 return;
             }
             

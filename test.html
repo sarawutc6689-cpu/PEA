@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>ระบบจัดการบิล | รายงานตามสถานที่</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการบิล PEA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
@@ -18,7 +18,9 @@
             --text-primary: #1e293b;
             --text-secondary: #64748b;
             --success: #10b981;
+            --success-light: #d1fae5;
             --warning: #f59e0b;
+            --warning-light: #fef3c7;
             --danger: #ef4444;
             --shadow: 0 10px 25px rgba(139, 92, 246, 0.1);
             --shadow-hover: 0 15px 35px rgba(139, 92, 246, 0.2);
@@ -40,8 +42,6 @@
             color: var(--text-primary);
             line-height: 1.6;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
 
         /* Header */
@@ -66,7 +66,7 @@
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
@@ -124,18 +124,19 @@
             color: white;
         }
 
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
         .nav-links a i {
             font-size: 18px;
         }
 
         /* Main Content */
         .main-content {
-            flex: 1;
             padding: 40px 20px;
-        }
-
-        .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -171,99 +172,26 @@
             color: var(--text-secondary);
             font-size: 17px;
             font-weight: 500;
-            max-width: 600px;
+            max-width: 700px;
             margin: 0 auto;
         }
 
-        /* Filter Section */
-        .filter-section {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            margin-bottom: 30px;
-        }
-
-        .filter-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .filter-header i {
-            color: var(--primary-purple);
-            font-size: 24px;
-        }
-
-        .filter-header h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-purple-dark);
-        }
-
-        .select-container {
-            position: relative;
-            max-width: 500px;
-        }
-
-        .select-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary-purple);
-            font-size: 18px;
-            z-index: 2;
-        }
-
-        #placeSelect {
-            width: 100%;
-            padding: 18px 20px 18px 48px;
-            font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            background: var(--light-gray);
-            color: var(--text-primary);
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 18px center;
-            background-size: 16px;
-            transition: var(--transition);
-        }
-
-        #placeSelect:hover {
-            border-color: var(--primary-purple-light);
-            background: var(--white);
-        }
-
-        #placeSelect:focus {
-            outline: none;
-            border-color: var(--primary-purple);
-            background: var(--white);
-            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
-        }
-
-        /* Stats Cards */
-        .stats-container {
+        /* Dashboard Stats */
+        .dashboard-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
             margin-bottom: 40px;
         }
 
         .stat-card {
             background: var(--white);
             border-radius: var(--radius);
-            padding: 30px;
+            padding: 25px;
             box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid;
             transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
         }
 
         .stat-card:hover {
@@ -271,281 +199,462 @@
             box-shadow: var(--shadow-hover);
         }
 
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 6px;
+        .stat-card.total {
+            border-top-color: var(--primary-purple);
+        }
+
+        .stat-card.completed {
+            border-top-color: var(--success);
+        }
+
+        .stat-card.inprogress {
+            border-top-color: var(--warning);
+        }
+
+        .stat-card.pending {
+            border-top-color: var(--danger);
+        }
+
+        .stat-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card.total .stat-icon {
+            color: var(--primary-purple);
+        }
+
+        .stat-card.completed .stat-icon {
+            color: var(--success);
+        }
+
+        .stat-card.inprogress .stat-icon {
+            color: var(--warning);
+        }
+
+        .stat-card.pending .stat-icon {
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
             height: 100%;
+            background: var(--gradient-purple);
+            border-radius: 4px;
+            transition: width 1s ease;
         }
 
-        .stat-card.total::before {
-            background: var(--primary-purple);
-        }
-
-        .stat-card.received::before {
-            background: var(--success);
-        }
-
-        .stat-card.pending::before {
-            background: var(--warning);
-        }
-
-        .stat-header {
+        .progress-text {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
+            margin-top: 5px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
-        .stat-title {
-            font-size: 17px;
+        /* Places Cards */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .place-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .place-card.completed {
+            border-color: var(--success-light);
+        }
+
+        .place-card.inprogress {
+            border-color: var(--warning-light);
+        }
+
+        .place-card.completed::before {
+            content: '✓ ครบแล้ว';
+            position: absolute;
+            top: 10px;
+            right: -30px;
+            background: var(--success);
+            color: white;
+            padding: 5px 30px;
+            font-size: 12px;
             font-weight: 600;
+            transform: rotate(45deg);
+        }
+
+        .place-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .place-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .place-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .place-status.completed {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .place-status.inprogress {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .place-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .place-stat {
+            padding: 10px;
+            background: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .place-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .place-stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .place-completion {
+            margin: 20px 0;
+        }
+
+        .completion-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .completion-percentage {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 12px 24px;
+            background: var(--white);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary-purple-light);
+            color: var(--primary-purple);
+        }
+
+        .filter-tab.active {
+            background: var(--gradient-purple);
+            color: white;
+            border-color: var(--primary-purple);
+        }
+
+        /* Search Section */
+        .search-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: var(--transition);
+            min-width: 300px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .search-btn {
+            padding: 15px 30px;
+            background: var(--gradient-purple);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .search-options {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Bill Results */
+        .bill-results {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .bill-card {
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .bill-card:hover {
+            border-color: var(--primary-purple-light);
+            box-shadow: var(--shadow);
+        }
+
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .bill-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .bill-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .bill-status.received {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .bill-status.pending {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .bill-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .bill-detail {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bill-label {
+            font-size: 12px;
             color: var(--text-secondary);
             margin-bottom: 5px;
         }
 
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .stat-card.total .stat-icon {
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--primary-purple);
-        }
-
-        .stat-card.received .stat-icon {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .stat-card.pending .stat-icon {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .stat-value {
-            font-size: 42px;
-            font-weight: 800;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-
-        .stat-card.total .stat-value {
-            color: var(--primary-purple-dark);
-        }
-
-        .stat-card.received .stat-value {
-            color: var(--success);
-        }
-
-        .stat-card.pending .stat-value {
-            color: var(--warning);
-        }
-
-        /* Table Section */
-        .table-section {
-            background: var(--white);
-            border-radius: var(--radius);
-            padding: 35px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-purple-dark);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .section-title i {
-            color: var(--primary-purple);
-        }
-
-        .bill-count {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--primary-purple);
-            color: white;
-            font-weight: 700;
-            min-width: 28px;
-            height: 28px;
-            border-radius: 14px;
-            font-size: 14px;
-            padding: 0 10px;
-            margin-left: 10px;
-        }
-
-        /* Table */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-        }
-
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
-
-        .data-table thead {
-            background: var(--light-purple);
-        }
-
-        .data-table th {
-            padding: 18px 20px;
-            text-align: left;
-            font-weight: 700;
-            color: var(--primary-purple-dark);
-            font-size: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .data-table tbody tr {
-            border-bottom: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
-
-        .data-table tbody tr:hover {
-            background: var(--light-purple);
-        }
-
-        .data-table td {
-            padding: 18px 20px;
+        .bill-value {
+            font-size: 16px;
+            font-weight: 600;
             color: var(--text-primary);
-            vertical-align: middle;
         }
 
-        .bill-number {
-            font-weight: 700;
-            color: var(--primary-purple-dark);
-        }
-
-        .bill-detail {
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        /* Status Badge */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .status-received {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-        }
-
-        .status-pending {
-            background: rgba(245, 158, 11, 0.15);
-            color: var(--warning);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
+        .bill-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
 
-        .btn-receive {
-            background: linear-gradient(135deg, var(--success) 0%, #0da674 100%);
-            color: white;
-            border: none;
+        .bill-btn {
             padding: 8px 16px;
+            border: none;
             border-radius: 8px;
-            font-weight: 600;
             font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-            white-space: nowrap;
+            gap: 8px;
         }
 
-        .btn-receive:hover {
-            background: linear-gradient(135deg, #0da674 0%, #0c9566 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        .bill-btn.receive {
+            background: var(--success);
+            color: white;
         }
 
-        .btn-receive:disabled {
-            background: var(--text-secondary);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .bill-btn.receive:hover {
+            background: #0da271;
         }
 
-        .btn-receive i {
-            font-size: 14px;
+        .bill-btn.details {
+            background: var(--light-purple);
+            color: var(--primary-purple);
         }
 
-        /* สำหรับสถานะที่รับบิลแล้ว */
-        .status-received .btn-receive {
-            display: none;
+        .bill-btn.details:hover {
+            background: var(--primary-purple-light);
+            color: white;
+        }
+
+        .bill-btn.print {
+            background: var(--warning);
+            color: white;
+        }
+
+        .bill-btn.print:hover {
+            background: #e6900b;
         }
 
         /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: var(--text-secondary);
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
 
-        .empty-state-icon {
+        .empty-icon {
             font-size: 70px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: var(--primary-purple);
             opacity: 0.5;
         }
 
-        .empty-state-title {
+        .empty-title {
             font-size: 24px;
             font-weight: 700;
+            color: var(--text-primary);
             margin-bottom: 10px;
-            color: var(--primary-purple-dark);
         }
 
-        .empty-state-subtitle {
+        .empty-subtitle {
+            color: var(--text-secondary);
             font-size: 16px;
-            margin-bottom: 30px;
             max-width: 400px;
-            margin: 0 auto 30px;
+            margin: 0 auto 20px;
         }
 
         /* Loading State */
         .loading {
             text-align: center;
-            padding: 60px 20px;
+            padding: 60px;
         }
 
         .loading-spinner {
@@ -569,46 +678,53 @@
             font-size: 17px;
         }
 
-        /* Message */
-        .message {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 12px;
-            font-weight: 600;
-            display: none;
+        /* Export Section */
+        .export-section {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
-            z-index: 1000;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-            animation: slideIn 0.3s ease;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        .message.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+        .export-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
             display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .message.error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .export-buttons {
             display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 12px 24px;
+            background: var(--light-purple);
+            color: var(--primary-purple);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: var(--gradient-purple);
+            color: white;
+            transform: translateY(-2px);
         }
 
         /* Footer */
@@ -616,11 +732,11 @@
             background: var(--white);
             padding: 30px 0;
             border-top: 1px solid var(--border-color);
-            margin-top: 50px;
+            margin-top: 60px;
         }
 
         .footer-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
             text-align: center;
@@ -632,27 +748,19 @@
             margin-bottom: 10px;
         }
 
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            margin-top: 20px;
-            flex-wrap: wrap;
+        /* Tab Content */
+        .tab-content {
+            display: none;
         }
 
-        .footer-links a {
-            color: var(--primary-purple);
-            text-decoration: none;
-            font-weight: 600;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
         }
 
-        .footer-links a:hover {
-            color: var(--primary-purple-dark);
-            text-decoration: underline;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* Responsive */
@@ -661,49 +769,39 @@
                 flex-direction: column;
                 gap: 15px;
             }
-
+            
             .page-title {
-                font-size: 30px;
-            }
-
-            .page-title i {
-                width: 60px;
-                height: 60px;
                 font-size: 28px;
             }
-
-            .stats-container {
+            
+            .places-grid {
                 grid-template-columns: 1fr;
             }
-
-            .stat-value {
-                font-size: 36px;
-            }
-
-            .section-header {
+            
+            .export-section {
                 flex-direction: column;
-                align-items: flex-start;
+                text-align: center;
             }
-
+            
+            .export-buttons {
+                justify-content: center;
+            }
+            
             .nav-links {
-                gap: 15px;
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
-
-            .nav-links a {
-                padding: 6px 12px;
-                font-size: 15px;
-            }
-
-            .table-section {
-                padding: 25px;
-            }
-
-            .action-buttons {
+            
+            .search-container {
                 flex-direction: column;
-                width: 100%;
             }
-
-            .btn-receive {
+            
+            .search-input {
+                min-width: 100%;
+            }
+            
+            .search-btn {
                 width: 100%;
                 justify-content: center;
             }
@@ -711,58 +809,47 @@
 
         @media (max-width: 480px) {
             .page-title {
+                font-size: 24px;
                 flex-direction: column;
-                gap: 10px;
             }
-
-            .stat-value {
-                font-size: 32px;
+            
+            .page-title i {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
             }
-
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .data-table th,
-            .data-table td {
-                padding: 14px 16px;
-            }
-
-            .message {
-                left: 20px;
-                right: 20px;
-                top: 10px;
+            
+            .dashboard-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
-
 <body>
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <a href="index.html" class="logo">
+            <a href="#" class="logo" onclick="showTab('dashboard')">
                 <div class="logo-icon">
                     <i class="fas fa-file-invoice-dollar"></i>
                 </div>
-                <div class="logo-text">ระบบจัดการบิล</div>
+                <div class="logo-text">ระบบจัดการบิล PEA</div>
             </a>
 
             <nav class="nav-links">
-                <a href="https://sarawutc6689-cpu.github.io/PEA/CheckBill.html">
+                <a href="#" onclick="showTab('checkBill')">
                     <i class="fas fa-search"></i>
                     <span>ค้นหา/รับบิล</span>
                 </a>
-                <a href="https://sarawutc6689-cpu.github.io/PEA/Report.html" class="active">
+                <a href="#" onclick="showTab('report')">
                     <i class="fas fa-chart-bar"></i>
-                    <span>รายงาน</span>
+                    <span>รายงานตามสถานที่</span>
                 </a>
-                <a href="https://sarawutc6689-cpu.github.io/PEA/AddBill.html">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>เพิ่มบิล</span>
+                <a href="#" onclick="showTab('fullBill')" class="active">
+                    <i class="fas fa-check-circle"></i>
+                    <span>สถานที่ครบแล้ว</span>
                 </a>
-                <a href="https://sarawutc6689-cpu.github.io/PEA/DashBoard.html">
+                <a href="#" onclick="showTab('dashboard')">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -772,467 +859,1010 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <div class="container">
-            <!-- Page Header -->
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
             <div class="page-header">
                 <h1 class="page-title">
-                    <i class="fas fa-chart-pie"></i>
-                    รายงานตามสถานที่
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
                 </h1>
-                <p class="page-subtitle">ตรวจสอบข้อมูลบิลและสถิติตามสถานที่ที่เลือก</p>
-            </div>
-
-            <!-- Filter Section -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <h3>เลือกสถานที่</h3>
-                </div>
-                <div class="select-container">
-                    <i class="fas fa-building select-icon"></i>
-                    <select id="placeSelect">
-                        <option value="">-- เลือกสถานที่ --</option>
-                    </select>
-                </div>
+                <p class="page-subtitle">ภาพรวมระบบจัดการบิล PEA</p>
             </div>
 
             <!-- Stats Cards -->
-            <div class="stats-container">
+            <div class="dashboard-stats" id="dashboardStats">
                 <div class="stat-card total">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-title">บิลทั้งหมด</div>
-                            <div class="stat-value" id="total">0</div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-file-invoice"></i>
-                        </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marker-alt"></i>
                     </div>
-                    <div class="stat-info">
-                        จำนวนบิลทั้งหมดในสถานที่ที่เลือก
-                    </div>
+                    <div class="stat-value" id="totalPlaces">0</div>
+                    <div class="stat-label">สถานที่ทั้งหมด</div>
                 </div>
                 
-                <div class="stat-card received">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-title">รับบิลแล้ว</div>
-                            <div class="stat-value" id="received">0</div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
+                <div class="stat-card completed">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
                     </div>
-                    <div class="stat-info">
-                        บิลที่ได้รับการดำเนินการเสร็จสิ้น
+                    <div class="stat-value" id="completedPlaces">0</div>
+                    <div class="stat-label">สถานที่ครบแล้ว</div>
+                </div>
+                
+                <div class="stat-card inprogress">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
                     </div>
+                    <div class="stat-value" id="inProgressPlaces">0</div>
+                    <div class="stat-label">กำลังดำเนินการ</div>
                 </div>
                 
                 <div class="stat-card pending">
-                    <div class="stat-header">
-                        <div>
-                            <div class="stat-title">คงเหลือ</div>
-                            <div class="stat-value" id="pending">0</div>
-                        </div>
-                        <div class="stat-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
                     </div>
-                    <div class="stat-info">
-                        บิลที่ยังรอดำเนินการ
-                    </div>
+                    <div class="stat-value" id="totalBills">0</div>
+                    <div class="stat-label">บิลทั้งหมด</div>
                 </div>
             </div>
 
-            <!-- Bills Table -->
-            <div class="table-section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-list-alt"></i>
-                        รายการบิล
-                        <span class="bill-count" id="billCount">0</span>
-                    </h2>
-                    <div class="section-actions">
-                        <button id="exportBtn" style="display: none; padding: 10px 20px; background: var(--gradient-purple); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                            <i class="fas fa-download"></i>
-                            ดาวน์โหลดรายงาน
-                        </button>
-                    </div>
+            <!-- Places Grid -->
+            <div id="dashboardPlaces">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">กำลังโหลดข้อมูล...</div>
                 </div>
-                
-                <div class="table-responsive">
-                    <table class="data-table" id="billsTable">
-                        <thead>
-                            <tr>
-                                <th width="25%">
-                                    <i class="fas fa-hashtag"></i>
-                                    เลขบิล
-                                </th>
-                                <th width="45%">
-                                    <i class="fas fa-align-left"></i>
-                                    รายละเอียด
-                                </th>
-                                <th width="15%">
-                                    <i class="fas fa-info-circle"></i>
-                                    สถานะ
-                                </th>
-                                <th width="15%">
-                                    <i class="fas fa-cogs"></i>
-                                    การดำเนินการ
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="result">
-                            <!-- Initial empty state -->
-                            <tr>
-                                <td colspan="4">
-                                    <div class="empty-state">
-                                        <div class="empty-state-icon">
-                                            <i class="fas fa-chart-bar"></i>
-                                        </div>
-                                        <h3 class="empty-state-title">เลือกสถานที่เพื่อดูรายงาน</h3>
-                                        <p class="empty-state-subtitle">ข้อมูลบิลจะแสดงที่นี่เมื่อคุณเลือกสถานที่จาก dropdown ด้านบน</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            </div>
+        </div>
+
+        <!-- Check Bill Tab -->
+        <div id="checkBill" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-search"></i>
+                    ค้นหา/รับบิล
+                </h1>
+                <p class="page-subtitle">ค้นหาบิลด้วยเลขที่บิลหรือสถานที่ และทำการรับบิล</p>
+            </div>
+
+            <!-- Search Section -->
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" 
+                           class="search-input" 
+                           id="searchInput" 
+                           placeholder="พิมพ์เลขที่บิล, สถานที่ หรือรหัสลูกค้า..." 
+                           onkeypress="handleSearchKeypress(event)">
+                    <button class="search-btn" onclick="searchBills()">
+                        <i class="fas fa-search"></i>
+                        ค้นหา
+                    </button>
+                </div>
+
+                <div class="search-options">
+                    <label class="search-option">
+                        <input type="radio" name="searchType" value="billNumber" checked>
+                        เลขที่บิล
+                    </label>
+                    <label class="search-option">
+                        <input type="radio" name="searchType" value="placeName">
+                        ชื่อสถานที่
+                    </label>
+                    <label class="search-option">
+                        <input type="radio" name="searchType" value="customerId">
+                        รหัสลูกค้า
+                    </label>
+                    <label class="search-option">
+                        <input type="radio" name="searchType" value="all">
+                        ค้นหาทั้งหมด
+                    </label>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div id="searchResults" class="bill-results">
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="empty-title">ค้นหาบิล</h3>
+                    <p class="empty-subtitle">กรุณาใช้ช่องค้นหาด้านบนเพื่อค้นหาบิล</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Tab -->
+        <div id="report" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-chart-bar"></i>
+                    รายงานตามสถานที่
+                </h1>
+                <p class="page-subtitle">ติดตามสถานะการรับบิลตามสถานที่ต่างๆ</p>
+            </div>
+
+            <!-- Places Grid -->
+            <div id="reportPlaces">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">กำลังโหลดข้อมูล...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Bill Tab -->
+        <div id="fullBill" class="tab-content">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-check-circle"></i>
+                    รายงานสถานที่ที่ได้รับบิลครบแล้ว
+                </h1>
+                <p class="page-subtitle">ติดตามสถานะการรับบิลตามสถานที่ต่างๆ ดูสถานที่ที่รับบิลครบแล้วและสถานที่ที่ยังรอดำเนินการ</p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all" onclick="filterPlaces('all')">
+                    <i class="fas fa-layer-group"></i>
+                    ทั้งหมด
+                </button>
+                <button class="filter-tab" data-filter="completed" onclick="filterPlaces('completed')">
+                    <i class="fas fa-check-circle"></i>
+                    ครบแล้ว
+                </button>
+                <button class="filter-tab" data-filter="inprogress" onclick="filterPlaces('inprogress')">
+                    <i class="fas fa-clock"></i>
+                    กำลังดำเนินการ
+                </button>
+                <button class="filter-tab" data-filter="summary" onclick="filterPlaces('summary')">
+                    <i class="fas fa-chart-pie"></i>
+                    สรุปสถิติ
+                </button>
+            </div>
+
+            <!-- Stats Section -->
+            <div id="statsSection" class="dashboard-stats">
+                <!-- Stats will be loaded here -->
+            </div>
+
+            <!-- Places Section -->
+            <div id="placesSection">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">กำลังโหลดข้อมูล...</div>
+                </div>
+            </div>
+
+            <!-- Export Section -->
+            <div id="exportSection" class="export-section" style="display: none;">
+                <div class="export-title">
+                    <i class="fas fa-file-export"></i>
+                    ส่งออกรายงาน
+                </div>
+                <div class="export-buttons">
+                    <button class="export-btn" onclick="exportToPDF()">
+                        <i class="fas fa-file-pdf"></i>
+                        PDF
+                    </button>
+                    <button class="export-btn" onclick="exportToExcel()">
+                        <i class="fas fa-file-excel"></i>
+                        Excel
+                    </button>
+                    <button class="export-btn" onclick="exportToCSV()">
+                        <i class="fas fa-file-csv"></i>
+                        CSV
+                    </button>
+                    <button class="export-btn" onclick="printReport()">
+                        <i class="fas fa-print"></i>
+                        พิมพ์รายงาน
+                    </button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- Message Display -->
-    <div id="message" class="message"></div>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p class="footer-text">ระบบจัดการใบเสร็จ © 2026 | พัฒนาโดย Sarawut.C</p>
+            <p class="footer-text">ระบบจัดการใบเสร็จ PEA © 2026 | พัฒนาโดย Sarawut.C</p>
             <p class="footer-text">สำหรับใช้ส่วนตัวท่านั้น</p>
         </div>
     </footer>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxfTu6osOm_WivAx26wUsXiydykXbWQXXwgi24dwRFtDlFR_Th8gSyA4E8nWxvceTgS/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbxfTu6osOm_WivAx26wUsXiydykXbWQXXwgi24dwRFtDlFR_Th8gSyA4E8nWxvceTgS/exec";
+        
+        let currentTab = 'fullBill';
+        let currentFilter = 'all';
+        let currentData = null;
+        let allPlaces = [];
 
-        // DOM Elements
-        const placeSelect = document.getElementById('placeSelect');
-        const totalEl = document.getElementById('total');
-        const receivedEl = document.getElementById('received');
-        const pendingEl = document.getElementById('pending');
-        const billCountEl = document.getElementById('billCount');
-        const result = document.getElementById('result');
-        const exportBtn = document.getElementById('exportBtn');
-        const billsTable = document.getElementById('billsTable');
-        const messageEl = document.getElementById('message');
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load data for initial tab
+            loadFullBillData();
+            setupEventListeners();
+        });
 
-        // Load places from API
-        async function loadPlaces() {
-            try {
-                const res = await fetch(API + "?action=places");
-                const data = await res.json();
-
-                if (data.success && data.places && data.places.length > 0) {
-                    // Clear existing options except the first one
-                    while (placeSelect.options.length > 1) {
-                        placeSelect.remove(1);
-                    }
-                    
-                    // Add places to select
-                    data.places.forEach(place => {
-                        const option = document.createElement('option');
-                        option.value = place;
-                        option.textContent = place;
-                        placeSelect.appendChild(option);
-                    });
-                } else {
-                    const option = document.createElement('option');
-                    option.value = "";
-                    option.textContent = "ไม่พบข้อมูลสถานที่";
-                    option.disabled = true;
-                    placeSelect.appendChild(option);
+        // Setup event listeners
+        function setupEventListeners() {
+            // Auto refresh every 30 seconds
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    refreshCurrentTab();
                 }
-            } catch (error) {
-                console.error("Error loading places:", error);
-                const option = document.createElement('option');
-                option.value = "";
-                option.textContent = "ไม่สามารถโหลดข้อมูลสถานที่";
-                option.disabled = true;
-                placeSelect.appendChild(option);
+            }, 30000);
+        }
+
+        // Tab navigation
+        function showTab(tabId) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked nav link
+            document.querySelector(`.nav-links a[onclick*="${tabId}"]`).classList.add('active');
+            
+            // Load data for the tab
+            currentTab = tabId;
+            
+            switch(tabId) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'checkBill':
+                    // Nothing to load initially for check bill
+                    break;
+                case 'report':
+                    loadReportData();
+                    break;
+                case 'fullBill':
+                    loadFullBillData();
+                    break;
             }
         }
 
-        // Show loading state
-        function showLoading() {
-            result.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                            <div class="loading-text">กำลังโหลดข้อมูล...</div>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        // Refresh current tab
+        function refreshCurrentTab() {
+            switch(currentTab) {
+                case 'dashboard':
+                    loadDashboardData();
+                    break;
+                case 'report':
+                    loadReportData();
+                    break;
+                case 'fullBill':
+                    loadFullBillData();
+                    break;
+            }
         }
 
-        // Show empty state
-        function showEmpty(message = "ไม่พบข้อมูลบิลสำหรับสถานที่นี้") {
-            result.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-inbox"></i>
-                            </div>
-                            <h3 class="empty-state-title">${message}</h3>
-                            <p class="empty-state-subtitle">ลองเลือกสถานที่อื่นหรือตรวจสอบอีกครั้งในภายหลัง</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_URL}?action=dashboard`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update stats
+                    document.getElementById('totalPlaces').textContent = data.summary.totalPlaces || 0;
+                    document.getElementById('completedPlaces').textContent = data.summary.completedCount || 0;
+                    document.getElementById('inProgressPlaces').textContent = data.summary.inProgressCount || 0;
+                    document.getElementById('totalBills').textContent = data.summary.totalBills || 0;
+                    
+                    // Render places
+                    renderDashboardPlaces(data.places || []);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
         }
 
-        // Show message
-        function showMessage(text, type = 'success') {
-            messageEl.textContent = text;
-            messageEl.className = `message ${type}`;
-            messageEl.style.display = 'flex';
+        // Render dashboard places
+        function renderDashboardPlaces(places) {
+            const container = document.getElementById('dashboardPlaces');
             
-            setTimeout(() => {
-                messageEl.style.opacity = '0';
-                setTimeout(() => {
-                    messageEl.style.display = 'none';
-                    messageEl.style.opacity = '1';
-                }, 300);
-            }, 3000);
-        }
-
-        // Load report data
-        async function loadReport(place) {
-            if (!place) {
-                showEmpty("เลือกสถานที่เพื่อดูรายงาน");
-                totalEl.textContent = "0";
-                receivedEl.textContent = "0";
-                pendingEl.textContent = "0";
-                billCountEl.textContent = "0";
-                exportBtn.style.display = 'none';
+            if (!places || places.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3 class="empty-title">ไม่พบข้อมูล</h3>
+                        <p class="empty-subtitle">ยังไม่มีข้อมูลสถานที่ในระบบ</p>
+                    </div>
+                `;
                 return;
             }
-
-            // Show loading
-            showLoading();
-            exportBtn.style.display = 'none';
-
-            try {
-                const res = await fetch(API + "?action=report&place=" + encodeURIComponent(place));
-                const data = await res.json();
-
-                // Update stats
-                totalEl.textContent = data.total || 0;
-                receivedEl.textContent = data.received || 0;
-                pendingEl.textContent = data.pending || 0;
-                billCountEl.textContent = data.total || 0;
-
-                // Show/hide export button
-                if (data.total > 0) {
-                    exportBtn.style.display = 'flex';
-                }
-
-                // Update table
-                if (data.items && data.items.length > 0) {
-                    renderBills(data.items);
-                } else {
-                    showEmpty("ไม่พบข้อมูลบิลสำหรับสถานที่นี้");
-                }
-            } catch (error) {
-                console.error("Error loading report:", error);
-                showEmpty("เกิดข้อผิดพลาดในการโหลดข้อมูล");
-                totalEl.textContent = "0";
-                receivedEl.textContent = "0";
-                pendingEl.textContent = "0";
-                billCountEl.textContent = "0";
-            }
-        }
-
-        // Render bills in table
-        function renderBills(bills) {
-            let html = '';
             
-            bills.forEach(bill => {
-                const statusClass = bill.status === 'รับบิลแล้ว' ? 'status-received' : 'status-pending';
-                const statusIcon = bill.status === 'รับบิลแล้ว' ? 'fas fa-check-circle' : 'fas fa-clock';
-                const statusText = bill.status === 'รับบิลแล้ว' ? 'รับบิลแล้ว' : 'รอรับบิล';
+            let html = `<h2 style="margin-bottom: 20px; color: var(--text-primary);">สถานที่ทั้งหมด (${places.length} สถานที่)</h2>`;
+            html += '<div class="places-grid">';
+            
+            places.forEach(place => {
+                const isCompleted = place.pendingBills === 0;
+                const statusClass = isCompleted ? 'completed' : 'inprogress';
+                const statusText = isCompleted ? 'ครบแล้ว' : 'รอดำเนินการ';
                 
                 html += `
-                    <tr data-bill-no="${bill.billNo}" data-status="${bill.status}">
-                        <td>
-                            <div class="bill-number">${bill.billNo}</div>
-                        </td>
-                        <td>
-                            <div class="bill-detail">${bill.detail || '-'}</div>
-                        </td>
-                        <td>
-                            <span class="status-badge ${statusClass}">
-                                <i class="${statusIcon}"></i>
-                                ${statusText}
+                    <div class="place-card ${statusClass}">
+                        <div class="place-header">
+                            <h3 class="place-name">${place.placeName}</h3>
+                            <span class="place-status ${statusClass}">
+                                ${isCompleted ? '✓ ' : '⏳ '}${statusText}
                             </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                ${bill.status === 'รอรับบิล' ? 
-                                    `<button class="btn-receive" onclick="receiveBill('${bill.billNo}')">
-                                        <i class="fas fa-check-circle"></i>
-                                        รับบิล
-                                    </button>` : 
-                                    `<span class="status-badge status-received">
-                                        <i class="fas fa-check-circle"></i>
-                                        รับแล้ว
-                                    </span>`
-                                }
+                        </div>
+                        
+                        <div class="place-stats">
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.totalBills}</div>
+                                <div class="place-stat-label">บิลทั้งหมด</div>
                             </div>
-                        </td>
-                    </tr>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.completedBills}</div>
+                                <div class="place-stat-label">รับแล้ว</div>
+                            </div>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.pendingBills}</div>
+                                <div class="place-stat-label">ค้างรับ</div>
+                            </div>
+                        </div>
+                        
+                        <div class="place-completion">
+                            <div class="completion-label">
+                                <span>อัตราความสมบูรณ์</span>
+                                <span class="completion-percentage">${place.completionRate}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${place.completionRate}%"></div>
+                            </div>
+                        </div>
+                    </div>
                 `;
             });
             
-            result.innerHTML = html;
+            html += '</div>';
+            container.innerHTML = html;
         }
 
-        // Receive bill function
-        async function receiveBill(billNo) {
-            // Find the button and disable it
-            const button = document.querySelector(`[onclick="receiveBill('${billNo}')"]`);
-            if (button) {
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังอัพเดท...';
+        // Load report data
+        async function loadReportData() {
+            try {
+                const response = await fetch(`${API_URL}?action=report`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderReportPlaces(data.places || []);
+                }
+            } catch (error) {
+                console.error('Error loading report data:', error);
+            }
+        }
+
+        // Render report places
+        function renderReportPlaces(places) {
+            const container = document.getElementById('reportPlaces');
+            
+            if (!places || places.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3 class="empty-title">ไม่พบข้อมูล</h3>
+                        <p class="empty-subtitle">ยังไม่มีข้อมูลสถานที่ในระบบ</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<h2 style="margin-bottom: 20px; color: var(--text-primary);">รายงานสถานที่ (${places.length} สถานที่)</h2>`;
+            html += '<div class="places-grid">';
+            
+            places.forEach(place => {
+                const isCompleted = place.pendingBills === 0;
+                const statusClass = isCompleted ? 'completed' : 'inprogress';
+                const statusText = isCompleted ? 'ครบแล้ว' : 'รอดำเนินการ';
+                
+                html += `
+                    <div class="place-card ${statusClass}">
+                        <div class="place-header">
+                            <h3 class="place-name">${place.placeName}</h3>
+                            <span class="place-status ${statusClass}">
+                                ${isCompleted ? '✓ ' : '⏳ '}${statusText}
+                            </span>
+                        </div>
+                        
+                        <div class="place-stats">
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.totalBills}</div>
+                                <div class="place-stat-label">บิลทั้งหมด</div>
+                            </div>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.completedBills}</div>
+                                <div class="place-stat-label">รับแล้ว</div>
+                            </div>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.pendingBills}</div>
+                                <div class="place-stat-label">ค้างรับ</div>
+                            </div>
+                        </div>
+                        
+                        <div class="place-completion">
+                            <div class="completion-label">
+                                <span>อัตราความสมบูรณ์</span>
+                                <span class="completion-percentage">${place.completionRate}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${place.completionRate}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; font-size: 13px; color: var(--text-secondary);">
+                            <i class="fas fa-info-circle"></i>
+                            ${isCompleted ? 'รับบิลครบทุกใบแล้ว ✓' : `เหลืออีก ${place.pendingBills} บิลที่ต้องรับ`}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Load full bill data
+        async function loadFullBillData(filter = 'all') {
+            try {
+                const endpoint = filter === 'summary' 
+                    ? `${API_URL}?action=places-summary`
+                    : `${API_URL}?action=completed-places&filter=${filter}`;
+                
+                const response = await fetch(endpoint);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentData = data;
+                    
+                    if (filter === 'summary') {
+                        renderSummary(data);
+                    } else {
+                        renderStats(data);
+                        renderPlaces(data, filter);
+                    }
+                    
+                    showExportSection();
+                }
+            } catch (error) {
+                console.error('Error loading full bill data:', error);
+                showError('เกิดข้อผิดพลาดในการเชื่อมต่อ');
+            }
+        }
+
+        // Filter places in full bill tab
+        function filterPlaces(filter) {
+            currentFilter = filter;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                if (tab.dataset.filter === filter) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Load data
+            loadFullBillData(filter);
+        }
+
+        // Render statistics
+        function renderStats(data) {
+            const statsSection = document.getElementById('statsSection');
+            
+            if (!data.summary) {
+                statsSection.innerHTML = '';
+                return;
+            }
+            
+            const { summary } = data;
+            
+            statsSection.innerHTML = `
+                <div class="stat-card total">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="stat-value">${summary.totalPlaces}</div>
+                    <div class="stat-label">สถานที่ทั้งหมด</div>
+                </div>
+                
+                <div class="stat-card completed">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value">${summary.completedCount}</div>
+                    <div class="stat-label">สถานที่ครบแล้ว</div>
+                </div>
+                
+                <div class="stat-card inprogress">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value">${summary.inProgressCount}</div>
+                    <div class="stat-label">กำลังดำเนินการ</div>
+                </div>
+                
+                <div class="stat-card pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-value">${summary.totalPendingBills}</div>
+                    <div class="stat-label">บิลที่รอดำเนินการ</div>
+                </div>
+            `;
+        }
+
+        // Render places
+        function renderPlaces(data, filter) {
+            const placesSection = document.getElementById('placesSection');
+            
+            let places = [];
+            let title = '';
+            
+            if (filter === 'completed' && data.completedPlaces) {
+                places = data.completedPlaces;
+                title = `สถานที่ที่ได้รับบิลครบแล้ว (${places.length} สถานที่)`;
+            } else if (filter === 'inprogress' && data.inProgressPlaces) {
+                places = data.inProgressPlaces;
+                title = `สถานที่ที่กำลังดำเนินการ (${places.length} สถานที่)`;
+            } else if (filter === 'all') {
+                places = [...(data.completedPlaces || []), ...(data.inProgressPlaces || [])];
+                title = `สถานที่ทั้งหมด (${places.length} สถานที่)`;
+            }
+            
+            if (places.length === 0) {
+                placesSection.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <h3 class="empty-title">ไม่พบข้อมูล</h3>
+                        <p class="empty-subtitle">ยังไม่มีข้อมูลสถานที่ในระบบ</p>
+                        <button onclick="loadFullBillData('all')" style="padding: 10px 20px; background: var(--gradient-purple); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                            <i class="fas fa-sync-alt"></i> โหลดใหม่
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            let placesHTML = `<h2 style="margin-bottom: 20px; color: var(--text-primary);">${title}</h2>`;
+            placesHTML += '<div class="places-grid">';
+            
+            places.forEach(place => {
+                const isCompleted = place.pendingBills === 0;
+                const statusClass = isCompleted ? 'completed' : 'inprogress';
+                const statusText = isCompleted ? 'ครบแล้ว' : 'รอดำเนินการ';
+                
+                placesHTML += `
+                    <div class="place-card ${statusClass}">
+                        <div class="place-header">
+                            <h3 class="place-name">${place.placeName}</h3>
+                            <span class="place-status ${statusClass}">
+                                ${isCompleted ? '✓ ' : '⏳ '}${statusText}
+                            </span>
+                        </div>
+                        
+                        <div class="place-stats">
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.totalBills}</div>
+                                <div class="place-stat-label">บิลทั้งหมด</div>
+                            </div>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.completedBills}</div>
+                                <div class="place-stat-label">รับแล้ว</div>
+                            </div>
+                            <div class="place-stat">
+                                <div class="place-stat-value">${place.pendingBills}</div>
+                                <div class="place-stat-label">ค้างรับ</div>
+                            </div>
+                        </div>
+                        
+                        <div class="place-completion">
+                            <div class="completion-label">
+                                <span>อัตราความสมบูรณ์</span>
+                                <span class="completion-percentage">${place.completionRate}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${place.completionRate}%"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 15px; font-size: 13px; color: var(--text-secondary);">
+                            <i class="fas fa-info-circle"></i>
+                            ${isCompleted ? 'รับบิลครบทุกใบแล้ว ✓' : `เหลืออีก ${place.pendingBills} บิลที่ต้องรับ`}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            placesHTML += '</div>';
+            placesSection.innerHTML = placesHTML;
+        }
+
+        // Render summary
+        function renderSummary(data) {
+            const placesSection = document.getElementById('placesSection');
+            const statsSection = document.getElementById('statsSection');
+            
+            if (!data.stats) {
+                placesSection.innerHTML = '<div class="empty-state">ไม่พบข้อมูลสรุป</div>';
+                return;
+            }
+            
+            const { stats } = data;
+            
+            // Update stats section
+            statsSection.innerHTML = `
+                <div class="stat-card total">
+                    <div class="stat-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="stat-value">${stats.totalPlaces}</div>
+                    <div class="stat-label">สถานที่ทั้งหมด</div>
+                </div>
+                
+                <div class="stat-card completed">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-value">${stats.averageCompletionRate}%</div>
+                    <div class="stat-label">อัตราความสมบูรณ์เฉลี่ย</div>
+                </div>
+                
+                <div class="stat-card inprogress">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-value">${stats.completedCount}</div>
+                    <div class="stat-label">สถานที่ครบแล้ว</div>
+                </div>
+                
+                <div class="stat-card pending">
+                    <div class="stat-icon">
+                        <i class="fas fa-file-invoice"></i>
+                    </div>
+                    <div class="stat-value">${stats.totalPendingBills}</div>
+                    <div class="stat-label">บิลที่รอดำเนินการ</div>
+                </div>
+            `;
+            
+            // Render summary content
+            let topCompletedHTML = '';
+            let topPendingHTML = '';
+            
+            if (stats.topCompletedPlaces) {
+                stats.topCompletedPlaces.forEach((place, index) => {
+                    topCompletedHTML += `
+                        <div class="place-card completed" style="margin-bottom: 15px;">
+                            <div class="place-header">
+                                <h3 class="place-name">${place.placeName}</h3>
+                                <span class="place-status completed">อันดับที่ ${index + 1}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--success);">${place.completionRate}%</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">ความสมบูรณ์</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--text-primary);">${place.totalBills}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">จำนวนบิล</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            if (stats.topPendingPlaces) {
+                stats.topPendingPlaces.forEach((place, index) => {
+                    topPendingHTML += `
+                        <div class="place-card inprogress" style="margin-bottom: 15px;">
+                            <div class="place-header">
+                                <h3 class="place-name">${place.placeName}</h3>
+                                <span class="place-status inprogress">อันดับที่ ${index + 1}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--danger);">${place.pendingBills}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">บิลค้างรับ</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 24px; font-weight: 700; color: var(--text-primary);">${place.completionRate}%</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">ความสมบูรณ์</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            placesSection.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+                    <div>
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-trophy" style="color: var(--success);"></i>
+                            สถานที่มีอัตราความสมบูรณ์สูงสุด
+                        </h3>
+                        ${topCompletedHTML || '<p style="color: var(--text-secondary); text-align: center;">ไม่มีข้อมูล</p>'}
+                    </div>
+                    <div>
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary);">
+                            <i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i>
+                            สถานที่มีบิลค้างรับมากที่สุด
+                        </h3>
+                        ${topPendingHTML || '<p style="color: var(--text-secondary); text-align: center;">ไม่มีข้อมูล</p>'}
+                    </div>
+                </div>
+                
+                <div style="background: var(--white); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow);">
+                    <h3 style="margin-bottom: 15px; color: var(--text-primary);">
+                        <i class="fas fa-chart-bar"></i>
+                        สรุปภาพรวม
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 800; color: var(--primary-purple);">${stats.completedCount}</div>
+                            <div style="color: var(--text-secondary);">สถานที่ครบแล้ว</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 800; color: var(--warning);">${stats.inProgressCount}</div>
+                            <div style="color: var(--text-secondary);">สถานที่กำลังดำเนินการ</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 800; color: var(--success);">${stats.totalCompletedBills}</div>
+                            <div style="color: var(--text-secondary);">บิลที่รับแล้วทั้งหมด</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; font-weight: 800; color: var(--danger);">${stats.totalPendingBills}</div>
+                            <div style="color: var(--text-secondary);">บิลที่รอดำเนินการทั้งหมด</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show error message
+        function showError(message) {
+            const placesSection = document.getElementById('placesSection');
+            placesSection.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="empty-title">เกิดข้อผิดพลาด</h3>
+                    <p class="empty-subtitle">${message}</p>
+                    <button onclick="loadFullBillData(currentFilter)" style="padding: 10px 20px; background: var(--gradient-purple); color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-sync-alt"></i> โหลดใหม่
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show export section
+        function showExportSection() {
+            if (currentData && currentData.success) {
+                document.getElementById('exportSection').style.display = 'flex';
+            }
+        }
+
+        // Search bills
+        async function searchBills() {
+            const searchInput = document.getElementById('searchInput');
+            const searchValue = searchInput.value.trim();
+            const searchType = document.querySelector('input[name="searchType"]:checked').value;
+            
+            if (!searchValue) {
+                alert('กรุณากรอกข้อมูลสำหรับค้นหา');
+                return;
+            }
+            
+            const resultsContainer = document.getElementById('searchResults');
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">กำลังค้นหา...</div>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`${API_URL}?action=search&type=${searchType}&query=${encodeURIComponent(searchValue)}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderSearchResults(data.results || []);
+                } else {
+                    resultsContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="empty-title">ไม่พบข้อมูล</h3>
+                            <p class="empty-subtitle">ไม่พบผลลัพธ์การค้นหา</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error searching bills:', error);
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h3 class="empty-title">เกิดข้อผิดพลาด</h3>
+                        <p class="empty-subtitle">ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Handle search keypress
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                searchBills();
+            }
+        }
+
+        // Render search results
+        function renderSearchResults(bills) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!bills || bills.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3 class="empty-title">ไม่พบผลลัพธ์</h3>
+                        <p class="empty-subtitle">ไม่พบข้อมูลที่ตรงกับการค้นหา</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `<h3 style="margin-bottom: 20px; color: var(--text-primary);">ผลการค้นหา (${bills.length} รายการ)</h3>`;
+            
+            bills.forEach(bill => {
+                const isReceived = bill.status === 'received';
+                const statusClass = isReceived ? 'received' : 'pending';
+                const statusText = isReceived ? 'รับแล้ว' : 'รอรับ';
+                
+                html += `
+                    <div class="bill-card">
+                        <div class="bill-header">
+                            <h4 class="bill-title">${bill.billNumber} - ${bill.placeName}</h4>
+                            <span class="bill-status ${statusClass}">${statusText}</span>
+                        </div>
+                        
+                        <div class="bill-details">
+                            <div class="bill-detail">
+                                <span class="bill-label">ลูกค้า</span>
+                                <span class="bill-value">${bill.customerName}</span>
+                            </div>
+                            <div class="bill-detail">
+                                <span class="bill-label">วันที่บิล</span>
+                                <span class="bill-value">${bill.billDate}</span>
+                            </div>
+                            <div class="bill-detail">
+                                <span class="bill-label">จำนวนเงิน</span>
+                                <span class="bill-value">${bill.amount} บาท</span>
+                            </div>
+                            <div class="bill-detail">
+                                <span class="bill-label">สถานะ</span>
+                                <span class="bill-value">${statusText}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="bill-actions">
+                            ${!isReceived ? `
+                                <button class="bill-btn receive" onclick="receiveBill('${bill.billNumber}')">
+                                    <i class="fas fa-check"></i>
+                                    รับบิล
+                                </button>
+                            ` : ''}
+                            <button class="bill-btn details" onclick="showBillDetails('${bill.billNumber}')">
+                                <i class="fas fa-info-circle"></i>
+                                รายละเอียด
+                            </button>
+                            <button class="bill-btn print" onclick="printBill('${bill.billNumber}')">
+                                <i class="fas fa-print"></i>
+                                พิมพ์
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // Bill actions
+        async function receiveBill(billNumber) {
+            if (!confirm(`คุณต้องการรับบิล ${billNumber} ใช่หรือไม่?`)) {
+                return;
             }
             
             try {
-                const res = await fetch(API, {
-                    method: "POST",
-                    body: JSON.stringify({
-                        action: "update",
-                        billNo: billNo
-                    })
-                });
-                
-                const data = await res.json();
+                const response = await fetch(`${API_URL}?action=receive&billNumber=${billNumber}`);
+                const data = await response.json();
                 
                 if (data.success) {
-                    // Update the row in table
-                    const row = document.querySelector(`tr[data-bill-no="${billNo}"]`);
-                    if (row) {
-                        // Update status badge
-                        const statusCell = row.querySelector('.status-badge');
-                        statusCell.className = 'status-badge status-received';
-                        statusCell.innerHTML = '<i class="fas fa-check-circle"></i> รับบิลแล้ว';
-                        
-                        // Update action buttons
-                        const actionCell = row.querySelector('.action-buttons');
-                        actionCell.innerHTML = `
-                            <span class="status-badge status-received">
-                                <i class="fas fa-check-circle"></i>
-                                รับแล้ว
-                            </span>
-                        `;
-                        
-                        // Update data attribute
-                        row.setAttribute('data-status', 'รับบิลแล้ว');
-                    }
-                    
-                    // Update stats
-                    const currentReceived = parseInt(receivedEl.textContent) || 0;
-                    const currentPending = parseInt(pendingEl.textContent) || 0;
-                    
-                    receivedEl.textContent = currentReceived + 1;
-                    pendingEl.textContent = Math.max(0, currentPending - 1);
-                    
-                    // Show success message
-                    showMessage(`อัพเดทสถานะบิล ${billNo} เรียบร้อยแล้ว`, 'success');
+                    alert('รับบิลสำเร็จ');
+                    searchBills(); // Refresh search results
+                    refreshCurrentTab(); // Refresh current tab data
                 } else {
-                    showMessage(data.message || 'เกิดข้อผิดพลาดในการอัพเดท', 'error');
-                    if (button) {
-                        button.disabled = false;
-                        button.innerHTML = '<i class="fas fa-check-circle"></i> รับบิล';
-                    }
+                    alert('รับบิลไม่สำเร็จ: ' + data.message);
                 }
             } catch (error) {
-                console.error("Error updating bill:", error);
-                showMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
-                if (button) {
-                    button.disabled = false;
-                    button.innerHTML = '<i class="fas fa-check-circle"></i> รับบิล';
-                }
+                console.error('Error receiving bill:', error);
+                alert('เกิดข้อผิดพลาดในการรับบิล');
             }
         }
 
-        // Export report
-        function exportReport() {
-            const place = placeSelect.value;
-            if (!place) {
-                showMessage('กรุณาเลือกสถานที่ก่อน', 'error');
-                return;
+        function showBillDetails(billNumber) {
+            alert(`รายละเอียดบิล: ${billNumber}\n\nฟังก์ชันนี้อยู่ในระหว่างการพัฒนา`);
+        }
+
+        function printBill(billNumber) {
+            alert(`กำลังพิมพ์บิล: ${billNumber}\n\nฟังก์ชันนี้อยู่ในระหว่างการพัฒนา`);
+        }
+
+        // Export functions
+        function exportToPDF() {
+            alert('กำลังเตรียมไฟล์ PDF... (ฟังก์ชันนี้ต้องการการตั้งค่าเพิ่มเติม)');
+        }
+
+        function exportToExcel() {
+            if (!currentData) return;
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "สถานที่,บิลทั้งหมด,รับแล้ว,ค้างรับ,อัตราความสมบูรณ์%,สถานะ\n";
+            
+            let places = [];
+            if (currentFilter === 'completed') {
+                places = currentData.completedPlaces || [];
+            } else if (currentFilter === 'inprogress') {
+                places = currentData.inProgressPlaces || [];
+            } else {
+                places = [...(currentData.completedPlaces || []), ...(currentData.inProgressPlaces || [])];
             }
             
-            // Create CSV content
-            const headers = ['เลขบิล', 'รายละเอียด', 'สถานะ'];
-            const rows = [];
-            
-            // Get data from table
-            const tableRows = result.querySelectorAll('tr');
-            tableRows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                if (cells.length === 4) {
-                    const billNo = cells[0].textContent.trim();
-                    const detail = cells[1].textContent.trim();
-                    const status = cells[2].textContent.trim();
-                    rows.push([billNo, detail, status]);
-                }
+            places.forEach(place => {
+                const status = place.pendingBills === 0 ? 'ครบแล้ว' : 'รอดำเนินการ';
+                csvContent += `${place.placeName},${place.totalBills},${place.completedBills},${place.pendingBills},${place.completionRate},${status}\n`;
             });
             
-            if (rows.length === 0) {
-                showMessage('ไม่มีข้อมูลให้ดาวน์โหลด', 'error');
-                return;
-            }
-            
-            // Create CSV
-            let csvContent = headers.join(',') + '\n';
-            rows.forEach(row => {
-                csvContent += row.join(',') + '\n';
-            });
-            
-            // Create download link
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `รายงานบิล_${place}_${new Date().toISOString().slice(0,10)}.csv`);
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `สถานที่ครบแล้ว_${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        // Event listeners
-        placeSelect.addEventListener('change', () => {
-            loadReport(placeSelect.value);
-        });
+        function exportToCSV() {
+            exportToExcel();
+        }
 
-        exportBtn.addEventListener('click', exportReport);
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadPlaces();
-            
-            // Check for URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const placeParam = urlParams.get('place');
-            if (placeParam) {
-                placeSelect.value = placeParam;
-                loadReport(placeParam);
-            }
-        });
+        function printReport() {
+            window.print();
+        }
     </script>
 </body>
 </html>

@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบจัดการบิล</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --v900: #2D1B69; --v800: #3D2384; --v700: #4C2FA0;
+  --v600: #5B3BB8; --v500: #6B46C1; --v400: #8B68D4;
+  --v200: #C4B5FD; --v100: #EDE9FE; --v50:  #F5F3FF;
+  --g900: #111827; --g700: #374151; --g500: #6B7280;
+  --g400: #9CA3AF; --g200: #E5E7EB; --g100: #F3F4F6; --g50: #F9FAFB;
+  --white: #FFFFFF;
+  --green: #10B981; --green-bg: #D1FAE5;
+  --amber: #F59E0B; --amber-bg: #FEF3C7;
+  --red:   #EF4444; --red-bg:   #FEE2E2;
+  --sw: 240px;
+  --r8: 8px; --r12: 12px; --r16: 16px;
+  --font: 'Sarabun', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--g50);color:var(--g900);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;display:flex;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sw);min-height:100vh;background:var(--v800);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;}
+.sidebar::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;opacity:.5;}
+.sb-logo{padding:26px 22px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);position:relative;}
+.sb-logo-icon{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;flex-shrink:0;}
+.sb-logo-name{font-size:14.5px;font-weight:700;color:#fff;line-height:1.2;}
+.sb-logo-sub{font-size:11px;color:rgba(255,255,255,.4);font-weight:400;}
+.sb-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:2px;position:relative;}
+.sb-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:12px 12px 5px;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r8);cursor:pointer;color:rgba(255,255,255,.58);font-size:13.5px;font-weight:500;transition:all .15s;user-select:none;position:relative;}
+.sb-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);}
+.sb-item.active{background:rgba(255,255,255,.13);color:#fff;font-weight:600;}
+.sb-item.active::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:3px;background:var(--v200);border-radius:0 3px 3px 0;}
+.sb-item i{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.sb-badge{margin-left:auto;background:var(--v600);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;min-width:20px;text-align:center;}
+.sb-badge.amber{background:var(--amber);}
+.sb-div{height:1px;background:rgba(255,255,255,.08);margin:8px 0;}
+.sb-item-danger{color:rgba(255,100,100,.7) !important;}
+.sb-item-danger:hover{background:rgba(239,68,68,.15) !important;color:rgba(255,140,140,.95) !important;}
+.sb-foot{padding:14px 22px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;color:rgba(255,255,255,.22);position:relative;}
+.sb-foot span{color:rgba(255,255,255,.42);}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--white);border-bottom:1px solid var(--g200);padding:0 30px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-left h1{font-size:15.5px;font-weight:700;color:var(--g900);line-height:1.2;}
+.topbar-left p{font-size:11.5px;color:var(--g400);margin-top:1px;}
+.topbar-right{display:flex;gap:8px;align-items:center;}
+.content{padding:26px 30px 48px;flex:1;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px;}
+.scard{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:18px 20px;display:flex;align-items:flex-start;justify-content:space-between;transition:box-shadow .18s;}
+.scard:hover{box-shadow:0 2px 10px rgba(0,0,0,.07);}
+.scard-lbl{font-size:11.5px;font-weight:600;color:var(--g500);letter-spacing:.02em;margin-bottom:5px;}
+.scard-val{font-size:26px;font-weight:800;color:var(--g900);line-height:1;}
+.scard-ico{width:38px;height:38px;border-radius:var(--r8);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.ico-v{background:var(--v100);color:var(--v500);}
+.ico-g{background:var(--green-bg);color:var(--green);}
+.ico-a{background:var(--amber-bg);color:var(--amber);}
+.ico-b{background:#DBEAFE;color:#2563EB;}
+
+/* ── SECTION HDR ── */
+.sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-hd h2{font-size:13px;font-weight:700;color:var(--g700);letter-spacing:.01em;}
+
+/* ── LOC GRID ── */
+.loc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:26px;}
+.lcard{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:16px;cursor:pointer;transition:all .18s;}
+.lcard:hover{border-color:var(--v200);box-shadow:0 2px 12px rgba(0,0,0,.08);transform:translateY(-2px);}
+.lcard.all-done{border-left:3px solid var(--green);}
+.lcard.has-pend{border-left:3px solid var(--amber);}
+.lcard-name{font-size:13px;font-weight:700;color:var(--g900);margin-bottom:11px;display:flex;align-items:center;gap:6px;}
+.lcard-name i{color:var(--v400);font-size:11px;}
+.lbar-wrap{height:3px;background:var(--g100);border-radius:99px;margin-bottom:11px;overflow:hidden;}
+.lbar{height:100%;border-radius:99px;transition:width .5s;}
+.lbar.done{background:var(--green);}
+.lbar.prog{background:linear-gradient(90deg,var(--v500),var(--v400));}
+.lnums{display:flex;gap:10px;flex-wrap:wrap;}
+.lnum{font-size:11px;color:var(--g500);display:flex;align-items:center;gap:3px;}
+.lnum strong{color:var(--g900);font-weight:700;}
+.lchip{margin-top:9px;display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;}
+.lchip.done{background:var(--green-bg);color:#065F46;}
+.lchip.pend{background:var(--amber-bg);color:#92400E;}
+
+/* ── PANEL ── */
+.panel{background:var(--white);border:1px solid var(--g200);border-radius:var(--r16);}
+.panel-hd{padding:15px 20px;border-bottom:1px solid var(--g100);display:flex;align-items:center;justify-content:space-between;}
+.panel-hd h3{font-size:13.5px;font-weight:700;color:var(--g900);}
+.panel-bd{padding:20px;}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl thead th{font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--g400);padding:10px 14px;text-align:left;background:var(--g50);border-bottom:1px solid var(--g100);white-space:nowrap;}
+.tbl tbody tr{border-bottom:1px solid var(--g100);transition:background .1s;}
+.tbl tbody tr:last-child{border:none;}
+.tbl tbody tr:hover{background:var(--v50);}
+.tbl tbody td{padding:11px 14px;font-size:13.5px;vertical-align:middle;color:var(--g700);}
+.bill-no{font-weight:700;color:var(--v700);font-size:13px;}
+.loc-tag{background:var(--v50);color:var(--v700);border:1px solid var(--v100);padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;display:inline-block;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;white-space:nowrap;}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.pill-done{background:var(--green-bg);color:#065F46;}
+.pill-pend{background:var(--amber-bg);color:#92400E;}
+
+/* ── BUTTONS ── */
+.btn{font-family:var(--font);font-weight:600;font-size:13.5px;border-radius:var(--r8);cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap;}
+.btn:focus{outline:none;}
+.btn-primary{background:var(--v600);color:#fff;padding:8px 16px;}
+.btn-primary:hover{background:var(--v700);color:#fff;transform:translateY(-1px);box-shadow:0 3px 10px rgba(91,59,184,.3);}
+.btn-ghost{background:transparent;color:var(--g700);border:1px solid var(--g200);padding:7px 13px;}
+.btn-ghost:hover{background:var(--g50);color:var(--g900);}
+.btn-backup{background:var(--green-bg);color:#065F46;padding:8px 16px;}
+.btn-backup:hover{background:#A7F3D0;}
+.btn-icon{width:29px;height:29px;padding:0;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;}
+.btn-edit{background:var(--amber-bg);color:#92400E;}
+.btn-edit:hover{background:#FDE68A;}
+.btn-del{background:var(--red-bg);color:#991B1B;}
+.btn-del:hover{background:#FECACA;}
+
+/* ── SEARCH ── */
+.search-box{position:relative;width:260px;}
+.search-box i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--g400);font-size:13px;pointer-events:none;}
+.search-inp{width:100%;border:1px solid var(--g200);border-radius:var(--r8);padding:7px 11px 7px 32px;font-family:var(--font);font-size:13px;color:var(--g900);background:var(--g50);transition:all .15s;}
+.search-inp:focus{outline:none;border-color:var(--v400);background:var(--white);box-shadow:0 0 0 3px rgba(107,70,193,.1);}
+.search-inp::placeholder{color:var(--g400);}
+
+/* ── MODAL ── */
+.modal-content{border:none;border-radius:var(--r16);overflow:hidden;font-family:var(--font);box-shadow:0 20px 60px rgba(0,0,0,.14);}
+.modal-header{padding:17px 22px;border-bottom:1px solid var(--g100);background:var(--white);}
+.modal-title{font-size:15px;font-weight:700;color:var(--g900);}
+.modal-body{padding:20px 22px;}
+.modal-footer{padding:13px 22px;border-top:1px solid var(--g100);background:var(--g50);gap:8px;}
+.form-label{font-size:12px;font-weight:700;color:var(--g700);margin-bottom:5px;display:block;}
+.form-control,.form-select{border:1px solid var(--g200);border-radius:var(--r8);padding:8px 12px;font-family:var(--font);font-size:14px;color:var(--g900);background:var(--white);transition:all .15s;width:100%;}
+.form-control:focus,.form-select:focus{outline:none;border-color:var(--v400);box-shadow:0 0 0 3px rgba(107,70,193,.1);}
+.form-control::placeholder{color:var(--g400);}
+.req{color:var(--red);}
+
+/* ── LOADING ── */
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.8);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:9999;}
+.spin{width:38px;height:38px;border:3px solid var(--g200);border-top-color:var(--v500);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:26px;right:26px;width:50px;height:50px;background:var(--v600);color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;cursor:pointer;box-shadow:0 5px 18px rgba(91,59,184,.4);transition:all .2s;z-index:800;}
+.fab:hover{background:var(--v700);transform:scale(1.07);box-shadow:0 8px 26px rgba(91,59,184,.5);}
+
+/* ── TOAST ── */
+.toast-wrap{position:fixed;top:14px;right:14px;z-index:10000;display:flex;flex-direction:column;gap:7px;}
+.toast-item{background:var(--white);border:1px solid var(--g200);border-radius:var(--r12);padding:11px 15px;font-size:13px;font-weight:500;color:var(--g900);display:flex;align-items:center;gap:9px;box-shadow:0 4px 20px rgba(0,0,0,.09);max-width:290px;animation:tin .22s ease;transition:opacity .3s;}
+.toast-item.ok{border-left:3px solid var(--green);}
+.toast-item.err{border-left:3px solid var(--red);}
+.toast-item.ok i{color:var(--green);font-size:14px;}
+.toast-item.err i{color:var(--red);font-size:14px;}
+@keyframes tin{from{opacity:0;transform:translateX(14px);}to{opacity:1;transform:none;}}
+
+/* ── EMPTY ── */
+.empty{padding:44px 20px;text-align:center;color:var(--g400);}
+.empty i{font-size:28px;color:var(--g200);display:block;margin-bottom:8px;}
+.empty p{font-size:13px;}
+
+/* ── GUIDE ── */
+.guide-sec{margin-bottom:18px;}
+.guide-sec:last-child{margin-bottom:0;}
+.guide-sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.guide-sec-ico{width:30px;height:30px;border-radius:8px;background:var(--v100);color:var(--v600);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.guide-sec-hd h6{font-size:13.5px;font-weight:700;color:var(--g900);}
+.guide-sec p, .guide-sec li{font-size:13px;color:var(--g500);line-height:1.7;}
+.guide-sec ul{padding-left:18px;margin-top:2px;}
+.guide-sec strong{color:var(--g700);}
+.guide-note{background:var(--amber-bg);border-radius:var(--r8);padding:10px 13px;font-size:12.5px;color:#78350F;margin-top:4px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  :root{--sw:0px;}
+  .sidebar{transform:translateX(-240px);width:240px;transition:transform .25s;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .content{padding:18px 14px 40px;}
+  .topbar{padding:0 14px;}
+}
+@media(max-width:520px){
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  .search-box{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-icon"><i class="bi bi-receipt-cutoff"></i></div>
+    <div>
+      <div class="sb-logo-name">ระบบจัดการบิล</div>
+      <div class="sb-logo-sub">Bill Manage (Supabase)</div>
+    </div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-lbl">เมนูหลัก</div>
+    <div class="sb-item active" id="nav-dash" onclick="showView('dashboard')">
+      <i class="bi bi-grid-1x2"></i><span>Dashboard</span>
+    </div>
+    <div class="sb-item" id="nav-bills" onclick="showView('bills')">
+      <i class="bi bi-receipt"></i><span>รายการบิล</span>
+      <span class="sb-badge" id="sbAll">0</span>
+    </div>
+    <div class="sb-item" id="nav-pend" onclick="filterView('รอรับบิล')">
+      <i class="bi bi-hourglass-split"></i><span>รอรับบิล</span>
+      <span class="sb-badge amber" id="sbPend">0</span>
+    </div>
+    <div class="sb-item" id="nav-done" onclick="filterView('รับบิลแล้ว')">
+      <i class="bi bi-check2-circle"></i><span>รับบิลแล้ว</span>
+    </div>
+    <div class="sb-div"></div>
+    <div style="padding:0 10px 6px;position:relative;">
+      <div style="position:relative;">
+        <i class="bi bi-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.35);font-size:13px;pointer-events:none;"></i>
+        <input id="searchInput" type="text" placeholder="ค้นหา 5 ตัวท้าย..."
+          style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:var(--r8);padding:8px 10px 8px 30px;font-family:var(--font);font-size:13px;color:#fff;outline:none;transition:all .15s;"
+          onfocus="this.style.background='rgba(255,255,255,.14)';this.style.borderColor='rgba(255,255,255,.3)';"
+          onblur="this.style.background='rgba(255,255,255,.08)';this.style.borderColor='rgba(255,255,255,.12)';">
+      </div>
+    </div>
+    <div class="sb-lbl">เครื่องมือ</div>
+    <div class="sb-item" onclick="showBackupConfirm()">
+      <i class="bi bi-archive"></i><span>Backup สิ้นเดือน</span>
+    </div>
+    <div class="sb-item" onclick="showBackupHistory()">
+      <i class="bi bi-clock-history"></i><span>ประวัติ Backup</span>
+    </div>
+    <div class="sb-item" id="nav-backup-view" onclick="showView('backup')">
+      <i class="bi bi-database"></i><span>ดูข้อมูล Backup</span>
+    </div>
+    <div class="sb-div"></div>
+    <div class="sb-item sb-item-danger" onclick="showClearConfirm()">
+      <i class="bi bi-trash3"></i><span>เคลียร์ข้อมูลทั้งหมด</span>
+    </div>
+    <div class="sb-item" onclick="showGuideModal()">
+      <i class="bi bi-question-circle"></i><span>คู่มือการใช้งาน</span>
+    </div>
+  </nav>
+  <div class="sb-foot">&copy; 2026 <span>Develop By Sarawut.C</span></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="topTitle">Dashboard</h1>
+      <p id="topSub">ภาพรวมสถานะบิลทั้งหมด</p>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost" id="btnRefresh"><i class="bi bi-arrow-clockwise"></i></button>
+      <button class="btn btn-primary" id="btnAdd"><i class="bi bi-plus-lg"></i> <span>เพิ่มบิล</span></button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- VIEW: Dashboard -->
+    <div id="vDash">
+      <div class="stats-grid">
+        <div class="scard">
+          <div><div class="scard-lbl">บิลทั้งหมด</div><div class="scard-val" id="statTotal">0</div></div>
+          <div class="scard-ico ico-v"><i class="bi bi-receipt"></i></div>
+        </div>
+        <div class="scard">
+          <div><div class="scard-lbl">รับบิลแล้ว</div><div class="scard-val" id="statDone">0</div></div>
+          <div class="scard-ico ico-g"><i class="bi bi-check2-circle"></i></div>
+        </div>
+        <div class="scard">
+          <div><div class="scard-lbl">รอรับบิล</div><div class="scard-val" id="statPend">0</div></div>
+          <div class="scard-ico ico-a"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+        <div class="scard">
+          <div><div class="scard-lbl">สถานที่</div><div class="scard-val" id="statLoc">0</div></div>
+          <div class="scard-ico ico-b"><i class="bi bi-geo-alt"></i></div>
+        </div>
+      </div>
+      <div class="sec-hd"><h2>สรุปตามสถานที่</h2></div>
+      <div class="loc-grid" id="locGrid">
+        <div style="grid-column:1/-1;" class="empty">
+          <i class="bi bi-arrow-repeat" style="animation:spin .8s linear infinite;"></i>
+          <p>กำลังโหลดข้อมูล...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Bills Table -->
+    <div id="vBills" style="display:none;">
+      <div class="panel">
+        <div class="panel-hd">
+          <h3 id="tblTitle">รายการบิลทั้งหมด</h3>
+          <span id="tblCount" style="font-size:12px;color:var(--g400);font-weight:600;"></span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>เลขที่บิล</th><th>สถานที่</th><th>รายละเอียด</th>
+                <th>สถานะ</th><th>วันที่</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="billsTbody">
+              <tr><td colspan="6"><div class="empty">
+                <i class="bi bi-arrow-repeat" style="animation:spin .8s linear infinite;"></i>
+                <p>กำลังโหลด...</p>
+              </div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW: Backup Viewer -->
+    <div id="vBackup" style="display:none;">
+      <div class="panel">
+        <div class="panel-hd">
+          <h3><i class="bi bi-database me-2" style="color:var(--v500);"></i>ข้อมูล Backup</h3>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <select id="backupSheetSelect" class="form-select" style="width:auto;font-size:13px;padding:6px 10px;"
+              onchange="loadBackupSheet(this.value)">
+              <option value="">-- เลือกเดือนที่ต้องการดู --</option>
+            </select>
+            <button class="btn btn-ghost" onclick="loadBackupList()" title="โหลดรายการ">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+        <div id="backupViewerBody">
+          <div class="empty">
+            <i class="bi bi-archive"></i>
+            <p>เลือกเดือนที่ต้องการดูข้อมูล Backup</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="loading-overlay" id="loadingOverlay">
+  <div style="text-align:center;">
+    <div class="spin" style="margin:0 auto 10px;"></div>
+    <div style="font-size:12.5px;color:var(--g500);font-weight:600;">กำลังประมวลผล...</div>
+  </div>
+</div>
+
+<!-- MODAL: Add/Edit -->
+<div class="modal fade" id="billModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">เพิ่มบิลใหม่</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="billId">
+        <div class="mb-3">
+          <label class="form-label">เลขที่บิล <span class="req">*</span></label>
+          <input type="text" class="form-control" id="billNumber" placeholder="เช่น BILL-2026-001">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">สถานที่ <span class="req">*</span></label>
+          <input type="text" class="form-control" id="location" placeholder="เช่น สาขาหลัก">
+        </div>
+        <div class="mb-3">
+          <label class="form-label">รายละเอียด</label>
+          <textarea class="form-control" id="description" rows="2" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)"></textarea>
+        </div>
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">สถานะ <span class="req">*</span></label>
+            <select class="form-select" id="status">
+              <option value="รอรับบิล">รอรับบิล</option>
+              <option value="รับบิลแล้ว">รับบิลแล้ว</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label">วันที่ <span class="req">*</span></label>
+            <input type="date" class="form-control" id="date">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-bs-dismiss="modal">ยกเลิก</button>
+        <button class="btn btn-primary" id="btnSave"><i class="bi bi-save2"></i> บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Delete -->
+<div class="modal fade" id="delModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">ยืนยันการลบ</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center" style="padding:24px 22px;">
+        <div style="width:50px;height:50px;background:var(--red-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:20px;color:var(--red);">
+          <i class="bi bi-trash3"></i>
+        </div>
+        <div style="font-weight:700;margin-bottom:4px;">ลบบิลนี้หรือไม่?</div>
+        <div style="font-size:12.5px;color:var(--g500);">ไม่สามารถย้อนกลับได้</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-bs-dismiss="modal">ยกเลิก</button>
+        <button class="btn" id="btnConfirmDel" style="background:var(--red);color:#fff;padding:8px 15px;">
+          <i class="bi bi-trash3"></i> ลบ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Backup -->
+<div class="modal fade" id="backupModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-archive me-2" style="color:var(--v500);"></i>สำรองข้อมูลสิ้นเดือน</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div style="background:var(--v50);border:1px solid var(--v100);border-radius:var(--r12);padding:14px;margin-bottom:12px;text-align:center;">
+          <div style="font-size:11.5px;color:var(--g500);margin-bottom:3px;">จะบันทึก Backup ชื่อ</div>
+          <div style="font-weight:800;color:var(--v700);font-size:14.5px;" id="backupName"></div>
+        </div>
+        <div style="background:var(--amber-bg);border-radius:var(--r8);padding:11px 13px;font-size:12.5px;color:#78350F;">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          หลัง Backup ระบบจะ<strong>เคลียร์ข้อมูลทั้งหมด</strong>ออกจากตารางหลัก เพื่อเริ่มรอบใหม่
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-bs-dismiss="modal">ยกเลิก</button>
+        <button class="btn btn-backup" id="btnDoBackup">
+          <i class="bi bi-cloud-check"></i> ดำเนินการ Backup
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Clear All Data -->
+<div class="modal fade" id="clearModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom:1px solid var(--g100);">
+        <h5 class="modal-title" style="color:var(--red);display:flex;align-items:center;gap:8px;">
+          <i class="bi bi-exclamation-triangle-fill"></i> เคลียร์ข้อมูลทั้งหมด
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center" style="padding:24px 22px;">
+        <div style="width:56px;height:56px;background:var(--red-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px;color:var(--red);">
+          <i class="bi bi-trash3-fill"></i>
+        </div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:6px;color:var(--g900);">ยืนยันการเคลียร์ข้อมูล?</div>
+        <div style="font-size:12.5px;color:var(--g500);line-height:1.6;">
+          จะรีเซ็ต<strong style="color:var(--g900);">สถานะ</strong>และ<strong style="color:var(--g900);">วันที่</strong>ของทุกบิลให้ว่าง<br>
+          ข้อมูลเลขที่บิล / สถานที่ / รายละเอียด <strong style="color:var(--green);">ยังคงอยู่ครบ</strong><br>
+          <span style="font-size:11.5px;color:var(--g400);">ไม่สามารถย้อนกลับได้</span>
+        </div>
+        <div style="text-align:left;margin-top:16px;">
+          <label class="form-label">กรอกรหัสยืนยันเพื่อดำเนินการ <span class="req">*</span></label>
+          <input type="password" class="form-control" id="clearCode" placeholder="กรอกรหัสยืนยัน" autocomplete="off">
+          <div id="clearCodeErr" style="display:none;color:var(--red);font-size:11.5px;margin-top:5px;">
+            <i class="bi bi-exclamation-circle me-1"></i>รหัสไม่ถูกต้อง
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="flex-direction:column;gap:6px;">
+        <button class="btn" id="btnConfirmClear"
+          style="width:100%;background:var(--red);color:#fff;padding:9px 16px;justify-content:center;">
+          <i class="bi bi-trash3"></i> ยืนยัน เคลียร์ข้อมูลทั้งหมด
+        </button>
+        <button class="btn btn-ghost" data-bs-dismiss="modal" style="width:100%;justify-content:center;">
+          ยกเลิก
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: User Guide -->
+<div class="modal fade" id="guideModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-question-circle me-2" style="color:var(--v500);"></i>คู่มือการใช้งานระบบจัดการบิล</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-grid-1x2"></i></div>
+            <h6>Dashboard</h6>
+          </div>
+          <p>หน้าแรกแสดงภาพรวมของระบบ ได้แก่ <strong>จำนวนบิลทั้งหมด</strong>, <strong>รับบิลแล้ว</strong>, <strong>รอรับบิล</strong> และ <strong>จำนวนสถานที่</strong> พร้อมสรุปสถานะแยกตามแต่ละสถานที่ในรูปแบบการ์ด</p>
+          <p>คลิกที่การ์ดสถานที่ เพื่อดูรายการบิลทั้งหมดของสถานที่นั้น รวมถึงแก้ไข/ลบบิลได้ทันที</p>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-receipt"></i></div>
+            <h6>รายการบิล / รอรับบิล / รับบิลแล้ว</h6>
+          </div>
+          <p>เมนูด้านซ้ายใช้ดูรายการบิลในรูปแบบตาราง โดยแยกตามสถานะ:</p>
+          <ul>
+            <li><strong>รายการบิล</strong> — แสดงบิลทั้งหมดในระบบ</li>
+            <li><strong>รอรับบิล</strong> — แสดงเฉพาะบิลที่ยังไม่ได้รับ</li>
+            <li><strong>รับบิลแล้ว</strong> — แสดงเฉพาะบิลที่รับเรียบร้อยแล้ว</li>
+          </ul>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-plus-lg"></i></div>
+            <h6>เพิ่ม / แก้ไข / ลบบิล</h6>
+          </div>
+          <p>กดปุ่ม <strong>"เพิ่มบิล"</strong> มุมขวาบนเพื่อเพิ่มบิลใหม่ กรอกเลขที่บิล สถานที่ รายละเอียด สถานะ และวันที่ (เลขที่บิลต้องไม่ซ้ำกัน)</p>
+          <p>ในตารางรายการบิล ใช้ไอคอน <i class="bi bi-pencil"></i> เพื่อแก้ไข และไอคอน <i class="bi bi-trash3"></i> เพื่อลบบิลรายการนั้น</p>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-search"></i></div>
+            <h6>ค้นหาบิล</h6>
+          </div>
+          <p>ใช้ช่องค้นหาด้านซ้าย พิมพ์ <strong>เลขท้ายบิลอย่างน้อย 5 ตัว</strong> ระบบจะค้นหาให้อัตโนมัติ หรือกด Enter เพื่อค้นหาทันที กด Esc เพื่อล้างการค้นหา</p>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-archive"></i></div>
+            <h6>Backup สิ้นเดือน</h6>
+          </div>
+          <p>ใช้สำรองข้อมูลบิลทั้งหมดเก็บไว้แยกตามเดือน (เช่น BACKUP_กรกฎาคม_2569)</p>
+          <div class="guide-note"><i class="bi bi-exclamation-triangle me-2"></i>หลังจาก Backup สำเร็จ ระบบจะ<strong>ลบข้อมูลทั้งหมดออกจากตารางหลัก</strong>โดยอัตโนมัติ เพื่อเริ่มรอบบิลใหม่</div>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico"><i class="bi bi-clock-history"></i></div>
+            <h6>ประวัติ Backup / ดูข้อมูล Backup</h6>
+          </div>
+          <p><strong>ประวัติ Backup</strong> แสดงรายการการสำรองข้อมูลที่เคยทำไว้ทั้งหมด พร้อมวันที่และจำนวนรายการ</p>
+          <p><strong>ดูข้อมูล Backup</strong> ใช้เลือกดูข้อมูลบิลย้อนหลังของแต่ละเดือนที่เคย Backup ไว้ โดยไม่กระทบข้อมูลปัจจุบัน</p>
+        </div>
+
+        <div class="guide-sec">
+          <div class="guide-sec-hd">
+            <div class="guide-sec-ico" style="background:var(--red-bg);color:var(--red);"><i class="bi bi-trash3"></i></div>
+            <h6>เคลียร์ข้อมูลทั้งหมด</h6>
+          </div>
+          <p>ใช้รีเซ็ต<strong>สถานะ</strong>และ<strong>วันที่</strong>ของทุกบิลให้ว่าง โดย<strong style="color:var(--green);">ไม่ลบ</strong>เลขที่บิล/สถานที่/รายละเอียด</p>
+          <div class="guide-note"><i class="bi bi-shield-lock me-2"></i>ต้องกรอก<strong>รหัสยืนยัน</strong>ก่อนทุกครั้ง และการทำรายการนี้<strong>ไม่สามารถย้อนกลับได้</strong></div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-dismiss="modal" style="width:100%;justify-content:center;">เข้าใจแล้ว</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   ⚙️ ตั้งค่า Supabase — ใส่ค่าจากโปรเจกต์ของคุณตรงนี้
+   Settings > API ใน Supabase Dashboard
+   ═══════════════════════════════════════════════════════════ */
+const SUPABASE_URL      = 'https://iulvrldhlfnezevasoom.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml1bHZybGRobGZuZXpldmFzb29tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAwNTE4MTcsImV4cCI6MjEwNTYyNzgxN30.ZF7cf--ccYwh2Kr-FbC4HXEcphkwJIHR15iV2wSyiSg';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const CLEAR_CONFIRM_CODE = '0962349390';
+
+/* ─── STATE ─── */
+let allBills = [], toDelete = null, curFilter = null;
+let billMod, delMod;
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  billMod = new bootstrap.Modal(document.getElementById('billModal'));
+  delMod  = new bootstrap.Modal(document.getElementById('delModal'));
+  document.getElementById('date').value = today();
+
+  document.getElementById('btnAdd').onclick     = openAdd;
+  document.getElementById('btnRefresh').onclick = load;
+  document.getElementById('btnSave').onclick    = saveBill;
+  document.getElementById('btnConfirmDel').onclick = doDel;
+  document.getElementById('btnDoBackup').onclick   = doBackup;
+  document.getElementById('btnConfirmClear').onclick = doClear;
+
+  let st;
+  document.getElementById('searchInput').addEventListener('input', e => {
+    clearTimeout(st);
+    const v = e.target.value.trim();
+    if (v.length >= 5) {
+      st = setTimeout(() => {
+        showView('bills');
+        const result = allBills.filter(b => b.billNumber && b.billNumber.toString().endsWith(v));
+        document.getElementById('tblTitle').textContent = `ค้นหา: "${v}"`;
+        renderTable(result);
+      }, 400);
+    } else if (!v) {
+      renderTable(curFilter ? allBills.filter(b => b.status === curFilter) : allBills);
+      document.getElementById('tblTitle').textContent = 'รายการบิลทั้งหมด';
+    }
+  });
+
+  document.getElementById('searchInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const v = e.target.value.trim();
+      if (v.length >= 5) {
+        showView('bills');
+        const result = allBills.filter(b => b.billNumber && b.billNumber.toString().endsWith(v));
+        document.getElementById('tblTitle').textContent = `ค้นหา: "${v}"`;
+        renderTable(result);
+      }
+    }
+    if (e.key === 'Escape') {
+      e.target.value = '';
+      renderTable(curFilter ? allBills.filter(b => b.status === curFilter) : allBills);
+      document.getElementById('tblTitle').textContent = 'รายการบิลทั้งหมด';
+    }
+  });
+
+  ['billModal','delModal'].forEach(id =>
+    document.getElementById(id).addEventListener('hidden.bs.modal', () => {
+      document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = document.body.style.paddingRight = '';
+    })
+  );
+  load();
+});
+
+function today() { return new Date().toISOString().split('T')[0]; }
+
+/* ─── VIEWS ─── */
+const views = { dashboard: 'vDash', bills: 'vBills', backup: 'vBackup' };
+const topbarInfo = {
+  dashboard: ['Dashboard','ภาพรวมสถานะบิลทั้งหมด'],
+  bills:     ['รายการบิล','บิลทั้งหมดในระบบ'],
+  backup:    ['ดูข้อมูล Backup','เรียกดูข้อมูลที่สำรองไว้'],
+};
+function showView(v) {
+  Object.keys(views).forEach(k => document.getElementById(views[k]).style.display = k === v ? '' : 'none');
+  const [t, s] = topbarInfo[v] || ['',''];
+  document.getElementById('topTitle').textContent = t;
+  document.getElementById('topSub').textContent   = s;
+  if (v === 'dashboard') setActive('nav-dash');
+  else if (v === 'bills') setActive('nav-bills');
+  else if (v === 'backup') { setActive('nav-backup-view'); loadBackupList(); }
+  if (v === 'bills') { curFilter = null; document.getElementById('tblTitle').textContent = 'รายการบิลทั้งหมด'; renderTable(allBills); }
+}
+function filterView(status) {
+  curFilter = status;
+  showView('bills');
+  document.getElementById('tblTitle').textContent = status;
+  setActive(status === 'รอรับบิล' ? 'nav-pend' : 'nav-done');
+  renderTable(allBills.filter(b => b.status === status));
+}
+function setActive(id) {
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
+}
+
+/* ─── DATA MAPPING (Supabase row -> UI shape) ─── */
+function mapBillRow(r) {
+  return {
+    id:          r.id,
+    billNumber:  r.bill_number,
+    location:    r.location,
+    description: r.description || '',
+    status:      r.status || 'รอรับบิล',
+    date:        r.bill_date || ''
+  };
+}
+function fmtDate(ts) {
+  if (!ts) return '';
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return '';
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+/* ─── DATA: LOAD ─── */
+async function load() {
+  showLoading();
+  try {
+    const { data, error } = await sb.from('bills').select('*').order('id');
+    if (error) throw error;
+    allBills = data.map(mapBillRow);
+    renderDash();
+    renderTable(curFilter ? allBills.filter(b => b.status === curFilter) : allBills);
+    document.getElementById('sbAll').textContent  = allBills.length;
+    document.getElementById('sbPend').textContent = allBills.filter(b => b.status === 'รอรับบิล').length;
+  } catch (e) {
+    toast('err', 'เชื่อมต่อไม่ได้: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+/* ─── RENDER DASHBOARD ─── */
+function renderDash() {
+  const total = allBills.length;
+  const done  = allBills.filter(b => b.status === 'รับบิลแล้ว').length;
+  const pend  = total - done;
+  const locs  = [...new Set(allBills.map(b => b.location))];
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statDone').textContent  = done;
+  document.getElementById('statPend').textContent  = pend;
+  document.getElementById('statLoc').textContent   = locs.length;
+
+  const grid = document.getElementById('locGrid');
+  if (!total) { grid.innerHTML = '<div style="grid-column:1/-1;" class="empty"><i class="bi bi-inbox"></i><p>ยังไม่มีข้อมูล</p></div>'; return; }
+
+  const map = {};
+  allBills.forEach(b => {
+    if (!map[b.location]) map[b.location] = { t:0, d:0 };
+    map[b.location].t++;
+    if (b.status === 'รับบิลแล้ว') map[b.location].d++;
+  });
+
+  grid.innerHTML = Object.entries(map).map(([loc, v]) => {
+    const pct  = v.t ? Math.round(v.d / v.t * 100) : 0;
+    const full = v.d === v.t;
+    const wait = v.t - v.d;
+    return `<div class="lcard ${full ? 'all-done' : 'has-pend'}" onclick="openLocModal('${esc(loc).replace(/'/g,"\\'")}')">
+      <div class="lcard-name"><i class="bi bi-geo-alt-fill"></i>${esc(loc)}</div>
+      <div class="lbar-wrap"><div class="lbar ${full?'done':'prog'}" style="width:${pct}%"></div></div>
+      <div class="lnums">
+        <span class="lnum"><i class="bi bi-receipt"></i><strong>${v.t}</strong></span>
+        <span class="lnum"><i class="bi bi-check2"></i><strong>${v.d}</strong> รับ</span>
+        <span class="lnum"><i class="bi bi-clock"></i><strong>${wait}</strong> รอ</span>
+      </div>
+      <span class="lchip ${full?'done':'pend'}">
+        ${full ? '<i class="bi bi-check-circle-fill"></i> ครบแล้ว' : `<i class="bi bi-exclamation-circle-fill"></i> รอ ${wait} บิล`}
+      </span>
+    </div>`;
+  }).join('');
+}
+
+/* ─── RENDER TABLE ─── */
+function renderTable(bills) {
+  const tbody = document.getElementById('billsTbody');
+  document.getElementById('tblCount').textContent = bills.length ? bills.length + ' รายการ' : '';
+  if (!bills.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><i class="bi bi-inbox"></i><p>ไม่พบข้อมูลบิล</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = bills.map(b => `<tr>
+    <td><span class="bill-no">${esc(b.billNumber)}</span></td>
+    <td><span class="loc-tag">${esc(b.location)}</span></td>
+    <td style="color:var(--g500);font-size:13px;">${esc(b.description||'—')}</td>
+    <td><span class="pill ${b.status==='รับบิลแล้ว'?'pill-done':'pill-pend'}">${b.status}</span></td>
+    <td style="color:var(--g500);font-size:13px;white-space:nowrap;">${b.date}</td>
+    <td style="white-space:nowrap;">
+      <button class="btn btn-icon btn-edit" onclick="openEdit(${b.id})"><i class="bi bi-pencil"></i></button>
+      <button class="btn btn-icon btn-del" style="margin-left:4px;" onclick="openDel(${b.id})"><i class="bi bi-trash3"></i></button>
+    </td>
+  </tr>`).join('');
+}
+
+/* ─── ADD/EDIT ─── */
+function openAdd() {
+  document.getElementById('modalTitle').textContent = 'เพิ่มบิลใหม่';
+  ['billId','billNumber','location','description'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('status').value = 'รอรับบิล';
+  document.getElementById('date').value   = today();
+  billMod.show();
+  setTimeout(() => document.getElementById('billNumber').focus(), 380);
+}
+function openEdit(id) {
+  const b = allBills.find(x => x.id === id);
+  if (!b) { toast('err','ไม่พบบิล'); return; }
+  document.getElementById('modalTitle').textContent  = 'แก้ไขบิล';
+  document.getElementById('billId').value            = b.id;
+  document.getElementById('billNumber').value        = b.billNumber;
+  document.getElementById('location').value          = b.location;
+  document.getElementById('description').value       = b.description || '';
+  document.getElementById('status').value            = b.status;
+  document.getElementById('date').value               = b.date || today();
+  billMod.show();
+}
+async function saveBill() {
+  const idVal = document.getElementById('billId').value;
+  const payload = {
+    bill_number: document.getElementById('billNumber').value.trim(),
+    location:    document.getElementById('location').value.trim(),
+    description: document.getElementById('description').value.trim() || null,
+    status:      document.getElementById('status').value,
+    bill_date:   document.getElementById('date').value || null,
+  };
+  if (!payload.bill_number) { toast('err','กรุณากรอกเลขที่บิล'); return; }
+  if (!payload.location)    { toast('err','กรุณากรอกสถานที่'); return; }
+  if (!payload.bill_date)   { toast('err','กรุณาเลือกวันที่'); return; }
+
+  showLoading();
+  try {
+    let error;
+    if (idVal) {
+      ({ error } = await sb.from('bills').update(payload).eq('id', idVal));
+    } else {
+      ({ error } = await sb.from('bills').insert(payload));
+    }
+    if (error) {
+      if (error.code === '23505') throw new Error('เลขที่บิลซ้ำ');
+      throw error;
+    }
+    billMod.hide();
+    await load();
+    toast('ok', idVal ? 'อัปเดตบิลเรียบร้อย' : 'เพิ่มบิล: ' + payload.bill_number);
+  } catch (e) {
+    toast('err', e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+/* ─── DELETE ─── */
+function openDel(id) {
+  if (!allBills.find(b => b.id === id)) { toast('err','ไม่พบบิล'); return; }
+  toDelete = id; delMod.show();
+}
+async function doDel() {
+  if (!toDelete) return;
+  showLoading();
+  try {
+    const { error } = await sb.from('bills').delete().eq('id', toDelete);
+    if (error) throw error;
+    delMod.hide();
+    toDelete = null;
+    await load();
+    toast('ok','ลบบิลเรียบร้อย');
+  } catch (e) {
+    toast('err', e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+/* ─── LOCATION MODAL ─── */
+function openLocModal(loc) {
+  const bills = allBills.filter(b => b.location === loc);
+  if (!bills.length) { toast('err','ไม่พบบิล'); return; }
+  document.getElementById('locModal2')?.remove();
+  const done = bills.filter(b => b.status === 'รับบิลแล้ว').length;
+  const rows = bills.map(b => `<tr>
+    <td><span class="bill-no">${esc(b.billNumber)}</span></td>
+    <td style="font-size:13px;color:var(--g500);">${esc(b.description||'—')}</td>
+    <td><span class="pill ${b.status==='รับบิลแล้ว'?'pill-done':'pill-pend'}">${b.status}</span></td>
+    <td style="font-size:13px;color:var(--g500);">${b.date}</td>
+    <td style="white-space:nowrap;">
+      <button class="btn btn-icon btn-edit" onclick="editFromLoc(${b.id})"><i class="bi bi-pencil"></i></button>
+      <button class="btn btn-icon btn-del" style="margin-left:4px;" onclick="delFromLoc(${b.id})"><i class="bi bi-trash3"></i></button>
+    </td>
+  </tr>`).join('');
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal fade" id="locModal2" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="bi bi-geo-alt me-2" style="color:var(--v500);"></i>${esc(loc)}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" style="padding:16px;">
+            <div style="display:flex;gap:10px;margin-bottom:16px;">
+              <div style="flex:1;background:var(--v50);border:1px solid var(--v100);border-radius:var(--r12);padding:14px;text-align:center;">
+                <div style="font-size:11px;font-weight:700;color:var(--g500);margin-bottom:3px;">ทั้งหมด</div>
+                <div style="font-size:22px;font-weight:800;color:var(--g900);">${bills.length}</div>
+              </div>
+              <div style="flex:1;background:var(--green-bg);border:1px solid #A7F3D0;border-radius:var(--r12);padding:14px;text-align:center;">
+                <div style="font-size:11px;font-weight:700;color:var(--g500);margin-bottom:3px;">รับแล้ว</div>
+                <div style="font-size:22px;font-weight:800;color:#065F46;">${done}</div>
+              </div>
+              <div style="flex:1;background:var(--amber-bg);border:1px solid #FDE68A;border-radius:var(--r12);padding:14px;text-align:center;">
+                <div style="font-size:11px;font-weight:700;color:var(--g500);margin-bottom:3px;">รอรับ</div>
+                <div style="font-size:22px;font-weight:800;color:#92400E;">${bills.length-done}</div>
+              </div>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>เลขที่บิล</th><th>รายละเอียด</th><th>สถานะ</th><th>วันที่</th><th></th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">ปิด</button></div>
+        </div>
+      </div>
+    </div>`);
+  const m = new bootstrap.Modal(document.getElementById('locModal2'));
+  m.show();
+  document.getElementById('locModal2').addEventListener('hidden.bs.modal', function(){ this.remove(); });
+}
+function editFromLoc(id) { bootstrap.Modal.getInstance(document.getElementById('locModal2'))?.hide(); setTimeout(()=>openEdit(id),380); }
+function delFromLoc(id)  { bootstrap.Modal.getInstance(document.getElementById('locModal2'))?.hide(); setTimeout(()=>openDel(id),380); }
+
+/* ─── BACKUP VIEWER ─── */
+async function loadBackupList() {
+  showLoading();
+  try {
+    const { data, error } = await sb.from('backup_batches').select('batch_name').order('created_at', { ascending:false });
+    if (error) throw error;
+    const sel = document.getElementById('backupSheetSelect');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">-- เลือกเดือนที่ต้องการดู --</option>';
+    data.forEach(row => {
+      const opt = document.createElement('option');
+      opt.value = row.batch_name; opt.textContent = row.batch_name;
+      sel.appendChild(opt);
+    });
+    if (prev && data.some(r => r.batch_name === prev)) { sel.value = prev; loadBackupSheet(prev); }
+    else if (data.length === 0) {
+      document.getElementById('backupViewerBody').innerHTML =
+        '<div class="empty"><i class="bi bi-inbox"></i><p>ยังไม่มีข้อมูล Backup</p></div>';
+    }
+  } catch (e) {
+    toast('err', e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+async function loadBackupSheet(sheetName) {
+  if (!sheetName) return;
+  const body = document.getElementById('backupViewerBody');
+  body.innerHTML = '<div class="empty"><i class="bi bi-arrow-repeat" style="animation:spin .8s linear infinite;font-size:24px;"></i><p>กำลังโหลดข้อมูล...</p></div>';
+  showLoading();
+  try {
+    const { data, error } = await sb.from('backup_bills').select('*').eq('batch_name', sheetName).order('id');
+    if (error) throw error;
+    renderBackupData(data.map(r => ({
+      billNumber: r.bill_number, location: r.location, description: r.description,
+      status: r.status || 'รอรับบิล', date: r.bill_date || ''
+    })), sheetName);
+  } catch (e) {
+    toast('err', e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+function renderBackupData(data, sheetName) {
+  const body = document.getElementById('backupViewerBody');
+  if (!data || data.length === 0) {
+    body.innerHTML = '<div class="empty"><i class="bi bi-inbox"></i><p>ไม่พบข้อมูลใน Backup นี้</p></div>';
+    return;
+  }
+  const done = data.filter(b => b.status === 'รับบิลแล้ว').length;
+  const pend = data.length - done;
+  body.innerHTML = `
+    <div style="padding:16px 20px;border-bottom:1px solid var(--g100);display:flex;gap:12px;flex-wrap:wrap;">
+      <div style="background:var(--v50);border:1px solid var(--v100);border-radius:var(--r8);padding:10px 16px;text-align:center;min-width:90px;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--g500);margin-bottom:2px;">ทั้งหมด</div>
+        <div style="font-size:20px;font-weight:800;color:var(--g900);">${data.length}</div>
+      </div>
+      <div style="background:var(--green-bg);border:1px solid #A7F3D0;border-radius:var(--r8);padding:10px 16px;text-align:center;min-width:90px;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--g500);margin-bottom:2px;">รับแล้ว</div>
+        <div style="font-size:20px;font-weight:800;color:#065F46;">${done}</div>
+      </div>
+      <div style="background:var(--amber-bg);border:1px solid #FDE68A;border-radius:var(--r8);padding:10px 16px;text-align:center;min-width:90px;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--g500);margin-bottom:2px;">รอรับ</div>
+        <div style="font-size:20px;font-weight:800;color:#92400E;">${pend}</div>
+      </div>
+      <div style="flex:1;display:flex;align-items:center;justify-content:flex-end;">
+        <span style="font-size:11px;color:var(--g400);background:var(--g100);padding:4px 10px;border-radius:99px;">
+          <i class="bi bi-archive me-1"></i>${esc(sheetName)}
+        </span>
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="tbl">
+        <thead>
+          <tr><th>เลขที่บิล</th><th>สถานที่</th><th>รายละเอียด</th><th>สถานะ</th><th>วันที่</th></tr>
+        </thead>
+        <tbody>
+          ${data.map(b => `<tr>
+            <td><span class="bill-no">${esc(b.billNumber)}</span></td>
+            <td><span class="loc-tag">${esc(b.location)}</span></td>
+            <td style="color:var(--g500);font-size:13px;">${esc(b.description||'—')}</td>
+            <td><span class="pill ${b.status==='รับบิลแล้ว'?'pill-done':'pill-pend'}">${esc(b.status)}</span></td>
+            <td style="color:var(--g500);font-size:13px;">${esc(b.date)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+/* ─── BACKUP (RPC: backup_monthly_data) ─── */
+function showBackupConfirm() {
+  const now = new Date();
+  const m = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  document.getElementById('backupName').textContent = `BACKUP_${m[now.getMonth()]}_${now.getFullYear()+543}`;
+  new bootstrap.Modal(document.getElementById('backupModal')).show();
+}
+async function doBackup() {
+  bootstrap.Modal.getInstance(document.getElementById('backupModal'))?.hide();
+  showLoading();
+  try {
+    const { data, error } = await sb.rpc('backup_monthly_data');
+    if (error) throw error;
+    if (data.success) {
+      await load();
+      toast('ok', `✅ Backup สำเร็จ "${data.sheetName}" — ${data.totalRecords} รายการ`);
+    } else {
+      toast('err', 'Backup ล้มเหลว: ' + data.message);
+    }
+  } catch (e) {
+    toast('err', 'Backup ล้มเหลว: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+async function showBackupHistory() {
+  showLoading();
+  try {
+    const { data, error } = await sb.from('backup_batches').select('*').order('created_at', { ascending:false });
+    if (error) throw error;
+    const hist = data.map((h, i) => ({
+      number: data.length - i,
+      date: fmtDate(h.created_at),
+      sheetName: h.batch_name,
+      recordCount: h.record_count,
+      status: h.status
+    }));
+    renderHistory(hist);
+  } catch (e) {
+    toast('err', e.message);
+  } finally {
+    hideLoading();
+  }
+}
+function renderHistory(hist) {
+  document.getElementById('histMod')?.remove();
+  if (!hist?.length) { toast('err','ยังไม่มีประวัติ'); return; }
+  const rows = hist.map(h=>`<tr>
+    <td style="font-size:13px;">#${h.number}</td>
+    <td style="font-size:13px;">${esc(h.date)}</td>
+    <td><code style="font-size:12px;color:var(--v600);">${esc(h.sheetName)}</code></td>
+    <td style="font-size:13px;">${Number(h.recordCount).toLocaleString()}</td>
+    <td><span class="pill pill-done">${esc(h.status)}</span></td>
+  </tr>`).join('');
+  document.body.insertAdjacentHTML('beforeend',`
+    <div class="modal fade" id="histMod" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title"><i class="bi bi-clock-history me-2" style="color:var(--v500);"></i>ประวัติการ Backup</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" style="padding:0;">
+            <table class="tbl"><thead><tr><th>ครั้งที่</th><th>วันที่</th><th>ชื่อ</th><th>รายการ</th><th>สถานะ</th></tr></thead><tbody>${rows}</tbody></table>
+          </div>
+          <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">ปิด</button></div>
+        </div>
+      </div>
+    </div>`);
+  const m = new bootstrap.Modal(document.getElementById('histMod'));
+  m.show();
+  document.getElementById('histMod').addEventListener('hidden.bs.modal', function(){ this.remove(); });
+}
+
+/* ─── CLEAR ALL DATA (reset status/date, keep rows) ─── */
+function showClearConfirm() {
+  document.getElementById('clearCode').value = '';
+  document.getElementById('clearCodeErr').style.display = 'none';
+  new bootstrap.Modal(document.getElementById('clearModal')).show();
+  setTimeout(() => document.getElementById('clearCode').focus(), 380);
+}
+async function doClear() {
+  const code = document.getElementById('clearCode').value.trim();
+  if (code !== CLEAR_CONFIRM_CODE) {
+    document.getElementById('clearCodeErr').style.display = 'block';
+    document.getElementById('clearCode').focus();
+    return;
+  }
+  bootstrap.Modal.getInstance(document.getElementById('clearModal'))?.hide();
+  showLoading();
+  try {
+    const affected = allBills.length;
+    const { error } = await sb.from('bills').update({ status: null, bill_date: null }).gt('id', 0);
+    if (error) throw error;
+    await load();
+    toast('ok', `🗑️ เคลียร์ข้อมูลเรียบร้อย — รีเซ็ต ${affected} รายการ`);
+  } catch (e) {
+    toast('err', 'เคลียร์ไม่สำเร็จ: ' + e.message);
+  } finally {
+    hideLoading();
+  }
+}
+
+/* ─── USER GUIDE ─── */
+function showGuideModal() {
+  new bootstrap.Modal(document.getElementById('guideModal')).show();
+}
+
+/* ─── UTILS ─── */
+function showLoading(){ document.getElementById('loadingOverlay').style.display='flex'; }
+function hideLoading(){ document.getElementById('loadingOverlay').style.display='none'; }
+function toast(type, msg) {
+  const w = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = `toast-item ${type}`;
+  el.innerHTML = `<i class="bi ${type==='ok'?'bi-check-circle-fill':'bi-exclamation-circle-fill'}"></i><span>${esc(msg)}</span>`;
+  w.appendChild(el);
+  const dur = type === 'ok' ? 2800 : 5000;
+  setTimeout(()=>{ el.style.opacity='0'; }, dur-300);
+  setTimeout(()=>el.remove(), dur);
+}
+function esc(s) { if(!s) return ''; const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+</script>
+</body>
+</html>

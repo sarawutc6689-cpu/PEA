@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการบิล | หน้าหลัก</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --purple-900: #2d1b69;
+            --purple-800: #3b2494;
+            --purple-700: #4c2fad;
+            --purple-600: #5e35c9;
+            --purple-500: #7c3aed;
+            --purple-400: #9f67f5;
+            --purple-300: #c4a5fa;
+            --purple-100: #ede9fe;
+            --purple-50: #f5f3ff;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-400: #9ca3af;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --gold: #c9a227;
+            --gold-light: #f0d56a;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--white);
+            color: var(--gray-800);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── DECORATIVE BACKGROUND ─── */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page-bg::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            right: -200px;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 65%);
+            border-radius: 50%;
+        }
+
+        .page-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(76,47,173,0.05) 0%, transparent 65%);
+            border-radius: 50%;
+        }
+
+        /* ─── HEADER ─── */
+        .header {
+            position: relative;
+            z-index: 100;
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        /* Top accent bar */
+        .header-accent {
+            height: 4px;
+            background: linear-gradient(90deg, var(--purple-900) 0%, var(--purple-600) 50%, var(--gold) 100%);
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+
+        .logo-emblem {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--purple-800), var(--purple-500));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(76,47,173,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-emblem::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .logo-emblem i {
+            font-size: 20px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-main {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--purple-900);
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--gray-400);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .header-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--purple-50);
+            border: 1px solid var(--purple-300);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--purple-700);
+        }
+
+        .header-badge i {
+            font-size: 10px;
+            color: var(--gold);
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 32px 60px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, var(--purple-50), transparent);
+            border-left: 3px solid var(--gold);
+            padding: 6px 16px 6px 12px;
+            border-radius: 0 20px 20px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--purple-700);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero-label i {
+            color: var(--gold);
+            font-size: 10px;
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.25;
+            color: var(--purple-900);
+            margin-bottom: 20px;
+        }
+
+        .hero-title .accent {
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-title .accent::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, rgba(201,162,39,0.35), rgba(201,162,39,0.1));
+            border-radius: 4px;
+            z-index: -1;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.85;
+            color: var(--gray-600);
+            max-width: 520px;
+        }
+
+        /* Hero decoration */
+        .hero-deco {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.12;
+            user-select: none;
+        }
+
+        .hero-deco-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 2px solid var(--purple-500);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-deco-circle::before {
+            content: '';
+            position: absolute;
+            inset: 16px;
+            border-radius: 50%;
+            border: 1px solid var(--purple-400);
+        }
+
+        .hero-deco-circle::after {
+            content: '';
+            position: absolute;
+            inset: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-300), var(--purple-100));
+        }
+
+        /* ─── DIVIDER ─── */
+        .section-divider {
+            max-width: 1100px;
+            margin: 0 auto 60px;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .divider-label {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-400);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* ─── CARDS ─── */
+        .cards-section {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 36px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            animation: cardIn 0.5s ease both;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.05s; }
+        .card:nth-child(2) { animation-delay: 0.12s; }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple-600), var(--purple-400));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--purple-300);
+            box-shadow: 0 8px 32px rgba(76,47,173,0.12);
+            transform: translateY(-4px);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        /* Featured card */
+        .card.featured {
+            background: linear-gradient(135deg, var(--purple-900) 0%, var(--purple-700) 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        .card.featured::before {
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+        }
+
+        .card.featured:hover {
+            box-shadow: 0 16px 48px rgba(45,27,105,0.35);
+        }
+
+        .card-icon-wrap {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            background: var(--purple-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            transition: background 0.25s;
+        }
+
+        .card:hover .card-icon-wrap {
+            background: linear-gradient(135deg, var(--purple-600), var(--purple-400));
+        }
+
+        .card-icon-wrap i {
+            font-size: 22px;
+            color: var(--purple-600);
+            transition: color 0.25s;
+        }
+
+        .card:hover .card-icon-wrap i {
+            color: white;
+        }
+
+        /* featured icon */
+        .card.featured .card-icon-wrap {
+            background: rgba(255,255,255,0.12);
+        }
+
+        .card.featured .card-icon-wrap i {
+            color: var(--gold-light);
+        }
+
+        .card.featured:hover .card-icon-wrap {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .card-title {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--purple-900);
+            margin-bottom: 10px;
+            line-height: 1.35;
+        }
+
+        .card.featured .card-title {
+            color: white;
+        }
+
+        .card-desc {
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--gray-600);
+            flex: 1;
+            margin-bottom: 28px;
+        }
+
+        .card.featured .card-desc {
+            color: rgba(255,255,255,0.75);
+        }
+
+        .card-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--purple-600);
+            border: 1.5px solid var(--purple-200);
+            border-radius: 8px;
+            padding: 10px 20px;
+            background: var(--purple-50);
+            text-decoration: none;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+
+        .card-cta:hover {
+            background: var(--purple-600);
+            border-color: var(--purple-600);
+            color: white;
+        }
+
+        .card-cta i {
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+
+        .card-cta:hover i {
+            transform: translateX(3px);
+        }
+
+        .card.featured .card-cta {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+        }
+
+        .card.featured .card-cta:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--purple-900);
+        }
+
+        /* decorative pattern on featured card */
+        .card.featured .card-deco {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            pointer-events: none;
+        }
+
+        .card.featured .card-deco::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* ─── STATS ─── */
+        .stats-section {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 32px 80px;
+        }
+
+        .stats-inner {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .stat-item + .stat-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 20%;
+            bottom: 20%;
+            width: 1px;
+            background: var(--gray-200);
+        }
+
+        .stat-num {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--purple-700);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-400);
+            letter-spacing: 0.04em;
+        }
+
+        /* ─── FOOTER ─── */
+        .footer {
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--gray-200);
+            background: var(--white);
+        }
+
+        .footer-accent {
+            height: 3px;
+            background: linear-gradient(90deg, var(--purple-900), var(--purple-500), var(--gold));
+        }
+
+        .footer-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .footer-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--purple-800), var(--purple-500));
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer-logo-icon i {
+            font-size: 14px;
+            color: white;
+        }
+
+        .footer-logo-text {
+            font-family: 'Noto Serif Thai', serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--purple-900);
+        }
+
+        .footer-meta {
+            text-align: right;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--gray-400);
+            line-height: 1.7;
+        }
+
+        .footer-copy span {
+            color: var(--purple-500);
+            font-weight: 600;
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 48px 20px 40px;
+            }
+
+            .hero-deco { display: none; }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .cards-section {
+                padding: 0 20px 60px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-inner {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 24px;
+            }
+
+            .stat-item:nth-child(3)::before,
+            .stat-item:nth-child(4)::before {
+                display: none;
+            }
+
+            .stat-item:nth-child(3) {
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .stat-item:nth-child(4) {
+                border-top: 1px solid var(--gray-200);
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .footer-meta {
+                text-align: center;
+            }
+
+            .section-divider {
+                padding: 0 20px;
+            }
+
+            .stats-section {
+                padding: 0 20px 60px;
+            }
+
+            .header-inner {
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-bg"></div>
+
+    <!-- ─── HEADER ─── -->
+    <header class="header">
+        <div class="header-accent"></div>
+        <div class="header-inner">
+            <a href="index.html" class="logo">
+                <div class="logo-emblem">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="logo-text-group">
+                    <span class="logo-main">ระบบจัดการบิล</span>
+                    <span class="logo-sub">Bill Management System</span>
+                </div>
+            </a>
+            <div class="header-badge">
+                <i class="fas fa-star"></i>
+                ระบบภายใน
+            </div>
+        </div>
+    </header>
+
+    <!-- ─── HERO ─── -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-label">
+                <i class="fas fa-circle"></i>
+                ระบบจัดการเอกสาร
+            </div>
+            <h1 class="hero-title">
+                ระบบจัดการบิล<br>
+                <span class="accent">ครบวงจร</span>
+            </h1>
+            <p class="hero-desc">
+                ระบบจัดการบิลที่ช่วยให้ท่านสามารถควบคุมและติดตาม<br>
+                รายการบิลทั้งหมดได้อย่างเป็นระเบียบ มีประสิทธิภาพ<br>
+                และถูกต้องแม่นยำ
+            </p>
+        </div>
+        <div class="hero-deco" aria-hidden="true">
+            <div class="hero-deco-circle">
+                <i class="fas fa-file-invoice-dollar" style="font-size:48px; color: var(--purple-400); position:relative; z-index:1;"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── DIVIDER ─── -->
+    <div class="section-divider">
+        <div class="divider-line"></div>
+        <span class="divider-label">เลือกใช้งาน</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <!-- ─── CARDS ─── -->
+    <section class="cards-section">
+        <div class="cards-grid">
+
+            <!-- Card 1: Featured -->
+            <div class="card featured">
+                <div class="card-deco"></div>
+                <div class="card-icon-wrap">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h2 class="card-title">การจัดการใบเสร็จ</h2>
+                <p class="card-desc">
+                    จัดการบิลทุกรายการในที่เดียว — เพิ่ม แก้ไข ลบ รับชำระ
+                    และตรวจสอบยอดคงเหลือ ครบถ้วนในระบบเดียว
+                </p>
+                <a href="https://sarawutc6689-cpu.github.io/PEA/Billmanage.html"
+                   class="card-cta" target="_blank">
+                    เข้าใช้งาน
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── STATS ─── -->
+    <section class="stats-section">
+        <div class="stats-inner">
+            <div class="stat-item">
+                <div class="stat-num">6</div>
+                <div class="stat-label">ฟีเจอร์ครบครัน</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">24/7</div>
+                <div class="stat-label">ใช้งานได้ตลอดเวลา</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">100%</div>
+                <div class="stat-label">ความปลอดภัยข้อมูล</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">∞</div>
+                <div class="stat-label">จำนวนบิลไม่จำกัด</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── FOOTER ─── -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <a href="index.html" class="footer-logo">
+                <div class="footer-logo-icon">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <span class="footer-logo-text">ระบบจัดการบิล</span>
+            </a>
+            <div class="footer-meta">
+                <p class="footer-copy">
+                    © 2568 ระบบจัดการใบเสร็จ &nbsp;|&nbsp;
+                    พัฒนาโดย <span>Sarawut.C</span>
+                </p>
+                <p class="footer-copy">สำหรับใช้ภายในองค์กรเท่านั้น</p>
+            </div>
+        </div>
+        <div class="footer-accent"></div>
+    </footer>
+
+</body>
+</html>
